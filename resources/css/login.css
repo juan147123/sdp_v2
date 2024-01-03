@@ -1,0 +1,122 @@
+@media screen and (min-width: 2048px) and (max-width: 3000px) {
+    #login-panel {
+        width: 30%;
+    }
+
+    #image-panel {
+        width: 70%;
+    }
+
+    #image-title-panel {
+        font-size: 2.0rem !important;
+    }
+
+    #login-slot {
+        width: 30rem !important;
+    }
+
+    #login-slot-portal-image {
+        height: 7rem !important;
+    }
+
+    #login-slot-group-image {
+        width: 20rem !important;
+        margin-top: 2rem;
+    }
+    #logo-sdp {
+        width: 78%;
+        margin: auto;
+        margin-top: -160px;
+    }
+    .login-container {
+        width: 70%;
+        margin: auto;
+        margin-top: -30px;
+    }
+}
+
+@media screen and (min-width: 1500px) and (max-width: 2049px)  {
+    #login-panel {
+        width: 30%;
+    }
+
+    #image-panel {
+        width: 70%;
+    }
+
+    #image-title-panel {
+        font-size: 1.3rem !important;
+    }
+
+    #login-slot {
+        width: 20rem !important;
+    }
+
+    #login-slot-portal-image {
+        height: 7rem !important;
+    }
+
+    #login-slot-group-image {
+        width: 15rem !important;
+        margin-top: 1rem;
+    }
+    #logo-sdp {
+        width: 80%;
+        margin: auto;
+        margin-top: -100px;
+    }
+    .login-container {
+        width: 80%;
+        margin: auto;
+        margin-top: -10px;
+    }
+    .btn-span-login{
+        font-size: 14px !important;
+    }
+    .btn-recomended{
+        font-size: 12px !important;
+    }
+}
+
+@media screen and (min-width: 1265px) and (max-width: 1499px) {
+    #login-panel {
+        width: 30%;
+    }
+
+    #image-panel {
+        width: 70%;
+    }
+
+    #image-title-panel {
+        font-size: 1.3rem !important;
+    }
+
+    #login-slot {
+        width: 20rem !important;
+    }
+
+    #login-slot-portal-image {
+        height: 7rem !important;
+    }
+
+    #login-slot-group-image {
+        width: 15rem !important;
+        margin-top: 1rem;
+    }
+    #logo-sdp {
+        width: 80%;
+        margin: auto;
+        margin-top: -100px;
+    }
+    .login-container {
+        width: 80%;
+        margin: auto;
+        margin-top: -10px;
+    }
+    .btn-span-login{
+        font-size: 14px !important;
+    }
+    .btn-recomended{
+        font-size: 12px !important;
+    }
+}
