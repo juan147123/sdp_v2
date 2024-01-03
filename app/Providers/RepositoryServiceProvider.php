@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use App\Interfaces\{
     AplicacionUsuarioRepositoryInterface,
     EloquentRepositoryInterface,
+    PersonalChileRepositoryInterface,
+    PersonalPeruRepositoryInterface,
     SolicitudRepositoryInterface,
     UsuarioRepositoryInterface,
     UsuarioRolRepositoryInterface,
@@ -13,6 +15,8 @@ use App\Interfaces\{
 use App\Repositories\{
     AplicacionUsuarioRepository,
     BaseRepository,
+    PersonalChileRepository,
+    PersonalPeruRepository,
     SolicitudRepository,
     UsuarioRepository,
     UsuarioRolRepository,
@@ -32,6 +36,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(AplicacionUsuarioRepositoryInterface::class, AplicacionUsuarioRepository::class);
         $this->app->bind(UsuarioRepositoryInterface::class, UsuarioRepository::class);
         $this->app->bind(UsuarioRolRepositoryInterface::class, UsuarioRolRepository::class);
+        $this->app->bind(PersonalPeruRepositoryInterface::class, PersonalPeruRepository::class);
+        $this->app->bind(PersonalChileRepositoryInterface::class, PersonalChileRepository::class);
     }
 
     /**

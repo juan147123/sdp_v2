@@ -2,7 +2,8 @@
 
 use App\Http\Controllers\{
     SolicitudController,
-    AuthController
+    AuthController,
+    ColaboradoresPeruController
 };
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -25,7 +26,7 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-});
+})->name('auth.login.initial');
 
 //LOGIN
 Route::get('login/google', [AuthController::class, 'redirectToGoogle'])->name('login.google');
@@ -35,6 +36,6 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
+
 });
 
-Route::get('test', [SolicitudController::class, 'listAll'])->name('test');

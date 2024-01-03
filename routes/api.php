@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ColaboradoresPeruController;
 use App\Http\Controllers\SolicitudController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,4 +23,6 @@ Route::middleware([
     'verified',
 ])->group(function () {
 });
+Route::get('colape', [ColaboradoresPeruController::class, 'validateLideresPE'])->name('colape');
 Route::get('test', [SolicitudController::class, 'listAll'])->name('test');
+Route::get('validateLideresPE', [AuthController::class, 'validateLideresPE'])->name('validateLideresPE');

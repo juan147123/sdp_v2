@@ -2,10 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Interfaces\AplicacionUsuarioRepositoryInterface;
-use App\Interfaces\UsuarioRepositoryInterface;
-use App\Interfaces\UsuarioRolRepositoryInterface;
+use App\Interfaces\{
+    AplicacionUsuarioRepositoryInterface,
+    PersonalChileRepositoryInterface,
+    PersonalPeruRepositoryInterface,
+    UsuarioRepositoryInterface,
+    UsuarioRolRepositoryInterface
+};
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
@@ -13,16 +20,22 @@ class AuthController extends Controller
     private $repository;
     private $repositoryUsuario;
     private $repositoryRolUsuario;
+    private $repositoryPersonalPE;
+    private $repositoryPersonalCL;
 
     public function __construct(
         AplicacionUsuarioRepositoryInterface $repository,
         UsuarioRepositoryInterface $repositoryUsuario,
         UsuarioRolRepositoryInterface $repositoryRolUsuario,
+        PersonalPeruRepositoryInterface $repositoryPersonalPE,
+        PersonalChileRepositoryInterface $repositoryPersonalCL
 
     ) {
         $this->repository = $repository;
         $this->repositoryUsuario = $repositoryUsuario;
         $this->repositoryRolUsuario = $repositoryRolUsuario;
+        $this->repositoryPersonalPE = $repositoryPersonalPE;
+        $this->repositoryPersonalCL = $repositoryPersonalCL;
     }
 
     public function redirectToGoogle()
@@ -34,9 +47,12 @@ class AuthController extends Controller
     {
         $user = Socialite::driver('google')->user();
         $email = $user->getEmail();
-        
-        if($email == 'jmestanza@flesan.com.pe'){
-            $email = 'frida.morales@flesan.cl';
+
+        if ($email == 'jmestanza@flesan.com.pe') {
+            //$email = 'dcollas@flesan.com.pe';
+            // $email = 'frida.morales@flesan.cl';
+            // $email = 'jorge.barrozo@flesan.cl';
+            $email = 'mmatamoros@flesan.com.pe';
         }
 
         $extension_correo = substr($email, -2);
@@ -58,6 +74,8 @@ class AuthController extends Controller
     }
     public function handleGoogleCallback()
     {
+        $AuthUser = null;
+
         // otengo el usuario de la cuenta de google
         $usuario = $this->getUser();
 
@@ -66,10 +84,17 @@ class AuthController extends Controller
         //si existe ejecuto las validaciones correspondientes
         if ($usuario_bd) {
             $AuthUser = $this->validateTableUser($usuario, $usuario_bd);
-            dd($AuthUser);
-        }else{
-            dd('usuario lider');
-            $usuario['pais'];
+        } else {
+            $pais =  $usuario['pais'];
+            if ($pais == 'PE') {
+                $AuthUser = $this->validateLideresPE($usuario);
+            } else {
+                $AuthUser = $this->validateLideresObraPlantaCL($usuario);
+            }
+        }
+        if ($AuthUser != null) {
+        } else {
+           return $this->redirectToLogin();
         }
     }
 
@@ -144,7 +169,108 @@ class AuthController extends Controller
         return  $redirect;
     }
 
-    public function validateLideresPE(){
-       
+    public function validateLideresPE($usuario)
+    {
+        $redirect = 'colaboradores.peru';
+        $datosLider =  $this->repositoryPersonalPE->UserFindByEmail($usuario['username']);
+        $dniLideres = $this->repositoryPersonalPE->getDniLideres();
+
+        if ($datosLider && in_array($datosLider->dni, $dniLideres)) {
+            //Busca el usuario en seguridad app
+            $appUser = $this->repository->findUserByEmail($usuario['username']);
+
+            //Si no existe lo cre $this->updateAvatarName($appUser, $usuario);a
+            if (!$appUser) {
+                $appUser = $this->createAppUser($usuario);
+                $userRol = $this->dtoAppUserRol(
+                    $appUser->id_aplicacion_usuario,
+                    $_ENV['ADMINISTRADOR_LIDER']
+                );
+                $this->createRolUser($userRol);
+            }
+
+            //Si existe actuaiza su nombre y avatar
+            $this->updateAvatarName($appUser, $usuario);
+
+            // Retorna el usuario a loguear más su ruta de redireccion
+            return array(
+                "appUser" => $appUser,
+                "redirect" => $redirect
+            );
+        }
+    }
+
+    public function validateLideresObraPlantaCL($usuario)
+    {
+        $user = null;
+
+        $correoLiderObra = $this->repositoryPersonalCL->getLideresObraCl();
+        if (in_array($usuario['username'], $correoLiderObra)) {
+            $user = $this->validateLideresCL($usuario);
+        } else {
+            $user = $this->validateLiderChile($usuario);
+        }
+        return $user;
+    }
+
+    public function validateLideresCL($usuario)
+    {
+        $redirect = 'colaboradores';
+        //Busca el usuario en seguridad app
+        $appUser = $this->repository->findUserByEmail($usuario['username']);
+
+        //Si no existe lo crea
+        if (!$appUser) {
+            $appUser = $this->createAppUser($usuario);
+            $userRol = $this->dtoAppUserRol(
+                $appUser->id_aplicacion_usuario,
+                $_ENV['ADMINISTRADOR_LIDER']
+            );
+            $this->createRolUser($userRol);
+        }
+
+        //Si existe actuaiza su nombre y avatar
+        $this->updateAvatarName($appUser, $usuario);
+
+        // Retorna el usuario a loguear más su ruta de redireccion
+        return array(
+            "appUser" => $appUser,
+            "redirect" => $redirect
+        );
+    }
+
+    public function validateLiderChile($usuario)
+    {
+        /* busca usuarios lideres de chile*/
+        $userDwChile = $this->repositoryPersonalCL->UserFindByEmail(strtoupper($usuario['username']));
+        $npLideres = $this->repositoryPersonalCL->getNpLideres();
+
+        if ($userDwChile && in_array($userDwChile->user_id, $npLideres)) {
+            $appUser = $this->repository->findUserByEmail($usuario['username']);
+            //Si no existe lo crea
+            if (!$appUser) {
+                $appUser = $this->createAppUser($usuario);
+                $userRol = $this->dtoAppUserRol(
+                    $appUser->id_aplicacion_usuario,
+                    $_ENV['ADMINISTRADOR_LIDER']
+                );
+                $this->createRolUser($userRol);
+            }
+            $redirect = 'colaboradores';
+            return array(
+                "appUser" => $appUser,
+                "redirect" => $redirect
+            );
+        }
+    }
+
+    public function redirectToLogin()
+    {
+        return Inertia::render('Auth/Login', [
+            'canLogin' => Route::has('login'),
+            'laravelVersion' => Application::VERSION,
+            'phpVersion' => PHP_VERSION,
+            'autorizado' => 1,
+        ]);
     }
 }

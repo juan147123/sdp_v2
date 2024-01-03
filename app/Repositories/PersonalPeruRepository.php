@@ -31,10 +31,6 @@ class PersonalPeruRepository extends BaseRepository implements PersonalPeruRepos
 
     public function getDataByEmailLider($correo)
     {
-        $empresas = [];
-        $unidades = [];
-        $areas = [];
-        $centros_costo = [];
         $query = "
             with lideres_pe as(
                 select email,dni from rrhh.ejb_rrhh_planilla_ad_gf
@@ -77,75 +73,45 @@ class PersonalPeruRepository extends BaseRepository implements PersonalPeruRepos
                 on c.lider_ren_dn = lp.dni or c.lider_des_dni = lp.dni;
             ";
         $colaboradores = DB::connection('dw_peru')->select(DB::raw($query), ['correo_lider' => $correo]);
-
-        $colaboradores = collect($colaboradores)->map(function ($colaborador) use (&$empresas, &$unidades, &$areas, &$centros_costo) {
-            $this->getEmpresas($colaborador, $empresas);
-            $this->getUnidades($colaborador, $unidades);
-            $this->getCentroCosto($colaborador, $centros_costo);
-            $this->getArea($colaborador, $areas);
-            $colaborador->solicitudes = $this->modelSolicitudColaborador
-                ->where('user_id', $colaborador->dni)
-                ->count();
-            return $colaborador;
-        });
-
-        return array(
-            "colaboradores" => $colaboradores,
-            "empresas" => $empresas,
-            'unidades' => $unidades,
-            'centrosCosto' => $centros_costo,
-            'areas' => $areas,
-        );
+        return  $colaboradores;
     }
 
-    public function getEmpresas($data, &$empresas)
+    public function getDniLideres()
     {
-        $empresa = [
-            'id' => $data->rut_empresa,
-            'descripcion' => $data->empresa,
-        ];
+        $query = "
+                select distinct l.* from 
+                    (select 
+                    distinct c.lider_ren_dn 
+                    from rrhh.ejb_rrhh_planilla_ad_gf c
+                    where c.estado = 'VIG'
+                    and lider_ren_dn is not null
+                    and lider_ren_dn <> 'ALLENDE MARINO JOSE FRANCISCO'
+                    and lider_ren_dn <> 'MARCO MORENO MURILLO'
+                    union all 
+                    select 
+                    distinct c.lider_des_dni  
+                    from rrhh.ejb_rrhh_planilla_ad_gf c
+                    where c.estado = 'VIG'
+                    and lider_des_dni is not null
+                    and lider_des_dni <> 'NA')
+                as l;
+            ";
+        $resultados = DB::connection('dw_peru')
+            ->select(DB::raw($query));
 
-        if (!in_array($empresa, $empresas)) {
-            array_push($empresas, $empresa);
-        }
+        $dniLideresPe = collect($resultados)->pluck('lider_ren_dn')->toArray();
+
+        return $dniLideresPe;
     }
-
-    public function getUnidades($data, &$unidades)
+    
+    public function UserFindByEmail($email)
     {
-        $unidad = [
-            'id' => $data->codigo_unidad,
-            'cod_empresa' => $data->rut_empresa,
-            'descripcion' => $data->unidad_descripcion,
-        ];
-        if (!in_array($unidad, $unidades)) {
-            array_push($unidades, $unidad);
-        }
-    }
-
-
-    public function getCentroCosto($data, &$centros_costo)
-    {
-        $centro_costo = [
-            'id' => $data->centro_costo,
-            'cod_unidad' => $data->codigo_unidad,
-            'cod_empresa' => $data->rut_empresa,
-            'descripcion' => $data->des_centro_gestion,
-        ];
-        if (!in_array($centro_costo, $centros_costo)) {
-            array_push($centros_costo, $centro_costo);
-        }
-    }
-
-    public function getArea($data, &$areas)
-    {
-        $area = [
-            'id' => $data->area,
-            'cod_empresa' => $data->rut_empresa,
-            'cod_unidad' => $data->codigo_unidad,
-            'descripcion' => $data->area
-        ];
-        if (!in_array($area, $areas)) {
-            array_push($areas, $area);
-        }
+        $dniLideres =  $this->getDniLideres();
+        return $this->model
+            ->select('dni', 'email')
+            ->where('email', $email)
+            ->where('estado', 'VIG')
+            ->whereIn('dni', $dniLideres)
+            ->first();
     }
 }
