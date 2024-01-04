@@ -22,8 +22,9 @@
         </div>
         <div class="hidden" id="parte-solicitudes-detalle">
             <SolicitudesColaborador
-                @ChangeView="this.ChangeView(0)"
+                @changeViewDetail="this.changeViewDetail"
                 :solicitudesColaborador="solicitudesColaborador"
+                :archivosList="archivosList"
             />
         </div>
     </AppLayout>
@@ -52,8 +53,10 @@ export default {
                 },
             ],
             table: [],
+            tableDetalle: [],
             part: 0,
             solicitudesColaborador: [],
+            archivosList: [],
         };
     },
     mounted() {
@@ -85,7 +88,7 @@ export default {
                         .find(".btnColaboradoresSolicitud")
                         .on("click", function () {
                             self.solicitudesColaborador = data;
-                            self.ChangeView(1);
+                            self.ChangeView(data);
                         });
                 },
                 columns: [
@@ -132,13 +135,13 @@ export default {
                                       ]
                                     : ["success", "completo"];
 
-                            return `<div><span class="badge bg-${status[0]} text-white">${status[1]}</span></div>`;
+                            return `<div><span style="font-size:11.5px;" class="badge bg-${status[0]} text-white">${status[1]}</span></div>`;
                         },
                     },
                 ],
             });
         },
-        ChangeView(part) {
+        ChangeView(data) {
             var togglerSolicitud = document.getElementById(
                 "parte-solicitudes-vista"
             );
@@ -147,6 +150,146 @@ export default {
             );
             togglerSolicitud.classList.toggle("hidden");
             togglerDetalle.classList.toggle("hidden");
+            this.createTableDetalle(data);
+        },
+        changeViewDetail() {
+            var togglerSolicitud = document.getElementById(
+                "parte-solicitudes-vista"
+            );
+            var togglerDetalle = document.getElementById(
+                "parte-solicitudes-detalle"
+            );
+            togglerSolicitud.classList.toggle("hidden");
+            togglerDetalle.classList.toggle("hidden");
+            if (this.tableDetalle) {
+                this.tableDetalle.destroy();
+            }
+        },
+        createTableDetalle(data) {
+            var self = this;
+            this.tableDetalle = new DataTable("#tableSolicitudesDetalle", {
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json",
+                },
+                responsive: true,
+                loadingRecords: "Cargando...",
+                autoFill: true,
+                data: data.solicitud_colaborador,
+                columnDefs: [
+                    { responsivePriority: 1, targets: 0 },
+                    { responsivePriority: 2, targets: -1 },
+                ],
+                drawCallback: function (settings) {
+                    $("ul.pagination").addClass("pagination-sm");
+                },
+                createdRow: function (row, data, dataIndex) {
+                    $(row)
+                        .find("#acciones1")
+                        .on("click", function () {
+                            self.archivosList = data.archivos;
+                        });
+                    $(row)
+                        .find("#acciones2")
+                        .on("click", function () {
+                            self.checksUsuario = data.check_area_colaboradores;
+                            self.getChecklist(true);
+                        });
+                    $(row)
+                        .find("#acciones3")
+                        .on("click", function () {
+                            self.updateStatus(data.id, 3, data.id_solicitud);
+                        });
+                    $(row)
+                        .find("#acciones4")
+                        .on("click", function () {
+                            self.updateStatus(data.id, 2, data.id_solicitud);
+                        });
+                },
+                columns: [
+                    { data: "user_id", width: 90, className: "text-center" },
+                    { data: "nombre_completo", className: "text-center" },
+                    {
+                        data: "sap_maestro_causales_terminos.name",
+                        className: "text-center",
+                    },
+                    { data: "fecha_desvinculacion", className: "text-center" },
+                    { data: "redireccion", className: "text-center" },
+                    { data: "comentario", className: "text-center" },
+                    {
+                        data: null,
+                        className: "text-center",
+                        width: 100,
+                        render: function (data, type, row) {
+                            const rol = self.$page.props.rol.id_rol;
+                            const isObra = rol === 82;
+
+                            var obra = self.solicitudesColaborador.obra;
+                            var desc = "";
+                            var color = "";
+
+                            if ((isObra && row.status == 1) || obra == 1) {
+                                desc = "pendiente";
+                                color = "info";
+                            } else if (
+                                (isObra && row.status == 2) ||
+                                obra == 1
+                            ) {
+                                desc = "cancelado";
+                                color = "danger";
+                            } else if (row.status == 2) {
+                                desc = "cancelado";
+                                color = "danger";
+                            } else if (row.status == 1) {
+                                desc = "checklist pendientes";
+                                color = "info";
+                            } else {
+                                desc = "completo";
+                                color = "success";
+                            }
+                            return `<span class="badge bg-${color} text-white">${desc}</span>`;
+                        },
+                    },
+                    {
+                        data: null,
+                        className: "text-center",
+                        render: function (data, type, row) {
+                            const rol = self.$page.props.rol.id_rol;
+                            var obra = self.solicitudesColaborador.obra;
+                            const isAdmin = rol === 79 || rol === 78;
+                            const isObra = rol === 82;
+                            const statusCompleto =
+                                data.status !== 3 || data.status !== 2;
+                            return `<div class="btn-group">
+                                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa fa-cogs"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones1"  data-bs-toggle="modal" data-bs-target="#modalArchivos"><i class="fas fa-file-alt text-info"></i> Archivos</a></li>
+                                            ${
+                                                isObra || obra == 1
+                                                    ? ""
+                                                    : '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones2" ><i class="fas fa-tasks text-primary"></i> Checklist</a></li>'
+                                            }
+                                            ${
+                                                statusCompleto &&
+                                                isAdmin &&
+                                                row.status != 3
+                                                    ? '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones3" ><i class="fas fa-check text-success"></i> Aprobar</a></li>'
+                                                    : ""
+                                            }
+                                            ${
+                                                statusCompleto &&
+                                                isAdmin &&
+                                                row.status != 3
+                                                    ? '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones4" ><i class="fas fa-times text-danger"></i> Desaprobar</a></li>'
+                                                    : ""
+                                            }
+                                        </ul>
+                                    </div>`;
+                        },
+                    },
+                ],
+            });
         },
     },
 };

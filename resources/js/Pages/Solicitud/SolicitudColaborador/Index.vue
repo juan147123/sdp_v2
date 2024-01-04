@@ -1,22 +1,22 @@
 <template>
     <breadcrumbs :modules="breadcrumbs" />
     <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
-    <i
-        class="fas fa-arrow-left mt-4"
-        id="arrow-back"
-        @click="ChangeView"
-    ></i>
-    <div
-        class="d-flex align-items-center justify-content-between ml-5 mt-3"
-    >
+    <div>
+        <i
+            class="fas fa-arrow-left mt-3 ml-2"
+            id="arrow-back"
+            @click="changeViewDetail"
+        ></i>
+    </div>
+    <div class="d-flex align-items-center justify-content-between ml-2 mt-3">
         <h5>Usuarios a desvincular</h5>
-        <h5 class="m-3">
+        <h5 class="m-2">
             Solicitud código:
             {{ this.solicitudesColaborador.codigo }}
         </h5>
     </div>
     <div
-        class="text-end m-3"
+        class="text-end m-2"
         v-if="
             this.$page.props.rol.id_rol == 79 ||
             this.$page.props.rol.id_rol == 78
@@ -38,8 +38,8 @@
                         @click="updateAllStatus(3)"
                         class="dropdown-item"
                         style="cursor: pointer; font-size: 11.5px"
-                        ><i class="fas fa-check text-success"></i>
-                        Aprobar todos</a
+                        ><i class="fas fa-check text-success"></i> Aprobar
+                        todos</a
                     >
                 </li>
                 <li>
@@ -54,21 +54,30 @@
             </ul>
         </div>
     </div>
-    <!--    
     <div class="contenedor-solicitud" v-if="this.checkView != true">
-        <div class="main-content">
-            <div>
-
-
-                <tableVue
-                    :data="this.solicitudesColaborador.solicitud_colaborador"
-                    :headers="this.headers"
-                    :dataTableOptions="this.dataTableOptions"
-                />
-                <Modal :archivosList="this.archivosList" />
-            </div>
+        <div class="box ml-2 mr-2 mt-1">
+            <table
+                class="table table-hover align-middle"
+                id="tableSolicitudesDetalle"
+            >
+                <thead class="table-dark">
+                    <tr>
+                        <th>NP Usuario</th>
+                        <th>Nombres y Apellidos</th>
+                        <th>Motivo de desvinculación</th>
+                        <th>Fecha de desvinculación</th>
+                        <th>Correo de redirección</th>
+                        <th>Comentarios</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <Modal :archivosList="this.archivosList" />
         </div>
     </div>
+    <!--    
     <div class="contenedor-checklist" v-else>
         <breadcrumbs :modules="breadcrumbsChecklist" />
         <i
@@ -89,8 +98,8 @@ import Checklist from "./Checklist/Index.vue";
 import Preloader from "@/Components/Preloader.vue";
 import { setSwal } from "../../../../Utils/swal";
 export default {
-    props: ["solicitudesColaborador", "CodigoSolicitud", "idSolicitud"],
-    emits: ["ChangeView", "getSolicitudes"],
+    props: ["solicitudesColaborador", "CodigoSolicitud", "idSolicitud","archivosList"],
+    emits: ["changeViewDetail", "getSolicitudes"],
     components: {
         AppLayout,
         breadcrumbs,
@@ -101,7 +110,6 @@ export default {
     data() {
         var self = this;
         return {
-            archivosList: [],
             checkView: false,
             checksUsuario: [],
             mensaje: "",
@@ -139,144 +147,14 @@ export default {
                     url: "",
                 },
             ],
-            dataTableOptions: {
-                responsive: true,
-                language: {
-                    url: window.location.origin + "/Plugins/Es-es.json",
-                },
-
-                columns: [
-                    { data: "user_id", width: 90, className: "text-center" },
-                    { data: "nombre_completo", className: "text-center" },
-                    {
-                        data: "sap_maestro_causales_terminos.name",
-                        className: "text-center",
-                    },
-                    { data: "fecha_desvinculacion", className: "text-center" },
-                    { data: "redireccion", className: "text-center" },
-                    { data: "comentario", className: "text-center" },
-                    {
-                        data: null,
-                        className: "text-center",
-                        width: 100,
-                        render: function (data, type, row) {
-                            const rol = self.$page.props.rol.id_rol;
-                            const isObra = rol === 82;
-                            var totalChecksRegistrados =
-                                row.check_area_colaboradores.filter(
-                                    (obj) => obj
-                                ).length;
-                            var obra = self.solicitudesColaborador.obra;
-                            var contadorPendiente =
-                                self.$page.props.data.checklist.length -
-                                totalChecksRegistrados;
-                            var desc = "";
-                            var color = "";
-                            if ((isObra && row.status == 1) || obra == 1) {
-                                desc = "pendiente";
-                                color = "info";
-                            } else if (
-                                (isObra && row.status == 2) ||
-                                obra == 1
-                            ) {
-                                desc = "cancelado";
-                                color = "danger";
-                            } else if (row.status == 2) {
-                                desc = "cancelado";
-                                color = "danger";
-                            } else if (row.status == 1) {
-                                desc =
-                                    "checklist pendientes de revisión: " +
-                                    contadorPendiente;
-                                color = "info";
-                            } else {
-                                desc = "completo";
-                                color = "success";
-                            }
-                            return `<span class="badge bg-${color} text-white">${desc}</span>`;
-                        },
-                    },
-                    {
-                        data: null,
-                        className: "text-center",
-                        render: function (data, type, row) {
-                            const rol = self.$page.props.rol.id_rol;
-                            var obra = self.solicitudesColaborador.obra;
-                            const isAdmin = rol === 79 || rol === 78;
-                            const isObra = rol === 82;
-                            const statusCompleto =
-                                data.status !== 3 || data.status !== 2;
-                            return `<div class="btn-group">
-                                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fa fa-cogs"></i>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones1"  data-bs-toggle="modal" data-bs-target="#modalArchivos"><i class="fas fa-file-alt text-info"></i> Archivos</a></li>
-                                            ${
-                                                isObra || obra == 1
-                                                    ? ""
-                                                    : '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones2" ><i class="fas fa-tasks text-primary"></i> Checklist</a></li>'
-                                            }
-                                            ${
-                                                statusCompleto &&
-                                                isAdmin &&
-                                                row.status != 3
-                                                    ? '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones3" ><i class="fas fa-check text-success"></i> Aprobar</a></li>'
-                                                    : ""
-                                            }
-                                            ${
-                                                statusCompleto &&
-                                                isAdmin &&
-                                                row.status != 3
-                                                    ? '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones4" ><i class="fas fa-times text-danger"></i> Desaprobar</a></li>'
-                                                    : ""
-                                            }
-                                        </ul>
-                                    </div>`;
-                        },
-                    },
-                ],
-                createdRow: function (row, data, dataIndex) {
-                    $(row)
-                        .find("#acciones1")
-                        .on("click", function () {
-                            self.archivosList = data.archivos;
-                        });
-                    $(row)
-                        .find("#acciones2")
-                        .on("click", function () {
-                            self.checksUsuario = data.check_area_colaboradores;
-                            self.getChecklist(true);
-                        });
-                    $(row)
-                        .find("#acciones3")
-                        .on("click", function () {
-                            self.updateStatus(data.id, 3, data.id_solicitud);
-                        });
-                    $(row)
-                        .find("#acciones4")
-                        .on("click", function () {
-                            self.updateStatus(data.id, 2, data.id_solicitud);
-                        });
-                },
-            },
-
-            headers: [
-                "NP Usuario",
-                "Nombres y Apellidos",
-                "Motivo de desvinculación",
-                "Fecha de desvinculación",
-                "Correo de redirección",
-                "Comentarios",
-                "Estado",
-                "Acciones",
-            ],
         };
     },
-    mounted() {},
+    mounted() {
+    
+    },
     methods: {
-        ChangeView() {
-            this.$emit("ChangeView");
+        changeViewDetail() {
+            this.$emit("changeViewDetail");
         },
         getChecklist(value) {
             this.checkView = value;
@@ -309,7 +187,7 @@ export default {
         },
 
         onFinish() {
-            this.$emit("ChangeView");
+            this.$emit("changeViewDetail");
             this.$emit("getSolicitudes");
             this.mensaje = "";
             this.isLoadingForm = false;
@@ -351,14 +229,14 @@ export default {
                 }
             );
         },
+       
     },
 };
 </script>
 <style scoped>
 #arrow-back {
     font-size: 20px;
-    margin-top: 15px;
-    margin-left: 25px;
     cursor: pointer;
+    padding: 5px;
 }
 </style>

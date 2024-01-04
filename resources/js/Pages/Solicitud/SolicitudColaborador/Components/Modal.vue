@@ -43,8 +43,8 @@
                                             <a
                                                 :href="ruta.path"
                                                 target="_blank"
-                                                class="btn btn-primary"
-                                                >Abrir archivo</a
+                                                class="btn btn-primary btn-sm"
+                                                ><i class="fa-regular fa-folder-open"></i></a
                                             >
                                         </div>
                                         <div v-else>
@@ -52,8 +52,8 @@
                                                 :href="ruta.path"
                                                 target="_blank"
                                                 :download="ruta.name"
-                                                class="btn btn-primary"
-                                                >Descargar archivo</a
+                                                class="btn btn-primary btn-sm"
+                                                ><i class="fa-solid fa-download"></i></a
                                             >
                                         </div>
                                     </li>
