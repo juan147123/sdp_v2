@@ -93,12 +93,18 @@ class AuthController extends Controller
                 $AuthUser = $this->validateLideresObraPlantaCL($usuario);
             }
         }
-        Auth::login($AuthUser['appUser']);
-        /* if ($AuthUser != null) { */
+        if(!$usuario_bd){
+            $rol = $_ENV['ADMINISTRADOR_LIDER'];
+        }else{
+            $rol = $usuario_bd['rol'];
+        }
+
+        if ($AuthUser) {
+            Auth::login($AuthUser['appUser']);
             return redirect()->route('redirect.solicitud');
-        /* } else {
-           return $this->redirectToLogin();
-        } */
+        } else {
+            return $this->redirectToLogin();
+        }
     }
 
     public function validateTableUser($usuario, $usuario_bd)

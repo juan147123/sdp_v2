@@ -1,38 +1,45 @@
 <template>
     <AppLayout>
-        <breadcrumbs :modules="breadcrumbs" />
-        <!--   <div class="main-content"> -->
-        <div class="box m-1 mt-5">
-            <table
-                class="table  table-hover align-middle"
-                id="tableSolicitudes"
-            >
-                <thead class="table-dark">
-                    <tr>
-                        <th>Detalle</th>
-                        <th>Código</th>
-                        <th>Solicitante</th>
-                        <th>Fecha de solicitud</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-                <tfoot></tfoot>
-            </table>
+        <div id="parte-solicitudes-vista">
+            <breadcrumbs :modules="breadcrumbs" />
+            <div class="box m-1 mt-5">
+                <table
+                    class="table table-hover align-middle"
+                    id="tableSolicitudes"
+                >
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Detalle</th>
+                            <th>Código</th>
+                            <th>Solicitante</th>
+                            <th>Fecha de solicitud</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
-
-        <!--    </div> -->
+        <div class="hidden" id="parte-solicitudes-detalle">
+            <SolicitudesColaborador
+                @ChangeView="this.ChangeView(0)"
+                :solicitudesColaborador="solicitudesColaborador"
+            />
+        </div>
     </AppLayout>
 </template>
 <script>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import breadcrumbs from "@/Components/Breadcrumbs.vue";
 import { rutaBase } from "../../../Utils/utils.js";
+import SolicitudesColaborador from "./SolicitudColaborador/Index.vue";
+
 import dayjs from "dayjs";
 export default {
     components: {
         AppLayout,
         breadcrumbs,
+        SolicitudesColaborador,
     },
     data() {
         var self = this;
@@ -41,10 +48,12 @@ export default {
                 {
                     label: "Solicitudes",
                     url: "/redirectPage/solicitud",
-                    icon:"fa fa-book"
+                    icon: "fa fa-book",
                 },
             ],
             table: [],
+            part: 0,
+            solicitudesColaborador: [],
         };
     },
     mounted() {
@@ -52,6 +61,7 @@ export default {
     },
     methods: {
         createTable() {
+            var self = this;
             this.table = new DataTable("#tableSolicitudes", {
                 language: {
                     url: "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json",
@@ -71,16 +81,12 @@ export default {
                     $("ul.pagination").addClass("pagination-sm");
                 },
                 createdRow: function (row, data, dataIndex) {
-                    /*  $(row)
-                        .find(".edit-btn")
-                        .on("click", function () {
-                            self.show(data);
-                        });
                     $(row)
-                        .find(".delete-btn")
+                        .find(".btnColaboradoresSolicitud")
                         .on("click", function () {
-                            self.delete(data.id_prod);
-                        }); */
+                            self.solicitudesColaborador = data;
+                            self.ChangeView(1);
+                        });
                 },
                 columns: [
                     {
@@ -88,7 +94,7 @@ export default {
                         width: 100,
                         className: "text-center",
                         render: function (data, type, row) {
-                            return `<button style="font-size: 12px;" class="btn btn-outline-primary btn-sm btnColaboradores"><i class="fas fa-users"></i></button>`;
+                            return `<button style="font-size: 12px;" class="btn btn-outline-primary btn-sm btnColaboradoresSolicitud"><i class="fas fa-users"></i></button>`;
                         },
                     },
                     { data: "codigo", className: "text-center", width: 130 },
@@ -131,6 +137,16 @@ export default {
                     },
                 ],
             });
+        },
+        ChangeView(part) {
+            var togglerSolicitud = document.getElementById(
+                "parte-solicitudes-vista"
+            );
+            var togglerDetalle = document.getElementById(
+                "parte-solicitudes-detalle"
+            );
+            togglerSolicitud.classList.toggle("hidden");
+            togglerDetalle.classList.toggle("hidden");
         },
     },
 };

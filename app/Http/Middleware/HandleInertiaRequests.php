@@ -2,11 +2,19 @@
 
 namespace App\Http\Middleware;
 
+use App\Interfaces\UsuarioRolRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
+
+    private $repositoryUsuarioRol;
+    public function __construct(UsuarioRolRepositoryInterface $repositoryUsuarioRol)
+    {
+        $this->repositoryUsuarioRol = $repositoryUsuarioRol;
+    }
     /**
      * The root template that's loaded on the first page visit.
      *
@@ -36,8 +44,12 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $usuario_rol = null;
+        if (Auth::user()) {
+            $usuario_rol = $this->repositoryUsuarioRol->getIdRol();
+        }
         return array_merge(parent::share($request), [
-            //
+            "rol" => $usuario_rol
         ]);
     }
 }

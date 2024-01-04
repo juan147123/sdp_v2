@@ -28,9 +28,9 @@
                     style="width: 60px; height: 60px"
                 />
                 <div class="d-flex flex-column user-props text-center">
-                    <!-- <span class="mx-2 user-data">{{
-                        this.$page.props.rol.nombre
-                    }}</span> -->
+                    <span class="mx-2 user-data fw-bold">{{
+                        this.$page.props.rol.descripcion
+                    }}</span>
                     <span class="mx-2 user-data">{{
                         this.$page.props.auth.user.name
                     }}</span>
