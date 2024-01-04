@@ -44,9 +44,9 @@
         </div>
         <hr />
         <nav class="mb-auto">
-            <!--  <ul class="mcd-menu">
-                <div v-if="this.$page.props.area === null">
-                    <li
+         <ul class="mcd-menu">
+                <div>
+                  <!--   <li
                         class="toogle-li"
                         v-if="
                             this.$page.props.rol.id_rol == 82 ||
@@ -72,12 +72,12 @@
                             <i class="fas fa-users icon-menu"></i>
                             <strong>Colaboradores</strong>
                         </a>
-                    </li>
+                    </li> -->
                     <li class="toogle-li">
                         <a
-                            :href="this.route('solicitudes')"
+                            :href="this.route('redirect.solicitud')"
                             :class="
-                                this.route().current('solicitudes')
+                                this.route().current('redirect.solicitud')
                                     ? 'active'
                                     : ''
                             "
@@ -88,7 +88,7 @@
                         </a>
                     </li>
 
-                    <li
+               <!--      <li
                         class="toogle-li"
                         v-if="this.$page.props.rol.id_rol == 79"
                     >
@@ -111,9 +111,9 @@
                                 >
                             </li>
                         </ul>
-                    </li>
+                    </li> -->
                 </div>
-                <div v-else>
+               <!--  <div v-else>
                     <li class="toogle-li">
                         <a
                             :href="this.route('solicitud.area')"
@@ -128,8 +128,8 @@
                             <strong>Solicitud / Checklist</strong>
                         </a>
                     </li>
-                </div>
-            </ul> -->
+                </div> -->
+            </ul> 
         </nav>
         <div
             class="text-center mt-auto p-5"

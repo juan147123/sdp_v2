@@ -1,9 +1,9 @@
 <template>
-    <div class="contenedor" id="contenedor-layout">
+    <div class="contenedor p-3" id="contenedor-layout">
         <Sidebar />
         <div>
             <!-- <Navbar /> -->
-            <main class="m-5">
+            <main class="ml-5 mr-5">
                 <slot></slot>
             </main>
         </div>

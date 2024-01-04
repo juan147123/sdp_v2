@@ -39,6 +39,7 @@ Route::middleware([
 
     //SOLICITUD
     Route::get('redirectPage/solicitud', [SolicitudController::class, 'redirectPage'])->name('redirect.solicitud');
+    Route::get('list/solicitud', [SolicitudController::class, 'listAll'])->name('list.solicitud');
 });
 
 

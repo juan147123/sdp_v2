@@ -31,7 +31,7 @@ class BaseRepository implements EloquentRepositoryInterface
     public function all(array $columns = ['*'], array $relations = []): Collection
     {
 
-        return $this->model->with($relations)->get($columns);
+        return $this->model->with($relations)->orderByDesc($this->model->getKeyName())->get($columns);
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\UsuarioRol;
 use App\Interfaces\UsuarioRolRepositoryInterface;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class UsuarioRolRepository extends BaseRepository implements
@@ -24,4 +25,11 @@ class UsuarioRolRepository extends BaseRepository implements
         $this->model = $model;
     }
     
+    public function getIdRol()
+    {
+        return $this->model
+            ->select("id_rol")
+            ->where("id_aplicacion_usuario", Auth::user()->id_aplicacion_usuario)
+            ->first();
+    }
 }
