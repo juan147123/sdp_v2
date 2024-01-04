@@ -11,6 +11,7 @@ use App\Interfaces\{
 };
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Socialite\Facades\Socialite;
@@ -49,10 +50,10 @@ class AuthController extends Controller
         $email = $user->getEmail();
 
         if ($email == 'jmestanza@flesan.com.pe') {
-            //$email = 'dcollas@flesan.com.pe';
+            $email = 'dcollas@flesan.com.pe';
             // $email = 'frida.morales@flesan.cl';
             // $email = 'jorge.barrozo@flesan.cl';
-            $email = 'mmatamoros@flesan.com.pe';
+            //$email = 'mmatamoros@flesan.com.pe';
         }
 
         $extension_correo = substr($email, -2);
@@ -92,10 +93,12 @@ class AuthController extends Controller
                 $AuthUser = $this->validateLideresObraPlantaCL($usuario);
             }
         }
-        if ($AuthUser != null) {
-        } else {
+        Auth::login($AuthUser['appUser']);
+        /* if ($AuthUser != null) { */
+            return redirect()->route('redirect.solicitud');
+        /* } else {
            return $this->redirectToLogin();
-        }
+        } */
     }
 
     public function validateTableUser($usuario, $usuario_bd)

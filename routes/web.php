@@ -37,5 +37,8 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
+    //SOLICITUD
+    Route::get('redirectPage/solicitud', [SolicitudController::class, 'redirectPage'])->name('redirect.solicitud');
 });
+
 
