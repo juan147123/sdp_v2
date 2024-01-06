@@ -220,29 +220,16 @@ export default {
                         className: "text-center",
                         width: 100,
                         render: function (data, type, row) {
-                            const rol = self.$page.props.rol.id_rol;
-                            const isObra = rol === 82;
-
-                            var obra = self.solicitudesColaborador.obra;
                             var desc = "";
                             var color = "";
 
-                            if ((isObra && row.status == 1) || obra == 1) {
+                            if (row.status == 1) {
                                 desc = "pendiente";
                                 color = "info";
-                            } else if (
-                                (isObra && row.status == 2) ||
-                                obra == 1
-                            ) {
-                                desc = "cancelado";
-                                color = "danger";
                             } else if (row.status == 2) {
                                 desc = "cancelado";
                                 color = "danger";
-                            } else if (row.status == 1) {
-                                desc = "checklist pendientes";
-                                color = "info";
-                            } else {
+                            } else if (row.status == 3) {
                                 desc = "completo";
                                 color = "success";
                             }
@@ -255,35 +242,22 @@ export default {
                         render: function (data, type, row) {
                             const rol = self.$page.props.rol.id_rol;
                             var obra = self.solicitudesColaborador.obra;
-                            const isAdmin = rol === 79 || rol === 78;
-                            const isObra = rol === 82;
-                            const statusCompleto =
-                                data.status !== 3 || data.status !== 2;
+                            const rolesAdmin = [79, 78];
+                            $botones = "";
+                            if (rolesAdmin.includes(rol)) {
+                                $botones =
+                                    '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones2" ><i class="fas fa-tasks text-primary"></i> Checklist</a></li>' +
+                                    '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones3" ><i class="fas fa-check text-success"></i> Aprobar</a></li>' +
+                                    '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones4" ><i class="fas fa-times text-danger"></i> Desaprobar</a></li>';
+                            }
+
                             return `<div class="btn-group">
                                         <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="fa fa-cogs"></i>
                                         </button>
                                         <ul class="dropdown-menu">
                                             <li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones1"  data-bs-toggle="modal" data-bs-target="#modalArchivos"><i class="fas fa-file-alt text-info"></i> Archivos</a></li>
-                                            ${
-                                                isObra || obra == 1
-                                                    ? ""
-                                                    : '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones2" ><i class="fas fa-tasks text-primary"></i> Checklist</a></li>'
-                                            }
-                                            ${
-                                                statusCompleto &&
-                                                isAdmin &&
-                                                row.status != 3
-                                                    ? '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones3" ><i class="fas fa-check text-success"></i> Aprobar</a></li>'
-                                                    : ""
-                                            }
-                                            ${
-                                                statusCompleto &&
-                                                isAdmin &&
-                                                row.status != 3
-                                                    ? '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones4" ><i class="fas fa-times text-danger"></i> Desaprobar</a></li>'
-                                                    : ""
-                                            }
+                                            
                                         </ul>
                                     </div>`;
                         },
