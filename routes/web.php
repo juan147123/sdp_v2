@@ -5,7 +5,8 @@ use App\Http\Controllers\{
     AuthController,
     ColaboradoresPeruController,
     ConfiguracionController,
-    SolicitudColaboradorController
+    SolicitudColaboradorController,
+    TerminosController
 };
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -53,5 +54,8 @@ Route::middleware([
     //COLABORADORES PERU
     Route::get('redirectpage/colaboradores/pe', [ColaboradoresPeruController::class, 'redirectPage'])->name('redirect.colaboradores.pe');
     Route::get('colaboradores/pe', [ColaboradoresPeruController::class, 'getColaboradoresPe'])->name('list.colaboradores.pe');
+    
+    //TERMINOS PERU
+    Route::get('terminos/list', [TerminosController::class, 'listAll'])->name('terminos.list');
 });    
 

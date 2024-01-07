@@ -2,13 +2,56 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string $externalcode
+ * @property string $status
+ * @property string $name
+ * @property string $event
+ * @property string $emplstatus
+ * @property SolicitudColaborador[] $solicitudColaboradors
+ */
 class Terminos extends Model
 {
-    use HasFactory;
-    protected $connection = 'dw_chile';
-    protected $table = "flesan_rrhh.sap_maestro_causales_terminos";
-    public $timestamps = false;
+    /**
+     * The table associated with the model.
+     * 
+     * @var string
+     */
+    protected $table = 'sap_maestro_causales_terminos';
+
+    /**
+     * The primary key for the model.
+     * 
+     * @var string
+     */
+    protected $primaryKey = 'externalcode';
+
+    /**
+     * The "type" of the auto-incrementing ID.
+     * 
+     * @var string
+     */
+    protected $keyType = 'string';
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     * 
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
+     * @var array
+     */
+    protected $fillable = ['status', 'name', 'event', 'emplstatus'];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function solicitudColaboradors()
+    {
+        return $this->hasMany('App\Models\SolicitudColaborador', 'motivo', 'externalcode');
+    }
 }

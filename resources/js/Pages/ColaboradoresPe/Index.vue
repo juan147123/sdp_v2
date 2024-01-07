@@ -44,7 +44,7 @@
                                     class="form-select column_filter select-filtros"
                                     name="empresa_pe"
                                     id="empresa_pe"
-                                    index="3"
+                                    index="4"
                                     v-model="this.empresa"
                                 >
                                     <option value="">Seleccione</option>
@@ -66,7 +66,7 @@
                                     class="form-select column_filter select-filtros"
                                     name="unidad_pe"
                                     id="unidad_pe"
-                                    index="4"
+                                    index="5"
                                     v-model="this.unidad"
                                 >
                                     <option value="" :codEmpresa="''">
@@ -93,7 +93,7 @@
                                     class="form-select column_filter select-filtros"
                                     name="centroCosto_pe"
                                     id="centroCosto_pe"
-                                    index="5"
+                                    index="6"
                                     v-model="this.centrocosto"
                                 >
                                     <option
@@ -127,7 +127,7 @@
                                     class="form-select column_filter select-filtros"
                                     name="area_pe"
                                     id="area_pe"
-                                    index="6"
+                                    index="7"
                                     v-model="this.area"
                                 >
                                     <option
@@ -158,6 +158,18 @@
         <div class="box m-1 mt-5">
             <div class="container-fluid">
                 <div class="box-body">
+                    <div class="mt-2 mb-3 text-end">
+                        <button
+                            type="button"
+                            class="btn btn-primary btn-sm shadow"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalSolicitudUnica"
+                            title="Nueva solicitud"
+                            @click="getMotivos"
+                        >
+                            Nueva solicitud
+                        </button>
+                    </div>
                     <div class="table-responsive">
                         <table
                             class="table text-nowrap table-bordered dt-responsive"
@@ -182,6 +194,7 @@
                 </div>
             </div>
         </div>
+        <Formulario :terminos="this.terminos"/>
     </AppLayout>
 </template>
 <script>
@@ -190,12 +203,14 @@ import breadcrumbs from "@/Components/Breadcrumbs.vue";
 import Preloader from "@/Components/Preloader.vue";
 import { setSwal } from "../../../Utils/swal";
 import { rutaBase } from "../../../Utils/utils.js";
+import Formulario from "./Formularios/Formulario.vue";
 
 export default {
     components: {
         AppLayout,
         breadcrumbs,
         Preloader,
+        Formulario,
     },
     data() {
         var self = this;
@@ -219,6 +234,8 @@ export default {
             departamento: "",
             centrocosto: "",
             area: "",
+            colaboradoresDetalle: [],
+            terminos: [],
         };
     },
     mounted() {
@@ -287,6 +304,23 @@ export default {
                         .on("click", function () {
                             self.solicitudesColaborador = data;
                             self.ChangeView(data);
+                        });
+                    $(row)
+                        .find(".checkbox-datatable")
+                        .on("change", function () {
+                            if (this.checked) {
+                                self.colaboradoresDetalle.push(data);
+                            } else {
+                                const indexToRemove =
+                                    self.colaboradoresDetalle.indexOf(data);
+                                if (indexToRemove !== -1) {
+                                    self.colaboradoresDetalle.splice(
+                                        indexToRemove,
+                                        1
+                                    );
+                                }
+                            }
+                            console.log(self.colaboradoresDetalle);
                         });
                 },
 
@@ -426,7 +460,6 @@ export default {
         filterColumn(i, value) {
             self = this;
             self.table.column(i).search(value).draw();
-            console.log(value);
         },
         onClickClean() {
             $("#empresa_pe").val("").trigger("change");
@@ -434,6 +467,19 @@ export default {
             $("#centroCosto_pe").val("").trigger("change");
             $("#area_pe").val("").trigger("change");
         },
+        async getMotivos() {
+            this.terminos = [];
+            this.mensaje = "Espere mientras cargamos el formulario";
+            this.isLoadingForm = true;
+            await axios
+                .get(rutaBase + "/terminos/list")
+                .then(async (response) => {
+                    this.mensaje = "";
+                    this.isLoadingForm = false;
+                    this.terminos = response.data;
+                });
+        },
+       
     },
 };
 </script>

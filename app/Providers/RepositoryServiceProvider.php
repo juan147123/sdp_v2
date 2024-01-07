@@ -11,6 +11,7 @@ use App\Interfaces\{
     PersonalPeruRepositoryInterface,
     SolicitudColaboradorRepositoryInterface,
     SolicitudRepositoryInterface,
+    TerminosRepositoryInterface,
     UsuarioRepositoryInterface,
     UsuarioRolRepositoryInterface,
 };
@@ -22,6 +23,7 @@ use App\Repositories\{
     PersonalPeruRepository,
     SolicitudColaboradorRepository,
     SolicitudRepository,
+    TerminosRepository,
     UsuarioRepository,
     UsuarioRolRepository,
 };
@@ -44,6 +46,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(PersonalChileRepositoryInterface::class, PersonalChileRepository::class);
         $this->app->bind(SolicitudColaboradorRepositoryInterface::class, SolicitudColaboradorRepository::class);
         $this->app->bind(ConfiguracionRepositoryInterface::class, ConfiguracionRepository::class);
+        $this->app->bind(TerminosRepositoryInterface::class, TerminosRepository::class);
     }
 
     /**
