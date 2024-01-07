@@ -29,6 +29,6 @@ export default {
 </script>
 <style scoped>
 a{
-    font-weight: bold;
+    font-weight: 400;
 }
 </style>

@@ -275,6 +275,7 @@ body {
 .breadcrumbs {
     font-size: 14px;
     padding: 5px;
+    background-color: white;
     width: 100%;
 }
 

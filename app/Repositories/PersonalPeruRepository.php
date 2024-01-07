@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\PersonalPeru;
 use App\Interfaces\PersonalPeruRepositoryInterface;
+use App\Interfaces\SolicitudColaboradorRepositoryInterface;
 use App\Models\SolicitudColaborador;
 use Illuminate\Support\Facades\DB;
 
@@ -14,7 +15,7 @@ class PersonalPeruRepository extends BaseRepository implements PersonalPeruRepos
      * @var Model
      */
     protected $model;
-    protected $modelSolicitudColaborador;
+    protected $repositorySolicitudColaborador;
     /**
      * BaseRepository constructor.
      *
@@ -22,10 +23,10 @@ class PersonalPeruRepository extends BaseRepository implements PersonalPeruRepos
      */
     public function __construct(
         PersonalPeru $model,
-        SolicitudColaborador $modelSolicitudColaborador
+        SolicitudColaboradorRepositoryInterface $repositorySolicitudColaborador
     ) {
         $this->model = $model;
-        $this->modelSolicitudColaborador = $modelSolicitudColaborador;
+        $this->repositorySolicitudColaborador = $repositorySolicitudColaborador;
     }
 
 
@@ -73,6 +74,10 @@ class PersonalPeruRepository extends BaseRepository implements PersonalPeruRepos
                 on c.lider_ren_dn = lp.dni or c.lider_des_dni = lp.dni;
             ";
         $colaboradores = DB::connection('dw_peru')->select(DB::raw($query), ['correo_lider' => $correo]);
+        $colaboradores = collect($colaboradores)->map(function ($colaborador) {
+            $colaborador->solicitudes = $this->repositorySolicitudColaborador->CountSolicitudByUserId($colaborador->dni);
+            return $colaborador;
+        });
         return  $colaboradores;
     }
 

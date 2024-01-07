@@ -44,26 +44,20 @@
         </div>
         <hr />
         <nav class="mb-auto">
-         <ul class="mcd-menu">
+            <ul class="mcd-menu">
                 <div>
-                  <!--   <li
-                        class="toogle-li"
-                        v-if="
-                            this.$page.props.rol.id_rol == 82 ||
-                            this.$page.props.rol.id_rol == 80
-                        "
-                    >
+                    <li class="toogle-li">
                         <a
                             :href="
                                 this.$page.props.dwh === 'PE'
-                                    ? this.route('colaboradores.peru')
-                                    : this.route('colaboradores')
+                                    ? this.route('redirect.colaboradores.pe')
+                                    : this.route('redirect.colaboradores.pe')//cl
                             "
                             :class="
-                                (this.route().current('colaboradores')
+                                (this.route().current('redirect.colaboradores.pe')//cl
                                     ? 'active'
                                     : '') ||
-                                (this.route().current('colaboradores.peru')
+                                (this.route().current('redirect.colaboradores.pe')
                                     ? 'active'
                                     : '')
                             "
@@ -72,7 +66,7 @@
                             <i class="fas fa-users icon-menu"></i>
                             <strong>Colaboradores</strong>
                         </a>
-                    </li> -->
+                    </li>
                     <li class="toogle-li">
                         <a
                             :href="this.route('redirect.solicitud')"
@@ -88,7 +82,7 @@
                         </a>
                     </li>
 
-               <!--      <li
+                    <!--      <li
                         class="toogle-li"
                         v-if="this.$page.props.rol.id_rol == 79"
                     >
@@ -113,7 +107,7 @@
                         </ul>
                     </li> -->
                 </div>
-               <!--  <div v-else>
+                <!--  <div v-else>
                     <li class="toogle-li">
                         <a
                             :href="this.route('solicitud.area')"
@@ -129,7 +123,7 @@
                         </a>
                     </li>
                 </div> -->
-            </ul> 
+            </ul>
         </nav>
         <div
             class="text-center mt-auto p-5"
@@ -234,7 +228,9 @@ export default {
             var title1 = document.getElementById("title1");
             var title2 = document.getElementById("title2");
             var buttonlogout = document.getElementById("button-logout");
-            var buttonLogoutBlock = document.getElementById("button-logout-block");
+            var buttonLogoutBlock = document.getElementById(
+                "button-logout-block"
+            );
             title1.classList.toggle("d-none");
             title2.classList.toggle("d-none");
             buttonlogout.classList.toggle("d-none");

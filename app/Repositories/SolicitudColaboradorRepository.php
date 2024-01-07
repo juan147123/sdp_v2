@@ -24,7 +24,7 @@ class SolicitudColaboradorRepository extends BaseRepository implements
     {
         $this->model = $model;
     }
-    
+
     public function updateStatusMasive($status, $ids)
     {
         return $this->model->whereIn('id', $ids)->update(['status' => $status]);
@@ -38,4 +38,10 @@ class SolicitudColaboradorRepository extends BaseRepository implements
             ->count();
         return $data;
     }
+    
+    public function CountSolicitudByUserId($user_id)
+    {
+        return $this->model->where('user_id', $user_id)->count();
+    }
+    
 }

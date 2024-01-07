@@ -47,7 +47,11 @@ Route::middleware([
     Route::put('solicitudes/status', [SolicitudColaboradorController::class, 'updateStatus'])->name('solicitud.colaborador.update.status');
     Route::put('solicitudes/status/masive', [SolicitudColaboradorController::class, 'updateAllStatus'])->name('solicitud.colaborador.update.masive');
     
+    //CONFIGURACION AREA
+    Route::get('redirectpage/configuraciones/areas', [ConfiguracionController::class, 'listAllArea'])->name('configuracion.list.area');
+    
+    //COLABORADORES PERU
+    Route::get('redirectpage/colaboradores/pe', [ColaboradoresPeruController::class, 'redirectPage'])->name('redirect.colaboradores.pe');
+    Route::get('colaboradores/pe', [ColaboradoresPeruController::class, 'getColaboradoresPe'])->name('list.colaboradores.pe');
 });    
-//CONFIGURACION AREA
-Route::get('redirectpage/configuraciones/areas', [ConfiguracionController::class, 'listAllArea'])->name('configuracion.list.area');
 

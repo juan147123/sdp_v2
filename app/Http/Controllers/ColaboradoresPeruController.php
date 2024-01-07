@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Interfaces\PersonalPeruRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class ColaboradoresPeruController extends Controller
 {
@@ -16,8 +18,14 @@ class ColaboradoresPeruController extends Controller
         $this->repository = $repository;
     }
     
-    public function validateLideresPE($email)
+    public function redirectPage()
     {
-        return $this->repository->getDataByEmailLider($email);
+        return Inertia::render('ColaboradoresPe/Index');
+    }
+
+   
+    public function getColaboradoresPe()
+    {
+        return $this->repository->getDataByEmailLider(Auth::user()->username);
     }
 }

@@ -50,8 +50,8 @@ class AuthController extends Controller
         $email = $user->getEmail();
 
         if ($email == 'jmestanza@flesan.com.pe') {
-            // $email = 'dcollas@flesan.com.pe';
-            $email = 'frida.morales@flesan.cl';
+            $email = 'dcollas@flesan.com.pe';
+            // $email = 'frida.morales@flesan.cl';
             // $email = 'jorge.barrozo@flesan.cl';
             //$email = 'mmatamoros@flesan.com.pe';
         }
