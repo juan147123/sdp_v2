@@ -39,4 +39,10 @@ class SolicitudColaboradorController extends Controller
             $this->repositorySolicitud->update($request->id_solicitud, ["status" => 3]);
         }
     }
+    
+    public function updateAllStatus(Request $request)
+    {
+        $this->repository->updateStatusMasive($request->status, $request->ids);
+        $this->updateStatusSolicitud($request);
+    }
 }

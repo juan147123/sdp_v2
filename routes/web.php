@@ -40,14 +40,14 @@ Route::middleware([
 ])->group(function () {
 
     //SOLICITUD
-    Route::get('redirectPage/solicitud', [SolicitudController::class, 'redirectPage'])->name('redirect.solicitud');
+    Route::get('redirectpage/solicitud', [SolicitudController::class, 'redirectPage'])->name('redirect.solicitud');
     Route::get('list/solicitud', [SolicitudController::class, 'listAll'])->name('list.solicitud');
     
     //SOLICITUD COLABORADOR
     Route::put('solicitudes/status', [SolicitudColaboradorController::class, 'updateStatus'])->name('solicitud.colaborador.update.status');
-
+    Route::put('solicitudes/status/masive', [SolicitudColaboradorController::class, 'updateAllStatus'])->name('solicitud.colaborador.update.masive');
     
 });    
 //CONFIGURACION AREA
-Route::get('redirectPage/configuraciones/areas', [ConfiguracionController::class, 'listAllArea'])->name('configuracion.list.area');
+Route::get('redirectpage/configuraciones/areas', [ConfiguracionController::class, 'listAllArea'])->name('configuracion.list.area');
 

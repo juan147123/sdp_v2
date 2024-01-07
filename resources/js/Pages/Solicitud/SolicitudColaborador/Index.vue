@@ -8,9 +8,9 @@
         ></i>
     </div>
     <div class="d-flex align-items-center justify-content-between ml-2 mt-3">
-        <h5>Usuarios a desvincular</h5>
-        <h5 class="m-2">
-            Solicitud código:
+        <h5></h5>
+        <h5 class="m-2 bg-white p-2">
+            Solicitud:
             {{ this.solicitudesColaborador.codigo }}
         </h5>
     </div>
@@ -23,7 +23,7 @@
     >
         <div class="btn-group">
             <button
-                class="btn btn-outline-primary btn-sm dropdown-toggle"
+                class="btn btn-primary btn-sm dropdown-toggle mb-3"
                 type="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
@@ -55,25 +55,31 @@
     </div>
     <div class="contenedor-solicitud" v-if="this.checkView != true">
         <div class="box ml-2 mr-2 mt-1">
-            <table
-                class="table table-hover align-middle"
-                id="tableSolicitudesDetalle"
-            >
-                <thead class="table-dark">
-                    <tr>
-                        <th>NP Usuario</th>
-                        <th>Nombres y Apellidos</th>
-                        <th>Motivo de desvinculación</th>
-                        <th>Fecha de desvinculación</th>
-                        <th>Correo de redirección</th>
-                        <th>Comentarios</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-            <Modal :archivosList="this.archivosList" />
+            <div class="container-fluid">
+                <div class="box-body">
+                    <div class="table-responsive">
+                        <table
+                            class="table text-nowrap table-bordered dt-responsive"
+                            id="tableSolicitudesDetalle"
+                        >
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>NP Usuario</th>
+                                    <th>Nombres y Apellidos</th>
+                                    <th>Motivo de desvinculación</th>
+                                    <th>Fecha de desvinculación</th>
+                                    <th>Correo de redirección</th>
+                                    <th>Comentarios</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                        <Modal :archivosList="this.archivosList" />
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -91,7 +97,7 @@ export default {
         "idSolicitud",
         "archivosList",
     ],
-    emits: ["changeViewDetail", "getSolicitudes"],
+    emits: ["changeViewDetail", "reloadTable"],
     components: {
         AppLayout,
         breadcrumbs,
@@ -116,7 +122,7 @@ export default {
             breadcrumbs: [
                 {
                     label: "Solicitudes",
-                    url: "/redirectPage/solicitud",
+                    url: "/redirectpage/solicitud",
                     icon: "fa fa-book",
                 },
                 {
@@ -178,7 +184,7 @@ export default {
 
         onFinish() {
             this.$emit("changeViewDetail");
-            this.$emit("getSolicitudes");
+            this.$emit("reloadTable");
             this.mensaje = "";
             this.isLoadingForm = false;
         },

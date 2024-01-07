@@ -4,26 +4,33 @@
         <div id="parte-solicitudes-vista">
             <breadcrumbs :modules="breadcrumbs" />
             <div class="box m-1 mt-5">
-                <table
-                    class="table table-hover align-middle"
-                    id="tableSolicitudes"
-                >
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Código</th>
-                            <th>Solicitante</th>
-                            <th>Fecha de solicitud</th>
-                            <th>Estado</th>
-                            <th>Colaboradores</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                <div class="container-fluid">
+                    <div class="box-body">
+                        <div class="table-responsive">
+                            <table
+                                class="table text-nowrap table-bordered dt-responsive"
+                                id="tableSolicitudes"
+                            >
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Solicitante</th>
+                                        <th>Fecha de solicitud</th>
+                                        <th>Estado</th>
+                                        <th>Colaboradores</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="hidden" id="parte-solicitudes-detalle">
             <SolicitudesColaborador
                 @changeViewDetail="this.changeViewDetail"
+                @reloadTable="reloadTable"
                 :solicitudesColaborador="solicitudesColaborador"
                 :archivosList="archivosList"
             />
@@ -60,7 +67,7 @@ export default {
             breadcrumbs: [
                 {
                     label: "Solicitudes",
-                    url: "/redirectPage/solicitud",
+                    url: "/redirectpage/solicitud",
                     icon: "fa fa-book",
                 },
             ],
@@ -99,7 +106,7 @@ export default {
                 autoFill: true,
                 columnDefs: [
                     { responsivePriority: 1, targets: 0 },
-                    { responsivePriority: 2, targets: -1 },
+                    { responsivePriority: 3, targets: -1 },
                 ],
                 drawCallback: function (settings) {
                     $("ul.pagination").addClass("pagination-sm");
@@ -174,7 +181,8 @@ export default {
                 data: data.solicitud_colaborador,
                 columnDefs: [
                     { responsivePriority: 1, targets: 0 },
-                    { responsivePriority: 2, targets: -1 },
+                    { responsivePriority: 2, targets: -2 },
+                    { responsivePriority: 3, targets: -1 },
                 ],
                 drawCallback: function (settings) {
                     $("ul.pagination").addClass("pagination-sm");
@@ -241,14 +249,14 @@ export default {
                             var obra = self.solicitudesColaborador.obra;
                             const rolesAdmin = [79, 78];
                             var botones = "";
-                            var botonesChecklist = "";
-                            if (rolesAdmin.includes(rol)) {
+                            var botonChecklist = "";
+                            if (rolesAdmin.includes(rol) && row.status == 1) {
                                 botones =
                                     '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones3" ><i class="fas fa-check text-success"></i> Aprobar</a></li>' +
                                     '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones4" ><i class="fas fa-times text-danger"></i> Desaprobar</a></li>';
                             }
                             if (obra != 1) {
-                                botonesChecklist =
+                                botonChecklist =
                                     '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones2" ><i class="fas fa-tasks text-primary"></i> Checklist</a></li>';
                             }
 
@@ -259,7 +267,7 @@ export default {
                                 "</button>" +
                                 '<ul class="dropdown-menu">' +
                                 '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones1"  data-bs-toggle="modal" data-bs-target="#modalArchivos"><i class="fas fa-file-alt text-info"></i> Archivos</a></li>' +
-                                botonesChecklist +
+                                botonChecklist +
                                 botones +
                                 "</ul>" +
                                 "</div>"
@@ -333,8 +341,11 @@ export default {
         onFinish() {
             this.mensaje = "";
             this.isLoadingForm = false;
-            this.table.ajax.reload();
+            this.reloadTable();
             this.changeViewDetail();
+        },
+        reloadTable() {
+            this.table.ajax.reload();
         },
         async updateAllStatus(status) {
             await new Promise((resolve) => {
