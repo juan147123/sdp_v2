@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Interfaces\SolicitudRepositoryInterface;
 use App\Interfaces\UsuarioRolRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class SolicitudController extends Controller
@@ -29,13 +30,17 @@ class SolicitudController extends Controller
     {
         $usuario_rol = $this->repositoryUsuarioRol->getIdRol();
         $list = [];
-        $list = $this->listSolicitudesLider();
-        if ($usuario_rol['idrol'] == env('ADMINISTRADOR_LIDER')) {
+        $idlideres = [env('ADMINISTRADOR_LIDER'), env('ADMINISTRADOR_LIDER_OBRA')];
+
+        if (in_array($usuario_rol['id_rol'], $idlideres)) {
+            $list = $this->listSolicitudesLider(['user_created' => strtoupper(Auth::user()->username)]);
+        } else {
+            $list = $this->listSolicitudesLider([]);
         }
         return $list;
     }
-    public function listSolicitudesLider()
+    public function listSolicitudesLider($conditionals)
     {
-        return $this->repository->all(['*'], ['solicitudColaborador', 'solicitudColaborador.archivos', 'solicitudColaborador.SapMaestroCausalesTerminos', 'solicitudColaborador.checkAreaColaboradores']);
+        return $this->repository->all(['*'], ['solicitudColaborador', 'solicitudColaborador.archivos', 'solicitudColaborador.SapMaestroCausalesTerminos', 'solicitudColaborador.checkAreaColaboradores'], $conditionals);
     }
 }

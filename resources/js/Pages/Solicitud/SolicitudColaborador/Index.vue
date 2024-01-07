@@ -3,8 +3,7 @@
     <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
     <div>
         <i
-            class="fas fa-arrow-left mt-3 ml-2"
-            id="arrow-back"
+            class="fas fa-arrow-left mt-3 ml-2 arrow-back"
             @click="changeViewDetail"
         ></i>
     </div>
@@ -77,18 +76,6 @@
             <Modal :archivosList="this.archivosList" />
         </div>
     </div>
-    <!--    
-    <div class="contenedor-checklist" v-else>
-        <breadcrumbs :modules="breadcrumbsChecklist" />
-        <i
-            class="fas fa-arrow-left"
-            id="arrow-back"
-            @click="getChecklist(false)"
-        ></i>
-       
-        <Checklist :checksUsuario="checksUsuario" />
-      
-    </div> -->
 </template>
 <script>
 import AppLayout from "@/Layouts/AppLayout.vue";
@@ -98,7 +85,12 @@ import Checklist from "./Checklist/Index.vue";
 import Preloader from "@/Components/Preloader.vue";
 import { setSwal } from "../../../../Utils/swal";
 export default {
-    props: ["solicitudesColaborador", "CodigoSolicitud", "idSolicitud","archivosList"],
+    props: [
+        "solicitudesColaborador",
+        "CodigoSolicitud",
+        "idSolicitud",
+        "archivosList",
+    ],
     emits: ["changeViewDetail", "getSolicitudes"],
     components: {
         AppLayout,
@@ -149,9 +141,7 @@ export default {
             ],
         };
     },
-    mounted() {
-    
-    },
+    mounted() {},
     methods: {
         changeViewDetail() {
             this.$emit("changeViewDetail");
@@ -229,14 +219,6 @@ export default {
                 }
             );
         },
-       
     },
 };
 </script>
-<style scoped>
-#arrow-back {
-    font-size: 20px;
-    cursor: pointer;
-    padding: 5px;
-}
-</style>

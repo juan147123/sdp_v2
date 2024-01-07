@@ -1,4 +1,5 @@
 <template>
+    <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
     <AppLayout>
         <div id="parte-solicitudes-vista">
             <breadcrumbs :modules="breadcrumbs" />
@@ -9,11 +10,11 @@
                 >
                     <thead class="table-dark">
                         <tr>
-                            <th>Detalle</th>
                             <th>Código</th>
                             <th>Solicitante</th>
                             <th>Fecha de solicitud</th>
                             <th>Estado</th>
+                            <th>Colaboradores</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -27,6 +28,12 @@
                 :archivosList="archivosList"
             />
         </div>
+        <div class="hidden" id="parte-solicitudes-checklist">
+            <Checklist
+                :checksUsuario="this.checkusuariolist"
+                @changeViewDetailChecklist="changeViewDetailChecklist"
+            />
+        </div>
     </AppLayout>
 </template>
 <script>
@@ -34,6 +41,9 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import breadcrumbs from "@/Components/Breadcrumbs.vue";
 import { rutaBase } from "../../../Utils/utils.js";
 import SolicitudesColaborador from "./SolicitudColaborador/Index.vue";
+import { setSwal } from "../../../Utils/swal";
+import Preloader from "@/Components/Preloader.vue";
+import Checklist from "./SolicitudColaborador/Checklist/Index.vue";
 
 import dayjs from "dayjs";
 export default {
@@ -41,6 +51,8 @@ export default {
         AppLayout,
         breadcrumbs,
         SolicitudesColaborador,
+        Preloader,
+        Checklist,
     },
     data() {
         var self = this;
@@ -57,6 +69,15 @@ export default {
             part: 0,
             solicitudesColaborador: [],
             archivosList: [],
+            mensaje: "",
+            checkusuariolist: [],
+            isLoadingForm: false,
+            form: this.$inertia.form({
+                id: 0,
+                status: 0,
+                id_solicitud: 0,
+                comentario: "",
+            }),
         };
     },
     mounted() {
@@ -92,14 +113,6 @@ export default {
                         });
                 },
                 columns: [
-                    {
-                        data: "codigo",
-                        width: 100,
-                        className: "text-center",
-                        render: function (data, type, row) {
-                            return `<button style="font-size: 12px;" class="btn btn-outline-primary btn-sm btnColaboradoresSolicitud"><i class="fas fa-users"></i></button>`;
-                        },
-                    },
                     { data: "codigo", className: "text-center", width: 130 },
                     { data: "user_created", className: "text-center" },
                     {
@@ -138,32 +151,16 @@ export default {
                             return `<div><span style="font-size:11.5px;" class="badge bg-${status[0]} text-white">${status[1]}</span></div>`;
                         },
                     },
+                    {
+                        data: null,
+                        width: 100,
+                        className: "text-center",
+                        render: function (data, type, row) {
+                            return `<button style="font-size: 12px;" class="btn btn-outline-primary btn-sm btnColaboradoresSolicitud"><i class="fas fa-users"></i></button>`;
+                        },
+                    },
                 ],
             });
-        },
-        ChangeView(data) {
-            var togglerSolicitud = document.getElementById(
-                "parte-solicitudes-vista"
-            );
-            var togglerDetalle = document.getElementById(
-                "parte-solicitudes-detalle"
-            );
-            togglerSolicitud.classList.toggle("hidden");
-            togglerDetalle.classList.toggle("hidden");
-            this.createTableDetalle(data);
-        },
-        changeViewDetail() {
-            var togglerSolicitud = document.getElementById(
-                "parte-solicitudes-vista"
-            );
-            var togglerDetalle = document.getElementById(
-                "parte-solicitudes-detalle"
-            );
-            togglerSolicitud.classList.toggle("hidden");
-            togglerDetalle.classList.toggle("hidden");
-            if (this.tableDetalle) {
-                this.tableDetalle.destroy();
-            }
         },
         createTableDetalle(data) {
             var self = this;
@@ -191,12 +188,12 @@ export default {
                     $(row)
                         .find("#acciones2")
                         .on("click", function () {
-                            self.checksUsuario = data.check_area_colaboradores;
-                            self.getChecklist(true);
+                            self.getChecklist(data);
                         });
                     $(row)
                         .find("#acciones3")
                         .on("click", function () {
+                            console.log(data.id);
                             self.updateStatus(data.id, 3, data.id_solicitud);
                         });
                     $(row)
@@ -230,7 +227,7 @@ export default {
                                 desc = "cancelado";
                                 color = "danger";
                             } else if (row.status == 3) {
-                                desc = "completo";
+                                desc = "aprobado";
                                 color = "success";
                             }
                             return `<span class="badge bg-${color} text-white">${desc}</span>`;
@@ -243,26 +240,191 @@ export default {
                             const rol = self.$page.props.rol.id_rol;
                             var obra = self.solicitudesColaborador.obra;
                             const rolesAdmin = [79, 78];
-                            $botones = "";
+                            var botones = "";
+                            var botonesChecklist = "";
                             if (rolesAdmin.includes(rol)) {
-                                $botones =
-                                    '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones2" ><i class="fas fa-tasks text-primary"></i> Checklist</a></li>' +
+                                botones =
                                     '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones3" ><i class="fas fa-check text-success"></i> Aprobar</a></li>' +
                                     '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones4" ><i class="fas fa-times text-danger"></i> Desaprobar</a></li>';
                             }
+                            if (obra != 1) {
+                                botonesChecklist =
+                                    '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones2" ><i class="fas fa-tasks text-primary"></i> Checklist</a></li>';
+                            }
 
-                            return `<div class="btn-group">
-                                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fa fa-cogs"></i>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones1"  data-bs-toggle="modal" data-bs-target="#modalArchivos"><i class="fas fa-file-alt text-info"></i> Archivos</a></li>
-                                            
-                                        </ul>
-                                    </div>`;
+                            return (
+                                '<div class="btn-group">' +
+                                '<button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                                '<i class="fa fa-cogs"></i>' +
+                                "</button>" +
+                                '<ul class="dropdown-menu">' +
+                                '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones1"  data-bs-toggle="modal" data-bs-target="#modalArchivos"><i class="fas fa-file-alt text-info"></i> Archivos</a></li>' +
+                                botonesChecklist +
+                                botones +
+                                "</ul>" +
+                                "</div>"
+                            );
                         },
                     },
                 ],
+            });
+        },
+        ChangeView(data) {
+            var togglerSolicitud = document.getElementById(
+                "parte-solicitudes-vista"
+            );
+            var togglerDetalle = document.getElementById(
+                "parte-solicitudes-detalle"
+            );
+            togglerSolicitud.classList.toggle("hidden");
+            togglerDetalle.classList.toggle("hidden");
+            this.createTableDetalle(data);
+        },
+        changeViewDetailChecklist() {
+            var togglerDetalle = document.getElementById(
+                "parte-solicitudes-detalle"
+            );
+            var togglerchecklist = document.getElementById(
+                "parte-solicitudes-checklist"
+            );
+            togglerchecklist.classList.toggle("hidden");
+            togglerDetalle.classList.toggle("hidden");
+        },
+        changeViewDetail() {
+            var togglerSolicitud = document.getElementById(
+                "parte-solicitudes-vista"
+            );
+            var togglerDetalle = document.getElementById(
+                "parte-solicitudes-detalle"
+            );
+            togglerSolicitud.classList.toggle("hidden");
+            togglerDetalle.classList.toggle("hidden");
+            if (this.tableDetalle) {
+                this.tableDetalle.destroy();
+            }
+        },
+        async updateStatus(id, status, id_solicitud) {
+            this.form.id = id;
+            this.form.status = status;
+            this.form.id_solicitud = id_solicitud;
+
+            await new Promise((resolve) => {
+                setSwal({
+                    value: "updateStatusInput",
+                    callback: async (comentario) => {
+                        resolve();
+                        this.update(comentario);
+                    },
+                });
+            });
+        },
+
+        update(comentario) {
+            this.mensaje = "espere mientras se efectuan los cambios....";
+            this.isLoadingForm = true;
+            this.form.comentario = comentario;
+            this.form.put(this.route("solicitud.colaborador.update.status"), {
+                onFinish: () => {
+                    this.onFinish();
+                },
+            });
+        },
+
+        onFinish() {
+            this.mensaje = "";
+            this.isLoadingForm = false;
+            this.table.ajax.reload();
+            this.changeViewDetail();
+        },
+        async updateAllStatus(status) {
+            await new Promise((resolve) => {
+                setSwal({
+                    value: "updateStatus",
+                    callback: async () => {
+                        resolve();
+                        this.updateAll(status);
+                    },
+                });
+            });
+        },
+        updateAll(status) {
+            this.mensaje = "espere mientras se efectuan los cambios....";
+            this.isLoadingForm = true;
+
+            this.solicitudesColaborador.solicitud_colaborador.forEach(
+                (solicitudColacorador) => {
+                    if (solicitudColacorador.status == 1) {
+                        this.ids.push(solicitudColacorador.id);
+                    }
+                }
+            );
+
+            this.$inertia.put(
+                this.route("solicitud.colaborador.update.masive"),
+                {
+                    ids: this.ids,
+                    status: status,
+                    id_solicitud: this.solicitudesColaborador.id,
+                },
+                {
+                    onFinish: () => {
+                        this.onFinish();
+                    },
+                }
+            );
+        },
+        async getChecklist(data) {
+            this.mensaje = "espere mientras se cargan los checklist....";
+            this.isLoadingForm = true;
+            this.checkusuariolist = [];
+            this.changeViewDetailChecklist();
+            self = this;
+            await axios.get("configuraciones/areas").then(async (response) => {
+                await self.setValueChecListView(response);
+                self.asignChecks(data);
+                self.mensaje = "";
+                self.isLoadingForm = false;
+            });
+        },
+        setValueChecListView(response) {
+            this.checkusuariolist = response.data;
+        },
+        asignChecks(data) {
+            var checkusu = data.check_area_colaboradores;
+            checkusu.forEach((area) => {
+                const checkList = JSON.parse(area.checklist);
+                if (checkusu.length == 0) {
+                    desc = "no registrado";
+                    color = "bg-danger";
+                }
+                var desc = "";
+                var color = "";
+                if (area.status == 2) {
+                    desc = "pendiente";
+                    color = "bg-info";
+                }
+                if (area.status == 3) {
+                    desc = "no aplica";
+                    color = "bg-secondary";
+                }
+                if (area.status == 4) {
+                    desc = "completo";
+                    color = "bg-success";
+                }
+                $("#status-" + area.area_id).addClass(color);
+                $("#status-" + area.area_id).html(desc);
+
+                checkList.forEach((check) => {
+                    if (check.checked == true) {
+                        $("#img-" + check.id).attr("src", "/images/check.png");
+                    } else {
+                        $("#img-" + check.id).attr(
+                            "src",
+                            "/images/uncheck.png"
+                        );
+                    }
+                });
+                $("#comentarios-" + area.area_id).html(area.comentarios);
             });
         },
     },

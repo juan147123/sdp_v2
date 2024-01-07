@@ -28,10 +28,15 @@ class BaseRepository implements EloquentRepositoryInterface
      * @param array $relations
      * @return Collection
      */
-    public function all(array $columns = ['*'], array $relations = []): Collection
+    public function all(array $columns = ['*'], array $relations = [], array $whereConditions = []): Collection
     {
-
-        return $this->model->with($relations)->orderByDesc($this->model->getKeyName())->get($columns);
+        $query = $this->model->with($relations);
+    
+        foreach ($whereConditions as $column => $value) {
+            $query->where($column, $value);
+        }
+    
+        return $query->orderByDesc($this->model->getKeyName())->get($columns);
     }
 
     /**

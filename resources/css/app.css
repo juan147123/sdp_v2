@@ -838,3 +838,8 @@ div:where(.swal2-container) .swal2-html-container {
     margin: 0 !important;
     margin-top: 50 !important;
 }
+.arrow-back {
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+}

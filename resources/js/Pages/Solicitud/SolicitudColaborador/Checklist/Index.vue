@@ -1,10 +1,16 @@
 <template>
+    <div>
+        <i
+            class="fas fa-arrow-left mt-3 mb-4 ml-2 arrow-back"
+            @click="changeViewDetailChecklist"
+        ></i>
+    </div>
     <div class="card-body bg-white px-5 py-3 rounded-top">
         <div class="d-flex overflow-auto">
             <div class="row flex-nowrap">
                 <div
                     class="card shadow card-checklist mx-3 col"
-                    v-for="area in this.$page.props.data.checklist"
+                    v-for="area in this.checksUsuario"
                 >
                     <div class="card-header">
                         <div class="d-flex justify-content-between">
@@ -18,7 +24,7 @@
                     <div class="card-body body_riesgo">
                         <div
                             class="form-check"
-                            v-for="checklist in area.checklist"
+                            v-for="checklist in area.configuracion"
                         >
                             <img
                                 src=""
@@ -54,42 +60,11 @@
 <script>
 export default {
     props: ["checksUsuario"],
-    mounted() {
-         this.asignChecks();
-    },
+    emits: ["changeViewDetailChecklist"],
+    mounted() {},
     methods: {
-        asignChecks() {
-            this.checksUsuario.forEach((area) => {
-                const checkList = JSON.parse(area.checklist);
-                var desc = "";
-                var color = "";
-                if (area.status == 2) {
-                    desc = "pendiente";
-                    color = "bg-info";
-                }
-                if (area.status == 3) {
-                    desc = "no aplica";
-                    color = "bg-secondary";
-                }
-                if (area.status == 4) {
-                    desc = "completo";
-                    color = "bg-success";
-                }
-
-                $("#status-" + area.area_id).addClass(color);
-                $("#status-" + area.area_id).html(desc);
-                checkList.forEach((check) => {
-                    if (check.checked == true) {
-                        $("#img-" + check.id).attr("src", "/images/check.png");
-                    } else {
-                        $("#img-" + check.id).attr(
-                            "src",
-                            "/images/uncheck.png"
-                        );
-                    }
-                });
-                $("#comentarios-" + area.area_id).html(area.comentarios);
-            });
+        changeViewDetailChecklist() {
+            this.$emit("changeViewDetailChecklist");
         },
     },
 };

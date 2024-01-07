@@ -51,8 +51,8 @@ class AuthController extends Controller
 
         if ($email == 'jmestanza@flesan.com.pe') {
             // $email = 'dcollas@flesan.com.pe';
-            // $email = 'frida.morales@flesan.cl';
-            $email = 'jorge.barrozo@flesan.cl';
+            $email = 'frida.morales@flesan.cl';
+            // $email = 'jorge.barrozo@flesan.cl';
             //$email = 'mmatamoros@flesan.com.pe';
         }
 

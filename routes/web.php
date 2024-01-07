@@ -3,7 +3,9 @@
 use App\Http\Controllers\{
     SolicitudController,
     AuthController,
-    ColaboradoresPeruController
+    ColaboradoresPeruController,
+    ConfiguracionController,
+    SolicitudColaboradorController
 };
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +42,12 @@ Route::middleware([
     //SOLICITUD
     Route::get('redirectPage/solicitud', [SolicitudController::class, 'redirectPage'])->name('redirect.solicitud');
     Route::get('list/solicitud', [SolicitudController::class, 'listAll'])->name('list.solicitud');
-});
+    
+    //SOLICITUD COLABORADOR
+    Route::put('solicitudes/status', [SolicitudColaboradorController::class, 'updateStatus'])->name('solicitud.colaborador.update.status');
 
+    
+});    
+//CONFIGURACION AREA
+Route::get('redirectPage/configuraciones/areas', [ConfiguracionController::class, 'listAllArea'])->name('configuracion.list.area');
 
