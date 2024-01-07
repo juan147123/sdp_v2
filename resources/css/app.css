@@ -50,10 +50,10 @@ body {
     color: #030303;
     border-radius: 20%;
     border: solid 1px #c3c8de;
-    background-color: white; 
+    background-color: white;
 }
 
-.icon-toogle-close{
+.icon-toogle-close {
     transform: rotate(180deg);
 }
 
@@ -299,7 +299,7 @@ body {
 }
 
 /* table css */
-.table{
+.table {
     width: 100% !important;
 }
 
@@ -324,6 +324,10 @@ table tbody tr td {
 
 thead th:first-child {
     border-radius: 10px 0 0 0;
+    border-right: none;
+}
+tbody td:first-child {
+    border-right: none;
 }
 
 thead th:last-child {
@@ -348,9 +352,6 @@ thead th:last-child {
     border-color: white !important;
 }
 
-table.dataTable > tbody > tr.selected > * {
-    box-shadow: inset 0 0 0 9999px rgb(95, 139, 141) !important;
-}
 /* acordion */
 .accordion-button:not(.collapsed) {
     background-color: #ffffff !important;
@@ -413,7 +414,9 @@ div:where(.swal2-container) .swal2-html-container {
 }
 
 /* Select 2 */
-
+.select2{
+    margin: 0 !important;
+}
 .select2-results__option {
     font-size: 12px;
 }
@@ -423,8 +426,8 @@ div:where(.swal2-container) .swal2-html-container {
 .select2-selection__rendered {
     font-size: 12px;
 }
-.select2-container {
-    width: 100% !important;
+.label-filter{
+    font-size: 14px;
 }
 /* card */
 .card {
@@ -843,4 +846,8 @@ div:where(.swal2-container) .swal2-html-container {
     font-size: 20px;
     cursor: pointer;
     padding: 5px;
+}
+.accordion-button{
+    height: 20px !important;
+    font-size: 12px !important;
 }
