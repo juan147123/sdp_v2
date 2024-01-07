@@ -194,7 +194,11 @@
                 </div>
             </div>
         </div>
-        <Formulario :terminos="this.terminos"/>
+        <Formulario
+            :terminos="this.terminos"
+            :colaboradoresDetalle="colaboradoresDetalle"
+            @reloadTable="reloadTable"
+        />
     </AppLayout>
 </template>
 <script>
@@ -479,7 +483,9 @@ export default {
                     this.terminos = response.data;
                 });
         },
-       
+        reloadTable() {
+            this.table.ajax.reload();
+        },
     },
 };
 </script>

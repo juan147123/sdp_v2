@@ -55,30 +55,26 @@
     </div>
     <div class="contenedor-solicitud" v-if="this.checkView != true">
         <div class="box ml-2 mr-2 mt-1">
-            <div class="container-fluid">
-                <div class="box-body">
-                    <div class="table-responsive">
-                        <table
-                            class="table text-nowrap table-bordered dt-responsive"
-                            id="tableSolicitudesDetalle"
-                        >
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>NP Usuario</th>
-                                    <th>Nombres y Apellidos</th>
-                                    <th>Motivo de desvinculación</th>
-                                    <th>Fecha de desvinculación</th>
-                                    <th>Correo de redirección</th>
-                                    <th>Comentarios</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                        <Modal :archivosList="this.archivosList" />
-                    </div>
-                </div>
+            <div class="box-body">
+                <table
+                    class="table text-nowrap table-bordered dt-responsive"
+                    id="tableSolicitudesDetalle"
+                >
+                    <thead class="table-dark">
+                        <tr>
+                            <th>NP Usuario</th>
+                            <th>Nombres y Apellidos</th>
+                            <th>Motivo de desvinculación</th>
+                            <th>Fecha de desvinculación</th>
+                            <th>Correo de redirección</th>
+                            <th>Comentarios</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <Modal :archivosList="this.archivosList" />
             </div>
         </div>
     </div>

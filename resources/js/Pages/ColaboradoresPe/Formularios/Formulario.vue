@@ -1,4 +1,5 @@
 <template>
+    <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
     <!-- Modal -->
     <div
         class="modal fade"
@@ -19,6 +20,7 @@
                     <button
                         type="button"
                         class="btn-close"
+                        id="btn-close-solicitud-unica"
                         data-bs-dismiss="modal"
                         aria-label="Close"
                     ></button>
@@ -100,7 +102,7 @@
                                     class="form-control form-control-sm"
                                     type="file"
                                     id="filesForm"
-                                    name="filesForm"
+                                    name="filesForm[]"
                                     multiple
                                     required
                                 />
@@ -130,8 +132,21 @@
     </div>
 </template>
 <script>
+import Preloader from "@/Components/Preloader.vue";
+import { rutaBase } from "../../../../Utils/utils.js";
+import { setSwal } from "../../../../Utils/swal";
 export default {
-    props: ["terminos"],
+    props: ["terminos", "colaboradoresDetalle"],
+    emits: ["reloadTable"],
+    components: {
+        Preloader,
+    },
+    data() {
+        return {
+            mensaje: "",
+            isLoadingForm: false,
+        };
+    },
     mounted() {
         $(".form-select-modal").select2({
             dropdownParent: $("#modalSolicitudUnica"),
@@ -146,6 +161,44 @@ export default {
                 .trigger("change");
             $("#redireccionForm").val("");
             $("#filesForm").val("");
+        },
+        submit() {
+            var self = this;
+            this.isLoadingForm = true;
+            this.mensaje =
+                "registrando la solicitud, esto demarara según la cantidad y tamaño de los archivos";
+
+            const form = document.getElementById("formSolicitud");
+            const formData = new FormData(form);
+            var user_id = this.colaboradoresDetalle[0].dni;
+            var nombre_completo =
+                this.colaboradoresDetalle[0].nombres +
+                " " +
+                this.colaboradoresDetalle[0].apellido;
+
+            formData.append("user_id", user_id);
+            formData.append("nombre_completo", nombre_completo);
+            axios
+                .post(rutaBase + "/create/solicitud", formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                })
+                .then((response) => {
+                    self.reloadTable();
+                    this.isLoadingForm = false;
+                    this.mensaje = "";
+                    $("#btn-close-solicitud-unica").trigger("click");
+                    setSwal({
+                        value: "create",
+                    });
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        },
+        reloadTable() {
+            this.$emit("reloadTable");
         },
     },
 };

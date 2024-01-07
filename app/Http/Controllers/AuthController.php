@@ -93,18 +93,29 @@ class AuthController extends Controller
                 $AuthUser = $this->validateLideresObraPlantaCL($usuario);
             }
         }
-        if(!$usuario_bd){
+        if (!$usuario_bd) {
             $rol = $_ENV['ADMINISTRADOR_LIDER'];
-        }else{
+        } else {
             $rol = $usuario_bd['rol'];
         }
 
         if ($AuthUser) {
             Auth::login($AuthUser['appUser']);
+            if ($rol == $_ENV['ADMINISTRADOR_LIDER']) {
+                $np_lider  = $this->getNpLider();
+                session(['np_lider' => $np_lider]);
+            }
             return redirect()->route('redirect.solicitud');
         } else {
             return $this->redirectToLogin();
         }
+    }
+    private function getNpLider()
+    {
+        $email = strtoupper(Auth::user()->username);
+        $personalCl = $this->repositoryPersonalCL->getNpLiderByEmail($email);
+        $personalPe = $this->repositoryPersonalPE->UserFindByEmail(Auth::user()->username);
+        return $personalCl ? $personalCl : $personalPe->dni;
     }
 
     public function validateTableUser($usuario, $usuario_bd)
