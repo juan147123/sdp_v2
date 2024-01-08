@@ -163,8 +163,13 @@
                             type="button"
                             class="btn btn-primary btn-sm shadow"
                             data-bs-toggle="modal"
-                            data-bs-target="#modalSolicitudUnica"
+                            :data-bs-target="
+                                this.colaboradoresDetalle.length == 1
+                                    ? '#modalSolicitudUnica'
+                                    : '#modalSolicitudMultiple'
+                            "
                             title="Nueva solicitud"
+                            :disabled="this.colaboradoresDetalle.length == 0"
                             @click="getMotivos"
                         >
                             Nueva solicitud
@@ -199,6 +204,11 @@
             :colaboradoresDetalle="colaboradoresDetalle"
             @reloadTable="reloadTable"
         />
+        <FormularioMultiple
+            :terminos="this.terminos"
+            :colaboradoresDetalle="colaboradoresDetalle"
+            @reloadTable="reloadTable"
+        />
     </AppLayout>
 </template>
 <script>
@@ -208,13 +218,14 @@ import Preloader from "@/Components/Preloader.vue";
 import { setSwal } from "../../../Utils/swal";
 import { rutaBase } from "../../../Utils/utils.js";
 import Formulario from "./Formularios/Formulario.vue";
-
+import FormularioMultiple from "./Formularios/FormularioMultiple.vue";
 export default {
     components: {
         AppLayout,
         breadcrumbs,
         Preloader,
         Formulario,
+        FormularioMultiple,
     },
     data() {
         var self = this;

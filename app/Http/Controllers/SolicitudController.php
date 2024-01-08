@@ -57,7 +57,7 @@ class SolicitudController extends Controller
     {
         $new_solicitud = $this->createSolicitud();
         $new_detail = $this->createSolicitudDetail($request, $new_solicitud);
-        return $new_detail;
+        return 1;
     }
     public function createSolicitud()
     {
