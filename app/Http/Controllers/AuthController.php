@@ -81,6 +81,7 @@ class AuthController extends Controller
         $usuario = $this->getUser();
 
         //busco el usuario en la tabla interna de usuarios 
+       
         $usuario_bd = $this->repositoryUsuario->findByEmail($usuario['username']);
         //si existe ejecuto las validaciones correspondientes
         if ($usuario_bd) {
