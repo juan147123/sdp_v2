@@ -13,7 +13,7 @@ class SolicitudColaboradorController extends Controller
 
     public function __construct(
         SolicitudColaboradorRepositoryInterface $repository,
-        SolicitudRepositoryInterface $repositorySolicitud,
+        SolicitudRepositoryInterface $repositorySolicitud
     ) {
         $this->repository = $repository;
         $this->repositorySolicitud = $repositorySolicitud;
@@ -39,7 +39,7 @@ class SolicitudColaboradorController extends Controller
             $this->repositorySolicitud->update($request->id_solicitud, ["status" => 3]);
         }
     }
-    
+
     public function updateAllStatus(Request $request)
     {
         $this->repository->updateStatusMasive($request->status, $request->ids);

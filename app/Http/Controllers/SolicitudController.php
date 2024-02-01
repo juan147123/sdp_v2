@@ -21,7 +21,7 @@ class SolicitudController extends Controller
         SolicitudRepositoryInterface $repository,
         UsuarioRolRepositoryInterface $repositoryUsuarioRol,
         SolicitudColaboradorRepositoryInterface $repositorySolicitudDetalle,
-        ExtraServicecontroller $extraService,
+        ExtraServicecontroller $extraService
     ) {
         $this->repository = $repository;
         $this->repositoryUsuarioRol = $repositoryUsuarioRol;

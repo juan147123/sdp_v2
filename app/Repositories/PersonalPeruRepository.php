@@ -71,7 +71,7 @@ class PersonalPeruRepository extends BaseRepository implements PersonalPeruRepos
                 from lideres_pe lp 
                 left join rrhh.ejb_rrhh_planilla_ad_gf c 
                 left join centro_gestion cg on (c.rut_empresa = cg.ruc_empresa and rtrim(c.centro_costo) = cg.centro_gestion)
-                on c.lider_ren_dn = lp.dni or c.lider_des_dni = lp.dni;
+                on c.lider_ren_dni = lp.dni or c.lider_des_dni = lp.dni;
             ";
         $colaboradores = DB::connection('dw_peru')->select(DB::raw($query), ['correo_lider' => $correo]);
         $colaboradores = collect($colaboradores)->map(function ($colaborador) {
@@ -86,12 +86,12 @@ class PersonalPeruRepository extends BaseRepository implements PersonalPeruRepos
         $query = "
                 select distinct l.* from 
                     (select 
-                    distinct c.lider_ren_dn 
+                    distinct c.lider_ren_dni 
                     from rrhh.ejb_rrhh_planilla_ad_gf c
                     where c.estado = 'VIG'
-                    and lider_ren_dn is not null
-                    and lider_ren_dn <> 'ALLENDE MARINO JOSE FRANCISCO'
-                    and lider_ren_dn <> 'MARCO MORENO MURILLO'
+                    and lider_ren_dni is not null
+                    and lider_ren_dni <> 'ALLENDE MARINO JOSE FRANCISCO'
+                    and lider_ren_dni <> 'MARCO MORENO MURILLO'
                     union all 
                     select 
                     distinct c.lider_des_dni  
@@ -104,7 +104,7 @@ class PersonalPeruRepository extends BaseRepository implements PersonalPeruRepos
         $resultados = DB::connection('dw_peru')
             ->select(DB::raw($query));
 
-        $dniLideresPe = collect($resultados)->pluck('lider_ren_dn')->toArray();
+        $dniLideresPe = collect($resultados)->pluck('lider_ren_dni')->toArray();
 
         return $dniLideresPe;
     }
