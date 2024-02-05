@@ -256,6 +256,14 @@ export default {
     mounted() {
         this.createTable();
         $(".select-filtros").select2();
+        $(".form-select-modal").select2({
+            dropdownParent: $("#modalSolicitudUnica"),
+            tags: true,
+        });
+        $(".form-select-modal").select2({
+            dropdownParent: $("#modalSolicitudMultiple"),
+            tags: true,
+        });
         this.filterTable();
     },
     methods: {

@@ -67,6 +67,7 @@ class SolicitudController extends Controller
         $new_solicitud = $this->repository->create($solicitud);
         return $new_solicitud;
     }
+    
     public function createSolicitudDetail($request, $new_solicitud)
     {
         $solicitud_detail = $this->buildSolicitudDetail($request->all(), $new_solicitud);

@@ -192,10 +192,7 @@ export default {
         };
     },
     mounted() {
-        $(".form-select-modal").select2({
-            dropdownParent: $("#modalSolicitudMultiple"),
-            tags: true,
-        });
+     
     },
     methods: {
         onClickCleanFormUnico() {
