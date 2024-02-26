@@ -60,3 +60,4 @@ Route::middleware([
     Route::get('terminos/list', [TerminosController::class, 'listAll'])->name('terminos.list');
 });    
 
+

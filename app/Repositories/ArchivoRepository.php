@@ -13,21 +13,34 @@ class ArchivoRepository extends BaseRepository implements ArchivoRepositoryInter
     {
     }
 
-    public function uploadFile($archivo, $id)
+    public function uploadFile($archivos, $id ,$new_solicitud)
     {
-        $filename = $archivo->getClientOriginalName();
-        $extension = $archivo->getClientOriginalExtension();
-        $fileUuid = uniqid('', true) . '.' . $extension;
-        $path = $archivo->storeAs('public/archivos', $fileUuid);
-        $url = Storage::url($path);
-        return array(
-            "idcontrol" => $id,
-            "nombre" => $filename,
-            "uuid" => $fileUuid,
-            "url" => $url,
-            "extension" => $extension
-        );
+        $resultados = [];
+
+        foreach ($archivos as $archivo) {
+            $filename = $archivo->getClientOriginalName();
+            $extension = $archivo->getClientOriginalExtension();
+            $uuid = uniqid('', true);
+            $fileUuid = $uuid . '.' . $extension;
+            $carpeta = date('Ymd') . $new_solicitud->codigo;
+            $path = $archivo->storeAs('public/' . $carpeta, $fileUuid);
+            $url = Storage::url($path);
+
+            $resultados[] = array(
+                "id_solicitud_colaborador" => $id,
+                "name" => $filename,
+                "path" => $url,
+                "extension" => $extension,
+                "uuid_name" => $fileUuid,
+                "uuid" => $uuid,
+                "carpeta" => $carpeta
+            );
+        }
+
+        return $resultados;
     }
+
+
     public function uploadFileBase64($archivo, $id)
     {
 

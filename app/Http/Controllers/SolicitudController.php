@@ -6,6 +6,7 @@ use App\Interfaces\SolicitudColaboradorRepositoryInterface;
 use App\Interfaces\SolicitudRepositoryInterface;
 use App\Interfaces\UsuarioRolRepositoryInterface;
 use App\Models\Archivos;
+use App\Repositories\ArchivoRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -13,6 +14,7 @@ use Inertia\Inertia;
 class SolicitudController extends Controller
 {
     private $repository;
+    private $archivoRepository;
     private $repositoryUsuarioRol;
     private $repositorySolicitudDetalle;
     private $extraService;
@@ -21,12 +23,14 @@ class SolicitudController extends Controller
         SolicitudRepositoryInterface $repository,
         UsuarioRolRepositoryInterface $repositoryUsuarioRol,
         SolicitudColaboradorRepositoryInterface $repositorySolicitudDetalle,
-        ExtraServicecontroller $extraService
+        ExtraServicecontroller $extraService,
+        ArchivoRepository $archivoRepository
     ) {
         $this->repository = $repository;
         $this->repositoryUsuarioRol = $repositoryUsuarioRol;
         $this->repositorySolicitudDetalle = $repositorySolicitudDetalle;
         $this->extraService = $extraService;
+        $this->archivoRepository = $archivoRepository;
     }
 
     public function redirectPage()
@@ -59,6 +63,7 @@ class SolicitudController extends Controller
         $new_detail = $this->createSolicitudDetail($request, $new_solicitud);
         return 1;
     }
+
     public function createSolicitud()
     {
         $userCreated = strtoupper(Auth::user()->username);
@@ -67,12 +72,12 @@ class SolicitudController extends Controller
         $new_solicitud = $this->repository->create($solicitud);
         return $new_solicitud;
     }
-    
+
     public function createSolicitudDetail($request, $new_solicitud)
     {
         $solicitud_detail = $this->buildSolicitudDetail($request->all(), $new_solicitud);
         $newSolicitudDetail =  $this->repositorySolicitudDetalle->create($solicitud_detail);
-        $this->saveDocument($newSolicitudDetail->id, $request);
+        return $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $request);
     }
 
     private function buildSolicitud($npLider, $userCreated)
@@ -93,6 +98,19 @@ class SolicitudController extends Controller
             'id_solicitud' => $new_solicitud->id
         ];
     }
+    public function saveDocumentLocal($id, $new_solicitud, $request)
+    {
+        $archivos = $request->file('filesForm');
+        try {
+            if ($archivos) {
+                $documents =  $this->archivoRepository->uploadFile($archivos, $id, $new_solicitud);
+                return Archivos::insert($documents);
+            }
+        } catch (\Throwable $th) {
+            echo $th;
+        }
+    }
+
     public function saveDocument($id_solicitud_colaborador, $request)
     {
         $archivos = $request->file('filesForm');
@@ -127,5 +145,4 @@ class SolicitudController extends Controller
 
         return $archivo;
     }
-
 }

@@ -148,7 +148,10 @@ export default {
         };
     },
     mounted() {
-
+        $(".form-select-modal").select2({
+            dropdownParent: $("#modalSolicitudUnica"),
+            tags: true,
+        });
     },
     methods: {
         onClickCleanFormUnico() {

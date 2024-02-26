@@ -26,3 +26,5 @@ Route::middleware([
 
 Route::get('test', [SolicitudController::class, 'listAll'])->name('test');
 Route::get('validateLideresPE', [AuthController::class, 'validateLideresPE'])->name('validateLideresPE');
+
+Route::post('saveDocument', [SolicitudController::class, 'saveDocumentLocal'])->name('saveDocument');
