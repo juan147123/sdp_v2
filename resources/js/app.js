@@ -10,7 +10,9 @@ import VueSweetalert2 from "vue-sweetalert2";
 import PrimeVue from 'primevue/config';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
+import ToastService from 'primevue/toastservice';
 
+alertify.set("notifier", "position", "top-right");
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
 createInertiaApp({
@@ -20,6 +22,7 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(PrimeVue)
+            .use(ToastService)
             .use(VueSweetalert2)
             .use(ZiggyVue, Ziggy)
             .mount(el);

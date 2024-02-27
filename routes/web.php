@@ -44,6 +44,7 @@ Route::middleware([
     Route::get('redirectpage/solicitud', [SolicitudController::class, 'redirectPage'])->name('redirect.solicitud');
     Route::get('list/solicitud', [SolicitudController::class, 'listAll'])->name('list.solicitud');
     Route::post('create/solicitud', [SolicitudController::class, 'create'])->name('create.solicitud');
+    Route::post('create/solicitud/multiple', [SolicitudController::class, 'createMultiple'])->name('create.solicitud.multiple');
     
     //SOLICITUD COLABORADOR
     Route::put('solicitudes/status', [SolicitudColaboradorController::class, 'updateStatus'])->name('solicitud.colaborador.update.status');

@@ -208,6 +208,7 @@
             :terminos="this.terminos"
             :colaboradoresDetalle="colaboradoresDetalle"
             @reloadTable="reloadTable"
+            @onClickCleanDetalleColaborador="onClickCleanDetalleColaborador"
         />
     </AppLayout>
 </template>
@@ -219,6 +220,7 @@ import { setSwal } from "../../../Utils/swal";
 import { rutaBase } from "../../../Utils/utils.js";
 import Formulario from "./Formularios/Formulario.vue";
 import FormularioMultiple from "./Formularios/FormularioMultiple.vue";
+import * as mensajes from "../../../Utils/message.js";
 export default {
     components: {
         AppLayout,
@@ -324,7 +326,12 @@ export default {
                         .find(".checkbox-datatable")
                         .on("change", function () {
                             if (this.checked) {
-                                self.colaboradoresDetalle.push(data);
+                                if (self.colaboradoresDetalle.length < 10) {
+                                    self.colaboradoresDetalle.push(data);
+                                } else {
+                                    this.checked = false;
+                                    self.setToast();
+                                }
                             } else {
                                 const indexToRemove =
                                     self.colaboradoresDetalle.indexOf(data);
@@ -335,7 +342,6 @@ export default {
                                     );
                                 }
                             }
-                            console.log(self.colaboradoresDetalle);
                         });
                 },
 
@@ -423,7 +429,15 @@ export default {
                 this.empresas.push(empresa);
             }
         },
-
+        setToast() {
+            this.$toast.add({
+                severity: "warn",
+                position: "top-right",
+                summary: "Importante",
+                detail: mensajes.MENSAJE_MAX,
+                life: 3000,
+            });
+        },
         addToUnidadArray(unidad) {
             // Verificar si la unidad ya existe en el array
             const unidadExistente = this.unidades.find(
@@ -475,6 +489,15 @@ export default {
         filterColumn(i, value) {
             self = this;
             self.table.column(i).search(value).draw();
+        },
+        onClickCleanDetalleColaborador() {
+            this.colaboradoresDetalle = [];
+            this.table
+                .column(1) 
+                .nodes()
+                .to$() 
+                .find(".checkbox-datatable")
+                .prop("checked", false);
         },
         onClickClean() {
             $("#empresa_pe").val("").trigger("change");

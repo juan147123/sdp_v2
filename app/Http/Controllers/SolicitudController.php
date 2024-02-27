@@ -77,7 +77,7 @@ class SolicitudController extends Controller
     {
         $solicitud_detail = $this->buildSolicitudDetail($request->all(), $new_solicitud);
         $newSolicitudDetail =  $this->repositorySolicitudDetalle->create($solicitud_detail);
-        return $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $request);
+        return $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $request->file('filesForm'));
     }
 
     private function buildSolicitud($npLider, $userCreated)
@@ -98,9 +98,8 @@ class SolicitudController extends Controller
             'id_solicitud' => $new_solicitud->id
         ];
     }
-    public function saveDocumentLocal($id, $new_solicitud, $request)
+    public function saveDocumentLocal($id, $new_solicitud, $archivos)
     {
-        $archivos = $request->file('filesForm');
         try {
             if ($archivos) {
                 $documents =  $this->archivoRepository->uploadFile($archivos, $id, $new_solicitud);
@@ -144,5 +143,40 @@ class SolicitudController extends Controller
         );
 
         return $archivo;
+    }
+
+    // registro multiple
+
+    public function createMultiple(Request $request)
+    {
+        $new_solicitud = $this->createSolicitud();
+        $requestData = $request->all();
+        $groupedIds = [];
+
+        foreach ($requestData as $key => $value) {
+            $gruopId = substr($key, -1);
+            if (!in_array($gruopId, $groupedIds)) {
+                $groupedIds[] = $gruopId;
+            }
+        }
+
+        foreach ($groupedIds as $index => $value) {
+            $data = array(
+                "user_id" => $request->{"userId$index"},
+                "nombre_completo" => $request->{"nombreCompleto$index"},
+                "motivo" => $request->{"motivo$index"},
+                "fecha_desvinculacion" => $request->{"fechaMotivo$index"},
+                "redireccion" => $request->{"redireccion$index"},
+                'id_solicitud' => 1
+            );
+            $archivos = $request->file("archivos$index");
+            $newSolicitudDetail =  $this->repositorySolicitudDetalle->create($data);
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos);
+        }
+
+
+
+        /*  $new_detail = $this->createSolicitudDetail($request, $new_solicitud);
+        return 1; */
     }
 }

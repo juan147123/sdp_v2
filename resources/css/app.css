@@ -398,28 +398,11 @@ div:where(.swal2-container) .swal2-html-container {
     font-size: 17px;
 }
 
-/* alertify  */
-.alertify-notifier .ajs-error {
-    background: #ff0000;
-    color: #ffffff;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    font-size: 16px;
-    padding: 10px 20px;
-    text-align: center;
-}
-
-.alertify-notifier .ajs-message {
-    font-weight: bold;
-}
-
 /* Select 2 */
 .select2{
     margin: 0 !important;
 }
-.select2-results__option {
-    font-size: 12px;
-}
+
 .select2-search__field {
     font-size: 12px;
 }
@@ -457,19 +440,6 @@ div:where(.swal2-container) .swal2-html-container {
     font-size: 14px;
 }
 
-/* alertify */
-.alertify-notifier .ajs-message.ajs-error {
-    color: #fff;
-    text-align: center;
-    font-weight: 100;
-    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0, 5);
-}
-.alertify-notifier .ajs-message.ajs-success {
-    color: #fff;
-    text-align: center;
-    font-weight: 100;
-    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0, 5);
-}
 
 /* checkform css checkbox-wrapper-area */
 .form-check-input[type="checkbox"]:indeterminate {
