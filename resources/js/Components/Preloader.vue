@@ -22,7 +22,8 @@ export default {
 </script>
 <style>
 #spinner {
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 255, 0.336);
+    backdrop-filter: blur(5px);
     z-index: 999999;
     top: 50%;
 }

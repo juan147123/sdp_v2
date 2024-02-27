@@ -108,6 +108,19 @@ export function setSwal(options) {
             });
             break;
 
+        case "multioption":
+            Swal.fire({
+                text: "¿Desea ejecutar la acción?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, ejecutar",
+                cancelButtonText: "Cancelar",
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    await options.callback();
+                }
+            });
+            break;
         case "createForm":
             Swal.fire({
                 text: "¿Desea generar el registro?",

@@ -51,13 +51,17 @@
                             :href="
                                 this.$page.props.dwh === 'PE'
                                     ? this.route('redirect.colaboradores.pe')
-                                    : this.route('redirect.colaboradores.pe')//cl
+                                    : this.route('redirect.colaboradores.pe') //cl
                             "
                             :class="
-                                (this.route().current('redirect.colaboradores.pe')//cl
+                                (this.route().current(
+                                    'redirect.colaboradores.pe'
+                                ) //cl
                                     ? 'active'
                                     : '') ||
-                                (this.route().current('redirect.colaboradores.pe')
+                                (this.route().current(
+                                    'redirect.colaboradores.pe'
+                                )
                                     ? 'active'
                                     : '')
                             "
@@ -82,30 +86,40 @@
                         </a>
                     </li>
 
-                    <!--      <li
-                        class="toogle-li"
-                        v-if="this.$page.props.rol.id_rol == 79"
-                    >
-                        <a class="no-href">
+                    <!-- v-if="this.$page.props.rol.id_rol == 79" configuraciones-->
+                    <li class="toogle-li">
+                        <a
+                            class="no-href"
+                            :class="
+                                this.route().current('redirect.configuraciones')
+                                    ? 'active'
+                                    : ''
+                            "
+                        >
                             <i class="fas fa-wrench icon-menu"></i>
                             <strong>Configuraciones</strong>
                         </a>
                         <ul>
                             <li>
                                 <a
-                                    :href="this.route('configuraciones')"
+                                    :href="
+                                        this.route('redirect.configuraciones')
+                                    "
                                     :class="
-                                        this.route().current('configuraciones')
+                                        this.route().current(
+                                            'redirect.configuraciones'
+                                        )
                                             ? 'active'
                                             : ''
                                     "
                                     @click="setPreloader()"
-                                    ><i class="fa fa-globe"></i>areas /
+                                >
+                                    <i class="fa fa-globe"></i>areas /
                                     checklist</a
                                 >
                             </li>
                         </ul>
-                    </li> -->
+                    </li>
                 </div>
                 <!--  <div v-else>
                     <li class="toogle-li">

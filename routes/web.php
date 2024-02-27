@@ -6,7 +6,8 @@ use App\Http\Controllers\{
     ColaboradoresPeruController,
     ConfiguracionController,
     SolicitudColaboradorController,
-    TerminosController
+    TerminosController,
+    UsuarioController
 };
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -45,20 +46,30 @@ Route::middleware([
     Route::get('list/solicitud', [SolicitudController::class, 'listAll'])->name('list.solicitud');
     Route::post('create/solicitud', [SolicitudController::class, 'create'])->name('create.solicitud');
     Route::post('create/solicitud/multiple', [SolicitudController::class, 'createMultiple'])->name('create.solicitud.multiple');
-    
+
     //SOLICITUD COLABORADOR
     Route::put('solicitudes/status', [SolicitudColaboradorController::class, 'updateStatus'])->name('solicitud.colaborador.update.status');
     Route::put('solicitudes/status/masive', [SolicitudColaboradorController::class, 'updateAllStatus'])->name('solicitud.colaborador.update.masive');
-    
+
     //CONFIGURACION AREA
     Route::get('redirectpage/configuraciones/areas', [ConfiguracionController::class, 'listAllArea'])->name('configuracion.list.area');
-    
+
     //COLABORADORES PERU
     Route::get('redirectpage/colaboradores/pe', [ColaboradoresPeruController::class, 'redirectPage'])->name('redirect.colaboradores.pe');
     Route::get('colaboradores/pe', [ColaboradoresPeruController::class, 'getColaboradoresPe'])->name('list.colaboradores.pe');
-    
+
     //TERMINOS PERU
     Route::get('terminos/list', [TerminosController::class, 'listAll'])->name('terminos.list');
-});    
+    
+    
+    // configuraciones / áreas / checklist
+    Route::get('configuraciones/areas', [ConfiguracionController::class, 'listAll'])->name('redirect.configuraciones');
+     Route::post('configuraciones/areas ', [ConfiguracionController::class, 'create'])->name('configuraciones.post');
+    Route::put('configuraciones/areas ', [ConfiguracionController::class, 'update'])->name('configuraciones.update');
+    Route::put('configuraciones/areas/delete ', [ConfiguracionController::class, 'delete'])->name('configuraciones.delete');
 
-
+    //USUARIOS
+    Route::post('usuarios/create', [UsuarioController::class, 'create'])->name('usuarios.create');
+    Route::put('usuarios/update', [UsuarioController::class, 'update'])->name('usuarios.update');
+    Route::put('usuarios/delete', [UsuarioController::class, 'delete'])->name('usuarios.delete');
+});

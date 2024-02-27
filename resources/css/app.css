@@ -97,6 +97,7 @@ body {
     width: 230px;
 }
 .mcd-menu li {
+    list-style: none;
     position: relative;
     background-color: #d60015;
     border: solid 1px #ddd;
