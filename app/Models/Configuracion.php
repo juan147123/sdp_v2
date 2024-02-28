@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Scopes\EnableScope;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -45,5 +46,11 @@ class Configuracion extends Model
     public function CheckColaborador()
     {
         return $this->hasMany('App\Models\CheckColaborador', 'area_id');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope(new EnableScope);
     }
 }
