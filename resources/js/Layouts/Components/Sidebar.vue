@@ -121,22 +121,24 @@
                         </ul>
                     </li>
                 </div>
-                <!--  <div v-else>
+                <!--  <div v-else>-->
+                <div>
                     <li class="toogle-li">
                         <a
-                            :href="this.route('solicitud.area')"
+                            :href="this.route('redirect.solicitud.area')"
                             :class="
-                                this.route().current('solicitud.area')
+                                this.route().current('redirect.solicitud.area')
                                     ? 'active'
                                     : ''
                             "
-                            @click="setPreloader()" n
+                            @click="setPreloader()"
+                            n
                         >
                             <i class="fas fa-file icon-menu"></i>
                             <strong>Solicitud / Checklist</strong>
                         </a>
                     </li>
-                </div> -->
+                </div>
             </ul>
         </nav>
         <div

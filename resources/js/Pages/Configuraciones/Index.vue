@@ -87,7 +87,7 @@ export default {
                 email: "",
                 name: "",
                 id_area: 0,
-                rol: "checklist",
+                rol: "81",
                 pais: "cl",
             }),
         };

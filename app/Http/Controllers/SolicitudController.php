@@ -173,10 +173,17 @@ class SolicitudController extends Controller
             $newSolicitudDetail =  $this->repositorySolicitudDetalle->create($data);
             $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos);
         }
+    }
 
+    //   TODO AREA
 
+    public function redirectByArea()
+    {
+        return Inertia::render('ChecklistArea/Index');
+    }
 
-        /*  $new_detail = $this->createSolicitudDetail($request, $new_solicitud);
-        return 1; */
+    public function listSolicitudesByArea()
+    {
+        return $this->repository->listSolicitudes();
     }
 }
