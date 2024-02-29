@@ -97,6 +97,7 @@ class AuthController extends Controller
                 $redirect = 'redirect.solicitud';
             } else {
                 $AuthUser = $this->validateLideresObraPlantaCL($usuario);
+                $redirect = 'redirect.colaboradores.cl';
             }
         }
         if (!$usuario_bd) {
@@ -111,7 +112,7 @@ class AuthController extends Controller
                 $np_lider  = $this->getNpLider();
                 session(['np_lider' => $np_lider]);
             }
-            return redirect()->route('redirect.solicitud');
+            return redirect()->route($redirect);
         } else {
             return $this->redirectToLogin();
         }
