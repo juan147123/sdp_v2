@@ -48,27 +48,34 @@
                 <div>
                     <li class="toogle-li">
                         <a
-                            :href="
-                                this.$page.props.dwh === 'PE'
-                                    ? this.route('redirect.colaboradores.pe')
-                                    : this.route('redirect.colaboradores.pe') //cl
-                            "
+                            :href="this.route('redirect.colaboradores.pe')"
                             :class="
-                                (this.route().current(
-                                    'redirect.colaboradores.pe'
-                                ) //cl
-                                    ? 'active'
-                                    : '') ||
-                                (this.route().current(
+                                this.route().current(
                                     'redirect.colaboradores.pe'
                                 )
                                     ? 'active'
-                                    : '')
+                                    : ''
                             "
                             @click="setPreloader()"
                         >
                             <i class="fas fa-users icon-menu"></i>
                             <strong>Colaboradores</strong>
+                        </a>
+                    </li>
+                    <li class="toogle-li">
+                        <a
+                            :href="this.route('redirect.colaboradores.cl')"
+                            :class="
+                                this.route().current(
+                                    'redirect.colaboradores.cl'
+                                )
+                                    ? 'active'
+                                    : ''
+                            "
+                            @click="setPreloader()"
+                        >
+                            <i class="fas fa-users icon-menu"></i>
+                            <strong>Colaboradores cl</strong>
                         </a>
                     </li>
                     <li class="toogle-li">

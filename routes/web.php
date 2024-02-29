@@ -3,6 +3,7 @@
 use App\Http\Controllers\{
     SolicitudController,
     AuthController,
+    ColaboradoresChileController,
     ColaboradoresPeruController,
     ConfiguracionController,
     SolicitudColaboradorController,
@@ -57,6 +58,10 @@ Route::middleware([
     //COLABORADORES PERU
     Route::get('redirectpage/colaboradores/pe', [ColaboradoresPeruController::class, 'redirectPage'])->name('redirect.colaboradores.pe');
     Route::get('colaboradores/pe', [ColaboradoresPeruController::class, 'getColaboradoresPe'])->name('list.colaboradores.pe');
+    
+    //COLABORADORES CHILE
+    Route::get('redirectpage/colaboradores/cl', [ColaboradoresChileController::class, 'redirectPage'])->name('redirect.colaboradores.cl');
+    Route::get('colaboradores/cl', [ColaboradoresChileController::class, 'getColaboradoresCl'])->name('list.colaboradores.cl');
     
     //TERMINOS PERU
     Route::get('terminos/list', [TerminosController::class, 'listAll'])->name('terminos.list');

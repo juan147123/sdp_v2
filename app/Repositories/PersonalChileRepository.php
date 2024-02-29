@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\PersonalChile;
 use App\Interfaces\PersonalChileRepositoryInterface;
+use App\Interfaces\SolicitudColaboradorRepositoryInterface;
 use App\Models\SolicitudColaborador;
 use Illuminate\Support\Facades\DB;
 
@@ -15,6 +16,7 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
      */
     protected $model;
     protected $modelSolicitudColaborador;
+    protected $repositorySolicitudColaborador;
     /**
      * BaseRepository constructor.
      *
@@ -22,10 +24,12 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
      */
     public function __construct(
         PersonalChile $model,
-        SolicitudColaborador $modelSolicitudColaborador
+        SolicitudColaborador $modelSolicitudColaborador,
+        SolicitudColaboradorRepositoryInterface $repositorySolicitudColaborador
     ) {
         $this->model = $model;
         $this->modelSolicitudColaborador = $modelSolicitudColaborador;
+        $this->repositorySolicitudColaborador = $repositorySolicitudColaborador;
     }
     public function UserFindByEmail($email)
     {
@@ -53,17 +57,9 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
             ->pluck('user_id')
             ->first();
     }
+
     public function getDataByUserIdLider($userId)
     {
-        $colaboradores = $this->getColaboradores($userId);
-        return $colaboradores;
-    }
-    public function getColaboradores($userId)
-    {
-        $empresas = [];
-        $unidades = [];
-        $departamentos = [];
-        $centros_costo = [];
         $query = "
         WITH RECURSIVE colaboradores AS (
             SELECT user_id, np_lider, first_name, last_name, national_id, correo_flesan, correo_gmail, empresa, centro_costo, nombre_centro_costo, departamento, nombre_departamento, division, nombre_division, external_cod_cargo, ubicacion
@@ -137,25 +133,11 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
         $colaboradores = DB::connection('dw_chile')->select(DB::raw($query), [
             'userId' => $userId,
         ]);
-
-        $colaboradores = collect($colaboradores)->map(function ($colaborador) use (&$empresas, &$unidades, &$departamentos, &$centros_costo) {
-            $this->getEmpresas($colaborador, $empresas);
-            $this->getUnidades($colaborador, $unidades);
-            $this->getDepartamentos($colaborador, $departamentos);
-            $this->getCentroCosto($colaborador, $centros_costo);
-            $colaborador->solicitudes = $this->modelSolicitudColaborador
-                ->where('user_id', $colaborador->user_id)
-                ->count();
+        $colaboradores = collect($colaboradores)->map(function ($colaborador) {
+            $colaborador->solicitudes = $this->repositorySolicitudColaborador->CountSolicitudByUserId($colaborador->user_id);
             return $colaborador;
         });
-
-        return array(
-            "colaboradores" => $colaboradores,
-            "empresas" => $empresas,
-            'unidades' => $unidades,
-            'departamentos' => $departamentos,
-            'centrosCosto' => $centros_costo,
-        );
+        return  $colaboradores;
     }
 
     public function getColaboradoresObra($correo)
@@ -243,76 +225,9 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
 
         $colaboradores = DB::connection('dw_chile')->select(DB::raw($query_obra), ['correo_lider' => $correo]);
 
-        $colaboradores = collect($colaboradores)->map(function ($colaborador) use (&$empresas, &$unidades, &$departamentos, &$centros_costo) {
-            $this->getEmpresas($colaborador, $empresas);
-            $this->getUnidades($colaborador, $unidades);
-            $this->getDepartamentos($colaborador, $departamentos);
-            $this->getCentroCosto($colaborador, $centros_costo);
-            $colaborador->solicitudes = $this->modelSolicitudColaborador
-                ->where('user_id', $colaborador->user_id)
-                ->count();
-            return $colaborador;
-        });
-
-        return array(
-            "colaboradores" => $colaboradores,
-            "empresas" => $empresas,
-            'unidades' => $unidades,
-            'departamentos' => $departamentos,
-            'centrosCosto' => $centros_costo,
-        );
+      return $colaboradores;
     }
 
-
-    public function getEmpresas($data, &$empresas)
-    {
-        $empresa = [
-            'id' => $data->empresa,
-            'descripcion' => $data->razon_social,
-        ];
-
-        if (!in_array($empresa, $empresas)) {
-            array_push($empresas, $empresa);
-        }
-    }
-
-    public function getUnidades($data, &$unidades)
-    {
-        $unidad = [
-            'id' => $data->id_unidad_negocio,
-            'cod_empresa' => $data->empresa,
-            'descripcion' => $data->unidad_negocio,
-        ];
-        if (!in_array($unidad, $unidades)) {
-            array_push($unidades, $unidad);
-        }
-    }
-
-    public function getDepartamentos($data, &$departamentos)
-    {
-        $departamento = [
-            'id' => $data->departamento,
-            'cod_empresa' => $data->empresa,
-            'cod_unidad' => $data->id_unidad_negocio,
-            'descripcion' => $data->nombre_departamento,
-        ];
-        if (!in_array($departamento, $departamentos)) {
-            array_push($departamentos, $departamento);
-        }
-    }
-    public function getCentroCosto($data, &$centros_costo)
-    {
-        $centro_costo = [
-            'id' => $data->centro_costo,
-            'cod_unidad' => $data->id_unidad_negocio,
-            'cod_empresa' => $data->empresa,
-            'cod_departamento' => $data->departamento,
-            'descripcion' => $data->nombre_centro_costo,
-        ];
-        if (!in_array($centro_costo, $centros_costo)) {
-            array_push($centros_costo, $centro_costo);
-        }
-    }
 
     public function getLideresObraCl()
     {

@@ -50,9 +50,10 @@ class AuthController extends Controller
         $email = $user->getEmail();
 
         if ($email == 'jmestanza@flesan.com.pe') {
-            $email = 'dcollas@flesan.com.pe';
+            // $email = 'dcollas@flesan.com.pe';
             // $email = 'frida.morales@flesan.cl';
             // $email = 'jorge.barrozo@flesan.cl';
+            $email = 'acandia@flesan.cl';
             //$email = 'mmatamoros@flesan.com.pe';
         }
 
@@ -76,6 +77,7 @@ class AuthController extends Controller
     public function handleGoogleCallback()
     {
         $AuthUser = null;
+        $redirect = "";
 
         // otengo el usuario de la cuenta de google
         $usuario = $this->getUser();
@@ -90,6 +92,7 @@ class AuthController extends Controller
             $pais =  $usuario['pais'];
             if ($pais == 'PE') {
                 $AuthUser = $this->validateLideresPE($usuario);
+                $redirect = 'redirect.solicitud';
             } else {
                 $AuthUser = $this->validateLideresObraPlantaCL($usuario);
             }
