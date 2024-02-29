@@ -67,6 +67,7 @@ Route::middleware([
     Route::post('configuraciones/areas ', [ConfiguracionController::class, 'create'])->name('configuraciones.post');
     Route::put('configuraciones/areas ', [ConfiguracionController::class, 'update'])->name('configuraciones.update');
     Route::put('configuraciones/areas/delete ', [ConfiguracionController::class, 'delete'])->name('configuraciones.delete');
+    Route::get('configuraciones/area', [ConfiguracionController::class, 'listByIdArea'])->name('list.configuracion.idarea');
     
     //USUARIOS
     Route::post('usuarios/create', [UsuarioController::class, 'create'])->name('usuarios.create');

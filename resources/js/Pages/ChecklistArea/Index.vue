@@ -32,32 +32,114 @@
                 @changeViewDetail="this.changeViewDetail"
                 @reloadTable="reloadTable"
                 :solicitudesColaborador="solicitudesColaborador"
-                :archivosList="archivosList"
             />
         </div>
-       <!--  <div class="hidden" id="parte-solicitudes-checklist">
-            <Checklist
-                :checksUsuario="this.checkusuariolist"
-                @changeViewDetailChecklist="changeViewDetailChecklist"
-            />
-        </div> -->
+
+        <!-- Modal -->
+        <div
+            class="modal fade"
+            id="modalCheckListArea"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="modalTitleId"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5>CHECKLIST</h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="p-1">
+                            <div class="form-check mb-3">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    v-model="form.aplica"
+                                />
+                                <label class="form-check-label" for="">
+                                    ¿Aplica formulario?</label
+                                >
+                            </div>
+                            <div v-for="check in this.checkusuariolist">
+                                <div
+                                    class="d-flex justify-content-between mb-2"
+                                >
+                                    <div class="form-check">
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            :id="'checkbox' + check.id"
+                                        />
+                                        <label
+                                            class="form-check-label ml-2"
+                                            for=""
+                                        >
+                                            {{ check.descripcion }}</label
+                                        >
+                                    </div>
+                                </div>
+                                <input
+                                    v-if="check.input == 1"
+                                    type="text"
+                                    required
+                                    class="form-control form-control-sm mb-3 ml-4 w-50"
+                                    :id="'input' + check.id"
+                                    :placeholder="
+                                        'Ingrese datos de ' + check.descripcion
+                                    "
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="" class="form-label"
+                                    >Comentarios</label
+                                >
+                                <textarea
+                                    type="text"
+                                    class="form-control"
+                                    v-model="form.comentarios"
+                                ></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-danger"
+                            data-bs-dismiss="modal"
+                        >
+                            Cancelar
+                        </button>
+                        <button type="button" class="btn btn-sm btn-primary">
+                            {{ form.status == 1 ? "Editar" : "Guardar" }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </AppLayout>
 </template>
 <script>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import breadcrumbs from "@/Components/Breadcrumbs.vue";
 import { rutaBase } from "../../../Utils/utils.js";
-import { setSwal } from "../../../Utils/swal";
 import Preloader from "@/Components/Preloader.vue";
-import dayjs from "dayjs";
 import SolicitudesColaborador from "./SolicitudColaborador/Index.vue";
+import dayjs from "dayjs";
+import { setSwal } from "../../../Utils/swal";
 
 export default {
     components: {
         AppLayout,
         breadcrumbs,
         Preloader,
-        SolicitudesColaborador
+        SolicitudesColaborador,
     },
     data() {
         var self = this;
@@ -76,13 +158,14 @@ export default {
             tableDetalle: [],
             part: 0,
             solicitudesColaborador: [],
-            archivosList: [],
             checkusuariolist: [],
             form: this.$inertia.form({
                 id: 0,
-                status: 0,
-                id_solicitud: 0,
-                comentario: "",
+                aplica: null,
+                area_id: 0,
+                checklist: [],
+                comentarios: "",
+                status: null,
             }),
         };
     },
@@ -217,25 +300,9 @@ export default {
                 },
                 createdRow: function (row, data, dataIndex) {
                     $(row)
-                        .find("#acciones1")
-                        .on("click", function () {
-                            self.archivosList = data.archivos;
-                        });
-                    $(row)
                         .find("#acciones2")
                         .on("click", function () {
                             self.getChecklist(data);
-                        });
-                    $(row)
-                        .find("#acciones3")
-                        .on("click", function () {
-                            console.log(data.id);
-                            self.updateStatus(data.id, 3, data.id_solicitud);
-                        });
-                    $(row)
-                        .find("#acciones4")
-                        .on("click", function () {
-                            self.updateStatus(data.id, 2, data.id_solicitud);
                         });
                 },
                 columns: [
@@ -277,23 +344,56 @@ export default {
                             var botonChecklist = "";
                             if (obra != 1) {
                                 botonChecklist =
-                                    '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones2" ><i class="fas fa-tasks text-primary"></i> Checklist</a></li>';
+                                    '<button class="btn btn-outline-primary" style="cursor:pointer;font-size:11.5px;" id="acciones2" data-bs-toggle="modal" data-bs-target="#modalCheckListArea" ><i class="fas fa-list"></i></button>';
                             }
 
-                            return (
-                                '<div class="btn-group">' +
-                                '<button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                                '<i class="fa fa-cogs"></i>' +
-                                "</button>" +
-                                '<ul class="dropdown-menu">' +
-                                botonChecklist +
-                                "</ul>" +
-                                "</div>"
-                            );
+                            return botonChecklist;
                         },
                     },
                 ],
             });
+        },
+        async getChecklist(check) {
+            var checkUsuario = check.check_area_colaboradores[0];
+            this.mensaje = "espere mientras se cargan los checklist....";
+            this.isLoadingForm = true;
+            this.checkusuariolist = [];
+            self = this;
+            await axios
+                .get(rutaBase + "/configuraciones/area")
+                .then(async (response) => {
+                    this.checkusuariolist = response.data;
+                    this.buildDtoCheck(checkUsuario);
+                    self.mensaje = "";
+                    self.isLoadingForm = false;
+                });
+        },
+        buildDtoCheck(checkusuario) {
+            this.form.reset();
+            if (checkusuario != undefined) {
+                this.form.id = checkusuario.id;
+                this.form.aplica = checkusuario.aplica;
+                this.form.area_id = checkusuario.area_id;
+                this.form.checklist = checkusuario.checklist;
+                this.form.comentarios = checkusuario.comentarios;
+                this.form.status = checkusuario.status;
+                this.setDataJson(checkusuario.checklist);
+            }
+        },
+        setDataJson(json) {
+            var jsonArray = JSON.parse(json);
+            setTimeout(() => {
+                jsonArray.forEach((dataObject) => {
+                    for (const key in dataObject) {
+                        const value = dataObject[key];
+                        if (key.startsWith("checkbox")) {
+                            $(`#${key}`).prop("checked", value);
+                        } else {
+                            $(`#${key}`).val(value);
+                        }
+                    }
+                });
+            }, 100);
         },
     },
 };

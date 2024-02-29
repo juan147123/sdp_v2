@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Configuracion;
 use App\Interfaces\ConfiguracionRepositoryInterface;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ConfiguracionRepository extends BaseRepository implements
@@ -54,21 +55,18 @@ class ConfiguracionRepository extends BaseRepository implements
         return $emails_area;
     }
     
-    public function listByUser($id)
-    {
-        $areas_checklist = $this->model
-            ->where('categoria', 'area')
-            ->where('enable', 1)
-            ->where('id', $id)
-            ->get()
-            ->map(function ($area_checklist) {
-                $checklist = $this->model
-                    ->where('parent_id', $area_checklist->id)
-                    ->where('enable', 1)
-                    ->get();
-                $area_checklist->checklist = $checklist;
-                return $area_checklist;
-            });
-        return $areas_checklist;
+    public function listByIdArea(){
+        $usuario = Auth::user();
+        $usuario_area = $this->repositoryUsu->findByEmail(
+            strval($usuario->username),
+            'checklist'
+        );
+
+        $data = $this->model
+        ->select('id','descripcion','input')
+        ->where('parent_id', $usuario_area->id_area)
+        ->where('enable', 1)
+        ->get();
+        return $data;
     }
 }

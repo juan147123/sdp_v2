@@ -69,7 +69,7 @@
                             <th>Correo de redirección</th>
                             <th>Comentarios</th>
                             <th>Estado</th>
-                            <th>Acciones</th>
+                            <th>Checklist</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -81,7 +81,6 @@
 <script>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import breadcrumbs from "@/Components/Breadcrumbs.vue";
-/* import Checklist from "./Checklist/Index.vue"; */
 import Preloader from "@/Components/Preloader.vue";
 import { setSwal } from "../../../../Utils/swal";
 export default {

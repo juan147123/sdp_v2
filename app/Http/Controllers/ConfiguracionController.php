@@ -41,4 +41,7 @@ class ConfiguracionController extends Controller
       $this->repository->update($request->id, ["enable" => 0]);
       return redirect('configuraciones/areas');
   }
+  public function listByIdArea(){
+    return $this->repository->listByIdArea();
+  }
 }
