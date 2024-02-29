@@ -230,3 +230,63 @@ ul.p-carousel-indicators{
 .p-column-filter-menu-button-active {
   color: #cb3a3a !important; 
 }
+
+/* Estilos Estados Solicitudes */
+
+.info-box {
+  padding: .5rem;
+  display: flex;
+  background-color: white;
+  border-radius: .3rem;
+}
+
+.info-box-icon {
+  border-radius: .3rem;
+  font-size: 1.5rem;
+  padding: .5rem .8rem;
+  color: white;
+}
+
+.info-box-content{
+  flex: 1;
+  padding: 0 .5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-box-text {
+  font-size: .9rem;
+  font-weight: bold;
+}
+
+.info-box-number {
+  font-weight: 600;
+}
+
+.bg-color-custom-creado{
+  background-color: #00a5ba;
+}
+.color-custom-creado{
+  color: #00a5ba;
+}
+
+.bg-color-custom-pendiente{
+  background-color: #ffbe00;
+}
+.color-custom-pendiente{
+  color: #ffbe00;
+}
+
+.bg-color-custom-aprobado{
+  background-color: #00a94e;
+}
+.color-custom-aprobado{
+  color: #00a94e;
+}
+
+.bg-color-custom-rechazado{
+  background-color: #f41b35;
+}
+.color-custom-rechazado{
+  color: #f41b35;
+}

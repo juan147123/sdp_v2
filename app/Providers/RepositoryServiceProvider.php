@@ -7,6 +7,7 @@ use App\Interfaces\{
     AplicacionUsuarioRepositoryInterface,
     ConfiguracionRepositoryInterface,
     EloquentRepositoryInterface,
+    EstadosRepositoryInterface,
     PersonalChileRepositoryInterface,
     PersonalPeruRepositoryInterface,
     SolicitudColaboradorRepositoryInterface,
@@ -19,6 +20,7 @@ use App\Repositories\{
     AplicacionUsuarioRepository,
     BaseRepository,
     ConfiguracionRepository,
+    EstadosRepository,
     PersonalChileRepository,
     PersonalPeruRepository,
     SolicitudColaboradorRepository,
@@ -47,6 +49,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(SolicitudColaboradorRepositoryInterface::class, SolicitudColaboradorRepository::class);
         $this->app->bind(ConfiguracionRepositoryInterface::class, ConfiguracionRepository::class);
         $this->app->bind(TerminosRepositoryInterface::class, TerminosRepository::class);
+        $this->app->bind(EstadosRepositoryInterface::class, EstadosRepository::class);
     }
 
     /**

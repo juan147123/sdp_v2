@@ -1,22 +1,68 @@
 <template>
     <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
     <AppLayout>
+
         <div id="parte-solicitudes-vista">
             <breadcrumbs :modules="breadcrumbs" />
-            <div class="box m-1 mt-5">
+            <div class="col-md-12 mt-2">
+                <div class="row">
+                    <div class="col-lg-3 col-6">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-color-custom-creado elevation-1"><i
+                                    class="fas fa-list-ol"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text color-custom-creado">CREADOS</span>
+                                <span class="info-box-number">{{ conteoSolicitudes.creados }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-color-custom-pendiente elevation-1"><i
+                                    class="fas fa-bookmark"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text color-custom-pendiente">PENDIENTES</span>
+                                <span class="info-box-number">{{ conteoSolicitudes.pendientes }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-color-custom-aprobado elevation-1"><i
+                                    class="fas fa-check-circle"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text color-custom-aprobado">APROBADOS</span>
+                                <span class="info-box-number">{{ conteoSolicitudes.aprobados }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-color-custom-rechazado elevation-1"><i
+                                    class="fas fa-times-circle"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text color-custom-rechazado">RECHAZADOS</span>
+                                <span class="info-box-number">{{ conteoSolicitudes.rechazados }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box m-1 mt-3">
+
                 <div class="container-fluid">
+
                     <div class="box-body">
-                        <div class="table-responsive">
-                            <table
-                                class="table text-nowrap table-bordered dt-responsive"
-                                id="tableSolicitudes"
-                            >
+                        <div class="table-responsive pt-2">
+                            <table class="table text-nowrap table-bordered dt-responsive" id="tableSolicitudes">
                                 <thead class="table-dark">
                                     <tr>
                                         <th>Código</th>
                                         <th>Solicitante</th>
                                         <th>Fecha de solicitud</th>
                                         <th>Estado</th>
+                                        <th>Estado de Solicitud</th>
                                         <th>Colaboradores</th>
                                     </tr>
                                 </thead>
@@ -28,18 +74,11 @@
             </div>
         </div>
         <div class="hidden" id="parte-solicitudes-detalle">
-            <SolicitudesColaborador
-                @changeViewDetail="this.changeViewDetail"
-                @reloadTable="reloadTable"
-                :solicitudesColaborador="solicitudesColaborador"
-                :archivosList="archivosList"
-            />
+            <SolicitudesColaborador @changeViewDetail="this.changeViewDetail" @reloadTable="reloadTable"
+                :solicitudesColaborador="solicitudesColaborador" :archivosList="archivosList" />
         </div>
         <div class="hidden" id="parte-solicitudes-checklist">
-            <Checklist
-                :checksUsuario="this.checkusuariolist"
-                @changeViewDetailChecklist="changeViewDetailChecklist"
-            />
+            <Checklist :checksUsuario="this.checkusuariolist" @changeViewDetailChecklist="changeViewDetailChecklist" />
         </div>
     </AppLayout>
 </template>
@@ -53,6 +92,7 @@ import Preloader from "@/Components/Preloader.vue";
 import Checklist from "./SolicitudColaborador/Checklist/Index.vue";
 
 import dayjs from "dayjs";
+import { createVNode } from "vue";
 export default {
     components: {
         AppLayout,
@@ -85,6 +125,12 @@ export default {
                 id_solicitud: 0,
                 comentario: "",
             }),
+            conteoSolicitudes: {
+                creados: 0,
+                pendientes: 0,
+                aprobados: 0,
+                rechazados: 0
+            }
         };
     },
     mounted() {
@@ -100,6 +146,13 @@ export default {
                 ajax: {
                     url: rutaBase + "/list/solicitud",
                     dataSrc: "",
+                    // success(response) {
+                    //     self.conteoSolicitudes.creados = response.filter(r => r.status == 0).length;
+                    //     self.conteoSolicitudes.pendientes = response.filter(r => r.status == 1).length;
+                    //     self.conteoSolicitudes.aprobados = response.filter(r => r.status == 2).length;
+                    //     self.conteoSolicitudes.rechazados = response.filter(r => r.status == 3).length;
+                    //     return response;
+                    // }
                 },
                 responsive: true,
                 loadingRecords: "Cargando...",
@@ -149,13 +202,36 @@ export default {
                                 counts[2] === totalCantidad
                                     ? ["danger", "cancelado"]
                                     : counts[1] >= 1
-                                    ? [
-                                          "info",
-                                          `colaboradores pendientes: ${counts[1]}`,
-                                      ]
-                                    : ["success", "completo"];
+                                        ? [
+                                            "info",
+                                            `colaboradores pendientes: ${counts[1]}`,
+                                        ]
+                                        : ["success", "completo"];
 
                             return `<div><span style="font-size:11.5px;" class="badge bg-${status[0]} text-white">${status[1]}</span></div>`;
+                        },
+                    },
+                    {
+                        data: "estado", className: "text-center", width: 80,
+                        render: function (data, type, row) {
+
+                            let claseColor = ''
+                            switch (data.descripcion) {
+                                case 'CREADO':
+                                    claseColor = 'bg-color-custom-creado'
+                                    break;
+                                case 'PENDIENTE':
+                                    claseColor = `bg-color-custom-pendiente`;
+                                    break;
+                                case 'APROBADO':
+                                    claseColor = `bg-color-custom-aprobado`;
+                                    break;
+                                case 'RECHAZADO':
+                                    claseColor = `bg-color-custom-rechazado`;
+                                    break;
+                            }
+                            return `<div><span style="font-size:11.5px;" class="badge text-white ${claseColor}">${data.descripcion}</span></div>`;
+
                         },
                     },
                     {
@@ -167,6 +243,14 @@ export default {
                         },
                     },
                 ],
+                initComplete: function (settings, json) {
+                    const response = json || [];
+                    console.log(response);
+                    self.conteoSolicitudes.creados = response.filter(r => r.estado.descripcion == 'CREADO').length;
+                    self.conteoSolicitudes.pendientes = response.filter(r => r.estado.descripcion == 'PENDIENTE').length;
+                    self.conteoSolicitudes.aprobados = response.filter(r => r.estado.descripcion == 'APROBADO').length;
+                    self.conteoSolicitudes.rechazados = response.filter(r => r.estado.descripcion == 'RECHAZADO').length;
+                }
             });
         },
         createTableDetalle(data) {
@@ -219,6 +303,7 @@ export default {
                     },
                     { data: "fecha_desvinculacion", className: "text-center" },
                     { data: "redireccion", className: "text-center" },
+                    { data: "comentario", className: "text-center" },
                     { data: "comentario", className: "text-center" },
                     {
                         data: null,

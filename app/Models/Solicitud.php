@@ -31,6 +31,15 @@ class Solicitud extends Model
      */
     protected $fillable = ['codigo', 'np_lider', 'user_created', 'created_at', 'updated_at', 'enable', 'status', 'obra'];
 
+        /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function estado()
+    {
+        return $this->belongsTo('App\Models\Estados', 'status', 'id');
+    }
+
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */

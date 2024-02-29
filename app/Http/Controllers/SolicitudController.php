@@ -54,7 +54,7 @@ class SolicitudController extends Controller
 
     public function listSolicitudesLider($conditionals)
     {
-        return $this->repository->all(['*'], ['solicitudColaborador', 'solicitudColaborador.archivos', 'solicitudColaborador.SapMaestroCausalesTerminos', 'solicitudColaborador.checkAreaColaboradores'], $conditionals);
+        return $this->repository->all(['*'], ['estado', 'solicitudColaborador', 'solicitudColaborador.archivos', 'solicitudColaborador.SapMaestroCausalesTerminos', 'solicitudColaborador.checkAreaColaboradores'], $conditionals);
     }
 
     public function create(Request $request)

@@ -49,7 +49,7 @@ class AuthController extends Controller
         $user = Socialite::driver('google')->user();
         $email = $user->getEmail();
 
-        if ($email == 'jmestanza@flesan.com.pe') {
+        if ($email == 'serodriguez@flesan.com.pe') {
             $email = 'dcollas@flesan.com.pe';
             // $email = 'frida.morales@flesan.cl';
             // $email = 'jorge.barrozo@flesan.cl';
