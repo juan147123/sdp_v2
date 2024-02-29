@@ -167,7 +167,7 @@ class SolicitudController extends Controller
                 "motivo" => $request->{"motivo$index"},
                 "fecha_desvinculacion" => $request->{"fechaMotivo$index"},
                 "redireccion" => $request->{"redireccion$index"},
-                'id_solicitud' => 1
+                'id_solicitud' => $new_solicitud->id
             );
             $archivos = $request->file("archivos$index");
             $newSolicitudDetail =  $this->repositorySolicitudDetalle->create($data);

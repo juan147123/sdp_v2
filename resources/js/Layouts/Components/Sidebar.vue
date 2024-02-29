@@ -45,8 +45,25 @@
         <hr />
         <nav class="mb-auto">
             <ul class="mcd-menu">
-                <div>
+                <div v-if="this.$page.props.rol.id_rol !== 81">
                     <li class="toogle-li">
+                        <a
+                            :href="this.route('redirect.solicitud')"
+                            :class="
+                                this.route().current('redirect.solicitud')
+                                    ? 'active'
+                                    : ''
+                            "
+                            @click="setPreloader()"
+                        >
+                            <i class="fas fa-file icon-menu"></i>
+                            <strong>Solicitudes</strong>
+                        </a>
+                    </li>
+                    <li
+                        class="toogle-li"
+                        v-if="this.$page.props.auth.user.pais == 'PE'"
+                    >
                         <a
                             :href="this.route('redirect.colaboradores.pe')"
                             :class="
@@ -62,7 +79,10 @@
                             <strong>Colaboradores</strong>
                         </a>
                     </li>
-                    <li class="toogle-li">
+                    <li
+                        class="toogle-li"
+                        v-if="this.$page.props.auth.user.pais == 'CL'"
+                    >
                         <a
                             :href="this.route('redirect.colaboradores.cl')"
                             :class="
@@ -75,26 +95,14 @@
                             @click="setPreloader()"
                         >
                             <i class="fas fa-users icon-menu"></i>
-                            <strong>Colaboradores cl</strong>
+                            <strong>Colaboradores</strong>
                         </a>
                     </li>
-                    <li class="toogle-li">
-                        <a
-                            :href="this.route('redirect.solicitud')"
-                            :class="
-                                this.route().current('redirect.solicitud')
-                                    ? 'active'
-                                    : ''
-                            "
-                            @click="setPreloader()"
-                        >
-                            <i class="fas fa-file icon-menu"></i>
-                            <strong>Solicitudes</strong>
-                        </a>
-                    </li>
-
                     <!-- v-if="this.$page.props.rol.id_rol == 79" configuraciones-->
-                    <li class="toogle-li">
+                    <li
+                        class="toogle-li"
+                        v-if="this.$page.props.rol.id_rol == 79"
+                    >
                         <a
                             class="no-href"
                             :class="
@@ -128,8 +136,7 @@
                         </ul>
                     </li>
                 </div>
-                <!--  <div v-else>-->
-                <div>
+                <div v-else>
                     <li class="toogle-li">
                         <a
                             :href="this.route('redirect.solicitud.area')"

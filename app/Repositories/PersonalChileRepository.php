@@ -142,11 +142,6 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
 
     public function getColaboradoresObra($correo)
     {
-
-        $empresas = [];
-        $unidades = [];
-        $departamentos = [];
-        $centros_costo = [];
         $query_obra = "
         with cecos_lider as( 
             select 

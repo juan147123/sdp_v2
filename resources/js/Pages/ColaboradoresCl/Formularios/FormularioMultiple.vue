@@ -176,9 +176,10 @@
 import Preloader from "@/Components/Preloader.vue";
 import { rutaBase } from "../../../../Utils/utils.js";
 import { setSwal } from "../../../../Utils/swal";
+import * as mensajes from "../../../../Utils/message.js";
 export default {
     props: ["terminos", "colaboradoresDetalle"],
-    emits: ["reloadTable","onClickCleanDetalleColaborador"],
+    emits: ["reloadTable", "onClickCleanDetalleColaborador"],
     components: {
         Preloader,
     },
@@ -214,13 +215,17 @@ export default {
                     },
                 })
                 .then((response) => {
-                    self.reloadTable();
                     this.isLoadingForm = false;
                     this.mensaje = "";
                     $("#btn-close-solicitud-multiple").trigger("click");
                     self.onClickCleanDetalleColaborador();
-                    setSwal({
-                        value: "create",
+                    self.reloadTable();
+                    this.$toast.add({
+                        severity: "success",
+                        position: "top-right",
+                        summary: "Notificación",
+                        detail: mensajes.MENSAJE_EXITO,
+                        life: 3000,
                     });
                 })
                 .catch((error) => {

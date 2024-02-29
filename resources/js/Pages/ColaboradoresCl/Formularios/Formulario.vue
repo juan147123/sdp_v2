@@ -135,6 +135,7 @@
 import Preloader from "@/Components/Preloader.vue";
 import { rutaBase } from "../../../../Utils/utils.js";
 import { setSwal } from "../../../../Utils/swal";
+import * as mensajes from "../../../../Utils/message.js";
 export default {
     props: ["terminos", "colaboradoresDetalle"],
     emits: ["reloadTable"],
@@ -170,11 +171,11 @@ export default {
 
             const form = document.getElementById("formSolicitud");
             const formData = new FormData(form);
-            var user_id = this.colaboradoresDetalle[0].dni;
+            var user_id = this.colaboradoresDetalle[0].user_id;
             var nombre_completo =
-                this.colaboradoresDetalle[0].nombres +
+                this.colaboradoresDetalle[0].firstname +
                 " " +
-                this.colaboradoresDetalle[0].apellido;
+                this.colaboradoresDetalle[0].lastname;
 
             formData.append("user_id", user_id);
             formData.append("nombre_completo", nombre_completo);
@@ -185,12 +186,16 @@ export default {
                     },
                 })
                 .then((response) => {
-                    self.reloadTable();
                     this.isLoadingForm = false;
                     this.mensaje = "";
                     $("#btn-close-solicitud-unica").trigger("click");
-                    setSwal({
-                        value: "create",
+                    self.reloadTable();
+                    this.$toast.add({
+                        severity: "success",
+                        position: "top-right",
+                        summary: "Notificación",
+                        detail: mensajes.MENSAJE_EXITO,
+                        life: 3000,
                     });
                 })
                 .catch((error) => {

@@ -178,13 +178,13 @@
                     <div class="table-responsive">
                         <table
                             class="table text-nowrap table-bordered dt-responsive"
-                            id="tableColaboradoresPe"
+                            id="tableColaboradoresCl"
                         >
                             <thead class="table-dark">
                                 <tr>
                                     <th id="button-plus"></th>
                                     <th>#</th>
-                                    <th>Dni</th>
+                                    <th>NP Usuario</th>
                                     <th>Nombres y Apellidos de solicitud</th>
                                     <th>Empresa</th>
                                     <th>Unidad</th>
@@ -263,7 +263,7 @@ export default {
     methods: {
         createTable() {
             var self = this;
-            this.table = new DataTable("#tableColaboradoresPe", {
+            this.table = new DataTable("#tableColaboradoresCl", {
                 language: {
                     url: "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json",
                 },

@@ -304,7 +304,6 @@ export default {
                     { data: "fecha_desvinculacion", className: "text-center" },
                     { data: "redireccion", className: "text-center" },
                     { data: "comentario", className: "text-center" },
-                    { data: "comentario", className: "text-center" },
                     {
                         data: null,
                         className: "text-center",
