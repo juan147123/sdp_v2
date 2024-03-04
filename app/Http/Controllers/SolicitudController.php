@@ -38,6 +38,11 @@ class SolicitudController extends Controller
         return Inertia::render('Solicitud/Index');
     }
 
+    public function redirectPageSolicitudObra()
+    {
+        return Inertia::render('SolicitudObra/Index');
+    }
+
     public function listAll()
     {
         $usuario_rol = $this->repositoryUsuarioRol->getIdRol();

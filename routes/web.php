@@ -48,6 +48,10 @@ Route::middleware([
     Route::post('create/solicitud', [SolicitudController::class, 'create'])->name('create.solicitud');
     Route::post('create/solicitud/multiple', [SolicitudController::class, 'createMultiple'])->name('create.solicitud.multiple');
     
+    //SOLICITUD OBRA
+    Route::get('redirectpage/solicitud/obra', [SolicitudController::class, 'redirectPageSolicitudObra'])->name('redirect.solicitud.obra');
+
+    
     //SOLICITUD COLABORADOR
     Route::put('solicitudes/status', [SolicitudColaboradorController::class, 'updateStatus'])->name('solicitud.colaborador.update.status');
     Route::put('solicitudes/status/masive', [SolicitudColaboradorController::class, 'updateAllStatus'])->name('solicitud.colaborador.update.masive');
@@ -62,6 +66,10 @@ Route::middleware([
     //COLABORADORES CHILE
     Route::get('redirectpage/colaboradores/cl', [ColaboradoresChileController::class, 'redirectPage'])->name('redirect.colaboradores.cl');
     Route::get('colaboradores/cl', [ColaboradoresChileController::class, 'getColaboradoresCl'])->name('list.colaboradores.cl');
+    
+    //COLABORADORES CHILE | OBRA
+    Route::get('redirectpage/obra/colaboradores/cl', [ColaboradoresChileController::class, 'redirectPageObraCl'])->name('redirect.colaboradores.obra.cl');
+    Route::get('colaboradores/obra/cl', [ColaboradoresChileController::class, 'getColaboradoresObra'])->name('list.colaboradores.obra.cl');
     
     //TERMINOS PERU
     Route::get('terminos/list', [TerminosController::class, 'listAll'])->name('terminos.list');

@@ -158,7 +158,7 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
             where
                 correo is not null)
         select 
-             c.user_id,
+            c.user_id,
             c.np_lider,
             c.first_name,
             c.last_name,
@@ -218,9 +218,14 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
             ORDER BY first_name ASC;        
         ";
 
-        $colaboradores = DB::connection('dw_chile')->select(DB::raw($query_obra), ['correo_lider' => $correo]);
-
-      return $colaboradores;
+        $colaboradores = DB::connection('dw_chile')->select(DB::raw($query_obra), [
+            'correo_lider' => $correo,
+        ]);
+        $colaboradores = collect($colaboradores)->map(function ($colaborador) {
+            $colaborador->solicitudes = $this->repositorySolicitudColaborador->CountSolicitudByUserId($colaborador->user_id);
+            return $colaborador;
+        });
+        return  $colaboradores;
     }
 
 

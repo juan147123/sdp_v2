@@ -45,63 +45,116 @@
         <hr />
         <nav class="mb-auto">
             <ul class="mcd-menu">
-                <div v-if="this.$page.props.rol.id_rol !== 81">
-                    <li class="toogle-li">
-                        <a
-                            :href="this.route('redirect.solicitud')"
-                            :class="
-                                this.route().current('redirect.solicitud')
-                                    ? 'active'
-                                    : ''
-                            "
-                            @click="setPreloader()"
-                        >
-                            <i class="fas fa-file icon-menu"></i>
-                            <strong>Solicitudes</strong>
-                        </a>
-                    </li>
-                    <li
-                        class="toogle-li"
-                        v-if="this.$page.props.auth.user.pais == 'PE'"
+                <div
+                    v-if="
+                        this.$page.props.rol.id_rol !==
+                        this.$env.ADMINISTRADOR_AREA
+                    "
+                >
+                    <!-- TODO CHILE PERU  -->
+                    <div
+                        class="solicitudes-planta"
+                        v-if="
+                            this.$page.props.rol.id_rol !==
+                            this.$env.ADMINISTRADOR_LIDER_OBRA
+                        "
                     >
-                        <a
-                            :href="this.route('redirect.colaboradores.pe')"
-                            :class="
-                                this.route().current(
-                                    'redirect.colaboradores.pe'
-                                )
-                                    ? 'active'
-                                    : ''
-                            "
-                            @click="setPreloader()"
+                        <li
+                            class="toogle-li"
+                            v-if="this.$page.props.auth.user.pais == 'PE'"
                         >
-                            <i class="fas fa-users icon-menu"></i>
-                            <strong>Colaboradores</strong>
-                        </a>
-                    </li>
+                            <a
+                                :href="this.route('redirect.colaboradores.pe')"
+                                :class="
+                                    this.route().current(
+                                        'redirect.colaboradores.pe'
+                                    )
+                                        ? 'active'
+                                        : ''
+                                "
+                                @click="setPreloader()"
+                            >
+                                <i class="fas fa-users icon-menu"></i>
+                                <strong>Colaboradores</strong>
+                            </a>
+                        </li>
+                        <li
+                            class="toogle-li"
+                            v-if="this.$page.props.auth.user.pais == 'CL'"
+                        >
+                            <a
+                                :href="this.route('redirect.colaboradores.cl')"
+                                :class="
+                                    this.route().current(
+                                        'redirect.colaboradores.cl'
+                                    )
+                                        ? 'active'
+                                        : ''
+                                "
+                                @click="setPreloader()"
+                            >
+                                <i class="fas fa-users icon-menu"></i>
+                                <strong>Colaboradores</strong>
+                            </a>
+                        </li>
+                        <li class="toogle-li">
+                            <a
+                                :href="this.route('redirect.solicitud')"
+                                :class="
+                                    this.route().current('redirect.solicitud')
+                                        ? 'active'
+                                        : ''
+                                "
+                                @click="setPreloader()"
+                            >
+                                <i class="fas fa-file icon-menu"></i>
+                                <strong>Solicitudes</strong>
+                            </a>
+                        </li>
+                    </div>
+                    <!-- TODO OBRA -->
+                    <div class="solicitudes-obra" v-else>
+                        <li class="toogle-li">
+                            <a
+                                :href="
+                                    this.route('redirect.colaboradores.obra.cl')
+                                "
+                                :class="
+                                    this.route().current(
+                                        'redirect.colaboradores.obra.cl'
+                                    )
+                                        ? 'active'
+                                        : ''
+                                "
+                                @click="setPreloader()"
+                            >
+                                <i class="fas fa-users icon-menu"></i>
+                                <strong>Colaboradores</strong>
+                            </a>
+                        </li>
+                        <li class="toogle-li">
+                            <a
+                                :href="this.route('redirect.solicitud.obra')"
+                                :class="
+                                    this.route().current(
+                                        'redirect.solicitud.obra'
+                                    )
+                                        ? 'active'
+                                        : ''
+                                "
+                                @click="setPreloader()"
+                            >
+                                <i class="fas fa-file icon-menu"></i>
+                                <strong>Solicitudes</strong>
+                            </a>
+                        </li>
+                    </div>
                     <li
                         class="toogle-li"
-                        v-if="this.$page.props.auth.user.pais == 'CL'"
-                    >
-                        <a
-                            :href="this.route('redirect.colaboradores.cl')"
-                            :class="
-                                this.route().current(
-                                    'redirect.colaboradores.cl'
-                                )
-                                    ? 'active'
-                                    : ''
-                            "
-                            @click="setPreloader()"
-                        >
-                            <i class="fas fa-users icon-menu"></i>
-                            <strong>Colaboradores</strong>
-                        </a>
-                    </li>
-                    <!-- v-if="this.$page.props.rol.id_rol == 79" configuraciones-->
-                    <li
-                        class="toogle-li"
-                        v-if="this.$page.props.rol.id_rol == 79"
+                        v-if="
+                            this.$page.props.rol.id_rol ==
+                            this.$env.SUPER_ADMINISTRADOR
+                        "
                     >
                         <a
                             class="no-href"
