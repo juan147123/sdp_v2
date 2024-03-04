@@ -35,8 +35,7 @@ class ColaboradoresChileController extends Controller
 
     public function getColaboradoresObra()
     {
-        $email = Auth::user()->username;
-        dd($email);
+        $email = strtoupper(Auth::user()->username);
         return $this->repository->getColaboradoresObra($email);
     }
 }
