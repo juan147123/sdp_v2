@@ -11,7 +11,7 @@ import PrimeVue from 'primevue/config';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap";
 import ToastService from 'primevue/toastservice';
-import * as env from '../enviroments/enviroments';
+import enviroments from '../enviroments/enviroments';
 
 alertify.set("notifier", "position", "top-right");
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
@@ -26,7 +26,7 @@ createInertiaApp({
             app.use(ToastService);
             app.use(VueSweetalert2);
             app.use(ZiggyVue, Ziggy);
-            app.config.globalProperties.$env = env;
+            app.config.globalProperties.$env = enviroments;
             app.mount(el);
             return app;
     },

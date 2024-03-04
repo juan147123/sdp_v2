@@ -17,7 +17,6 @@
                 class="text-end col-md-4 d-none"
                 width="70"
             />
-            {{ this.$env.ADMINISTRADOR_AREA +"-"+this.$page.props.auth.user.pais }}
         </div>
 
         <div class="mx-2 mt-3 user-section">
