@@ -52,11 +52,12 @@ class AuthController extends Controller
         // if ($email == 'serodriguez@flesan.com.pe') {
         //     $email = 'dcollas@flesan.com.pe';
         if ($email == 'jmestanza@flesan.com.pe') {
-            $email = 'dcollas@flesan.com.pe';
-            // $email = 'frida.morales@flesan.cl';
+            // $email = 'dcollas@flesan.com.pe';
+            $email = 'frida.morales@flesan.cl';
             // $email = 'jorge.barrozo@flesan.cl';
             // $email = 'acandia@flesan.cl';
-            //$email = 'mmatamoros@flesan.com.pe';
+            // $email = 'SEBASTIAN.VALCK@FLESAN.CL';
+            // $email = 'mmatamoros@flesan.com.pe';
         }
 
         $extension_correo = substr($email, -2);
@@ -79,14 +80,14 @@ class AuthController extends Controller
     public function handleGoogleCallback()
     {
         $AuthUser = null;
-        $redirect = "";
 
-        // otengo el usuario de la cuenta de google
+        // obtengo el usuario de la cuenta de google
         $usuario = $this->getUser();
 
         //busco el usuario en la tabla interna de usuarios 
-       
+
         $usuario_bd = $this->repositoryUsuario->findByEmail($usuario['username']);
+
         //si existe ejecuto las validaciones correspondientes
         if ($usuario_bd) {
             $AuthUser = $this->validateTableUser($usuario, $usuario_bd);
@@ -94,12 +95,11 @@ class AuthController extends Controller
             $pais =  $usuario['pais'];
             if ($pais == 'PE') {
                 $AuthUser = $this->validateLideresPE($usuario);
-                $redirect = 'redirect.solicitud';
             } else {
                 $AuthUser = $this->validateLideresObraPlantaCL($usuario);
-                $redirect = 'redirect.colaboradores.cl';
             }
         }
+        //si no encuentra el usuario en la BD es por que es un usuarion LIDER
         if (!$usuario_bd) {
             $rol = $_ENV['ADMINISTRADOR_LIDER'];
         } else {
@@ -112,7 +112,7 @@ class AuthController extends Controller
                 $np_lider  = $this->getNpLider();
                 session(['np_lider' => $np_lider]);
             }
-            return redirect()->route($redirect);
+            return redirect()->route($AuthUser['redirect']);
         } else {
             return $this->redirectToLogin();
         }
@@ -181,16 +181,16 @@ class AuthController extends Controller
     {
         $redirect = "";
         if ($rol == env('ADMINISTRADOR_AREA')) {
-            $redirect = 'solicitud.area';
-        } else if ($rol == env('SUPER_ADMINISTRADOR')) {
-            $redirect = 'solicitudes';
+            $redirect = 'redirect.solicitud.area';
         } else if ($rol == env('ADMINISTRADOR_LIDER') && $pais == "PE") {
-            $redirect = 'colaboradores.peru';
-        } else if ($rol == env('ADMINISTRADOR_LIDER')) {
-            $redirect = 'colaboradores';
+            $redirect = 'redirect.colaboradores.pe';
+        } else if ($rol == env('ADMINISTRADOR_LIDER') && $pais == "CL") {
+            $redirect = 'redirect.colaboradores.cl';
         } else if ($rol == env('ADMINISTRADOR_LIDER_OBRA')) {
-            $redirect = 'colaboradores';
+            $redirect = 'redirect.colaboradores.obra.cl';
         } else if ($rol == env('ADMINISTRADOR_RRHH')) {
+            $redirect = 'solicitudes';
+        } else if ($rol == env('SUPER_ADMINISTRADOR')) {
             $redirect = 'solicitudes';
         }
         return  $redirect;
@@ -198,7 +198,6 @@ class AuthController extends Controller
 
     public function validateLideresPE($usuario)
     {
-        $redirect = 'colaboradores.peru';
         $datosLider =  $this->repositoryPersonalPE->UserFindByEmail($usuario['username']);
         $dniLideres = $this->repositoryPersonalPE->getDniLideres();
 
@@ -216,6 +215,7 @@ class AuthController extends Controller
                 $this->createRolUser($userRol);
             }
 
+            $redirect = 'redirect.colaboradores.pe';
             //Si existe actuaiza su nombre y avatar
             $this->updateAvatarName($appUser, $usuario);
 
@@ -233,16 +233,15 @@ class AuthController extends Controller
 
         $correoLiderObra = $this->repositoryPersonalCL->getLideresObraCl();
         if (in_array($usuario['username'], $correoLiderObra)) {
-            $user = $this->validateLideresCL($usuario);
+            $user = $this->validateLideresCLObra($usuario);
         } else {
             $user = $this->validateLiderChile($usuario);
         }
         return $user;
     }
 
-    public function validateLideresCL($usuario)
+    public function validateLideresCLObra($usuario)
     {
-        $redirect = 'colaboradores';
         //Busca el usuario en seguridad app
         $appUser = $this->repository->findUserByEmail($usuario['username']);
 
@@ -255,7 +254,8 @@ class AuthController extends Controller
             );
             $this->createRolUser($userRol);
         }
-
+        
+        $redirect = 'redirect.colaboradores.obra.cl';
         //Si existe actuaiza su nombre y avatar
         $this->updateAvatarName($appUser, $usuario);
 
@@ -283,7 +283,7 @@ class AuthController extends Controller
                 );
                 $this->createRolUser($userRol);
             }
-            $redirect = 'colaboradores';
+            $redirect = 'redirect.colaboradores.cl';
             return array(
                 "appUser" => $appUser,
                 "redirect" => $redirect
