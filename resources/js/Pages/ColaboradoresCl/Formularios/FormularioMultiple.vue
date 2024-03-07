@@ -178,7 +178,7 @@ import { rutaBase } from "../../../../Utils/utils.js";
 import { setSwal } from "../../../../Utils/swal";
 import * as mensajes from "../../../../Utils/message.js";
 export default {
-    props: ["terminos", "colaboradoresDetalle"],
+    props: ["terminos", "colaboradoresDetalle","filters"],
     emits: ["reloadTable", "onClickCleanDetalleColaborador"],
     components: {
         Preloader,
@@ -203,8 +203,15 @@ export default {
             var self = this;
             const form = document.getElementById("formSolicitudMultiple");
             const formData = new FormData(form);
-
-            this.isLoadingForm = true;
+            var empresa = $("#empresa_cl").val();
+            var unidad = $("#unidad_cl").val();
+            var centro = $("#centroCosto_cl").val();
+            var depa = $("#departamento_cl").val();
+            console.log(empresa);
+            console.log(unidad);
+            console.log(centro);
+            console.log(depa);
+           /*  this.isLoadingForm = true;
             this.mensaje =
                 "registrando la solicitud, esto demorara según la cantidad y tamaño de los archivos";
 
@@ -230,7 +237,7 @@ export default {
                 })
                 .catch((error) => {
                     console.error(error);
-                });
+                }); */
         },
         reloadTable() {
             this.$emit("reloadTable");

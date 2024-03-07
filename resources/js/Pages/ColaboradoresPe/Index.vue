@@ -326,7 +326,7 @@ export default {
                         .find(".checkbox-datatable")
                         .on("change", function () {
                             if (this.checked) {
-                                if (self.colaboradoresDetalle.length < 10) {
+                                if (self.colaboradoresDetalle.length < 15) {
                                     self.colaboradoresDetalle.push(data);
                                 } else {
                                     this.checked = false;

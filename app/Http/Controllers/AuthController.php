@@ -59,7 +59,9 @@ class AuthController extends Controller
             // $email = 'SEBASTIAN.VALCK@FLESAN.CL';
             // $email = 'mmatamoros@flesan.com.pe';
             // $email = 'ESM@FLESAN.CL';
-            $email = 'esm@flesan.cl';
+            $email = 'jorge.fernandezdelrio@flesan.cl';
+            // $email = 'david.vilugron@flesan.cl'; //pendiente
+            // $email = 'cesar.munoz@flesan.cl';
         }
 
         $extension_correo = substr($email, -2);
@@ -234,12 +236,22 @@ class AuthController extends Controller
         $user = null;
 
         $correoLiderObra = $this->repositoryPersonalCL->getLideresObraCl();
+
+        $this->setModule($usuario);
         if (in_array($usuario['username'], $correoLiderObra)) {
             $user = $this->validateLideresCLObra($usuario);
         } else {
             $user = $this->validateLiderChile($usuario);
         }
         return $user;
+    }
+
+    public function setModule($usuario)
+    {
+        $correoAdminDep = $this->repositoryPersonalCL->getAdministradorDepartamento();
+        if (in_array($usuario['username'], $correoAdminDep)) {
+            session(['aprobacion_obra' => 1]);
+        }
     }
 
     public function validateLideresCLObra($usuario)
@@ -256,11 +268,11 @@ class AuthController extends Controller
             );
             $this->createRolUser($userRol);
         }
-        
+
         $redirect = 'redirect.colaboradores.obra.cl';
         //Si existe actuaiza su nombre y avatar
         $this->updateAvatarName($appUser, $usuario);
-
+        session(['obra' => 1]);
         // Retorna el usuario a loguear más su ruta de redireccion
         return array(
             "appUser" => $appUser,

@@ -36,20 +36,21 @@
                         <div class="row">
                             <div class="col-md-3 d-flex flex-column">
                                 <label
-                                    for="empresa_pe"
+                                    for="empresa_cl"
                                     class="form-label label-filter"
                                     >Empresa:</label
                                 >
                                 <select
                                     class="form-select column_filter select-filtros"
-                                    name="empresa_pe"
-                                    id="empresa_pe"
+                                    name="empresa_cl"
+                                    id="empresa_cl"
                                     index="4"
-                                    v-model="this.empresa"
+                                    @change="onChangeFiltersSetData($event)"
                                 >
                                     <option value="">Seleccione</option>
                                     <option
                                         v-for="empresa in this.empresas"
+                                        :key="empresa.rut"
                                         :value="empresa.id"
                                     >
                                         {{ empresa.descripcion }}
@@ -58,16 +59,15 @@
                             </div>
                             <div class="col-md-3 d-flex flex-column">
                                 <label
-                                    for="unidad_pe"
+                                    for="unidad_cl"
                                     class="form-label label-filter"
                                     >Unidad:</label
                                 >
                                 <select
                                     class="form-select column_filter select-filtros"
-                                    name="unidad_pe"
-                                    id="unidad_pe"
+                                    name="unidad_cl"
+                                    id="unidad_cl"
                                     index="5"
-                                    v-model="this.unidad"
                                 >
                                     <option value="" :codEmpresa="''">
                                         Seleccione
@@ -85,16 +85,15 @@
                             </div>
                             <div class="col-md-3 d-flex flex-column">
                                 <label
-                                    for="centroCosto_pe"
+                                    for="centroCosto_cl"
                                     class="form-label label-filter"
                                     >Centro de costo:</label
                                 >
                                 <select
                                     class="form-select column_filter select-filtros"
-                                    name="centroCosto_pe"
-                                    id="centroCosto_pe"
+                                    name="centroCosto_cl"
+                                    id="centroCosto_cl"
                                     index="6"
-                                    v-model="this.centrocosto"
                                 >
                                     <option
                                         value=""
@@ -120,15 +119,14 @@
                                 <label
                                     for="area"
                                     class="form-label label-filter"
-                                    >Área:</label
+                                    >Departamento:</label
                                 >
 
                                 <select
                                     class="form-select column_filter select-filtros"
-                                    name="area_pe"
-                                    id="area_pe"
+                                    name="departamento_cl"
+                                    id="departamento_cl"
                                     index="7"
-                                    v-model="this.area"
                                 >
                                     <option
                                         value=""
@@ -144,7 +142,7 @@
                                         :centro_costo="area.centro_costo"
                                         :codEmpresa="area.rut"
                                     >
-                                        {{ area.centro_costo }}
+                                        {{ area.departamento }}
                                         -
                                         {{ area.descripcion }}
                                     </option>
@@ -189,7 +187,7 @@
                                     <th>Empresa</th>
                                     <th>Unidad</th>
                                     <th>Centro de costo</th>
-                                    <th>Área</th>
+                                    <th>Departamento</th>
                                     <th>Solicitud</th>
                                 </tr>
                             </thead>
@@ -203,12 +201,14 @@
             :terminos="this.terminos"
             :colaboradoresDetalle="colaboradoresDetalle"
             @reloadTable="reloadTable"
+            :filters="this.filters"
         />
         <FormularioMultiple
             :terminos="this.terminos"
             :colaboradoresDetalle="colaboradoresDetalle"
             @reloadTable="reloadTable"
             @onClickCleanDetalleColaborador="onClickCleanDetalleColaborador"
+            :filters="this.filters"
         />
     </AppLayout>
 </template>
@@ -246,11 +246,12 @@ export default {
             unidades: [],
             areas: [],
             centrosCosto: [],
-            empresa: "",
-            unidad: "",
-            departamento: "",
-            centrocosto: "",
-            area: "",
+            filters: {
+                empresa: "",
+                unidad: "",
+                departamento: "",
+                centrocosto: "",
+            },
             colaboradoresDetalle: [],
             terminos: [],
         };
@@ -294,7 +295,8 @@ export default {
                         var unidad = {
                             rut: colaborador.rut,
                             codigo_unidad: colaborador.id_unidad_negocio,
-                            descripcion: colaborador.unidad_negocio.toUpperCase(),
+                            descripcion:
+                                colaborador.unidad_negocio.toUpperCase(),
                         };
                         self.addToUnidadArray(unidad);
 
@@ -302,17 +304,20 @@ export default {
                             rut: colaborador.empresa,
                             codigo_unidad: colaborador.id_unidad_negocio,
                             centro_costo: colaborador.centro_costo,
-                            descripcion: colaborador.nombre_centro_costo.toUpperCase(),
+                            descripcion:
+                                colaborador.nombre_centro_costo.toUpperCase(),
                         };
                         self.addToCentroGestionArray(cege);
 
-                        var area = {
+                        var departamento = {
                             rut: colaborador.rut,
                             codigo_unidad: colaborador.id_unidad_negocio,
                             centro_costo: colaborador.centro_costo,
-                            descripcion: colaborador.nombre_departamento.toUpperCase(),
+                            departamento: colaborador.departamento,
+                            descripcion:
+                                colaborador.nombre_departamento.toUpperCase(),
                         };
-                        self.addToAreaArray(area);
+                        self.addToAreaArray(departamento);
                     });
                 },
                 createdRow: function (row, data, dataIndex) {
@@ -326,7 +331,7 @@ export default {
                         .find(".checkbox-datatable")
                         .on("change", function () {
                             if (this.checked) {
-                                if (self.colaboradoresDetalle.length < 10) {
+                                if (self.colaboradoresDetalle.length < 15) {
                                     self.colaboradoresDetalle.push(data);
                                 } else {
                                     this.checked = false;
@@ -401,8 +406,7 @@ export default {
                         data: "departamento",
                         width: 300,
                         render: function (data, type, row) {
-                            return data  + " - " +
-                                row.nombre_departamento;
+                            return data + " - " + row.nombre_departamento;
                         },
                     },
                     {
@@ -488,23 +492,24 @@ export default {
             });
         },
         filterColumn(i, value) {
+            console.log(value)
             self = this;
             self.table.column(i).search(value).draw();
         },
         onClickCleanDetalleColaborador() {
             this.colaboradoresDetalle = [];
             this.table
-                .column(1) 
+                .column(1)
                 .nodes()
-                .to$() 
+                .to$()
                 .find(".checkbox-datatable")
                 .prop("checked", false);
         },
         onClickClean() {
-            $("#empresa_pe").val("").trigger("change");
-            $("#unidad_pe").val("").trigger("change");
-            $("#centroCosto_pe").val("").trigger("change");
-            $("#area_pe").val("").trigger("change");
+            $("#empresa_cl").val("").trigger("change");
+            $("#unidad_cl").val("").trigger("change");
+            $("#centroCosto_cl").val("").trigger("change");
+            $("#departamento_cl").val("").trigger("change");
         },
         async getMotivos() {
             this.terminos = [];
@@ -520,6 +525,11 @@ export default {
         },
         reloadTable() {
             this.table.ajax.reload();
+        },
+        onChangeFiltersSetData($event) {
+            const selectedData = $(`#${this.selectId}`).select2("data");
+            console.log(selectedData);
+            /* this.filters[clave] = valor; */
         },
     },
 };

@@ -8,4 +8,4 @@ export const MENSAJE_ELIMINADO = "¡Eliminado!";
 export const MENSAJE_NO_AUTORIZADO = "Ud. no se encuentra autorizado comuniquese con el area de desarrollo.";
 export const MENSAJE_LOGOUT = "¿Desea cerrar sesion?";
 export const MENSAJE_SOLICITUD_EXISTE = "Ya se encuentra registrado dentro de una solicitud.";
-export const MENSAJE_MAX = "Solo se pueden registrar 10 colaboradores como máximo.";
+export const MENSAJE_MAX = "Solo se pueden registrar 15 colaboradores como máximo.";

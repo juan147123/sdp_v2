@@ -137,7 +137,7 @@ import { rutaBase } from "../../../../Utils/utils.js";
 import { setSwal } from "../../../../Utils/swal";
 import * as mensajes from "../../../../Utils/message.js";
 export default {
-    props: ["terminos", "colaboradoresDetalle"],
+    props: ["terminos", "colaboradoresDetalle","filters"],
     emits: ["reloadTable"],
     components: {
         Preloader,

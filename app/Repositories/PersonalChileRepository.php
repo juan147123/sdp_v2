@@ -251,4 +251,22 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
 
         return $correosLideresObra;
     }
+    
+    public function getAdministradorDepartamento()
+    {
+        $query = "
+        select LOWER(smc.correo_flesan)  as correo from sap_maestro_colaborador smc where smc.user_id  in (
+            select distinct  l.lider_departamento::INT from flesan_rrhh.sap_maestro_empresa_dep_un_cc l
+            where l.status_cc = 'A' and l.status_departamento = 'A'
+            and l.lider_departamento <> ''
+            )
+            and smc.empl_status = '41111';";
+
+        $resultados = DB::connection('dw_chile')
+            ->select(DB::raw($query));
+
+        $correoAdminDep = collect($resultados)->pluck('correo')->toArray();
+
+        return $correoAdminDep;
+    }
 }

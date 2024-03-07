@@ -120,7 +120,7 @@
                                 <label
                                     for="area"
                                     class="form-label label-filter"
-                                    >Área:</label
+                                    >Departamento:</label
                                 >
 
                                 <select
@@ -144,7 +144,7 @@
                                         :centro_costo="area.centro_costo"
                                         :codEmpresa="area.rut"
                                     >
-                                        {{ area.centro_costo }}
+                                        {{ area.departamento }}
                                         -
                                         {{ area.descripcion }}
                                     </option>
@@ -189,7 +189,7 @@
                                     <th>Empresa</th>
                                     <th>Unidad</th>
                                     <th>Centro de costo</th>
-                                    <th>Área</th>
+                                    <th>Departamento</th>
                                     <th>Solicitud</th>
                                 </tr>
                             </thead>
@@ -298,21 +298,23 @@ export default {
                         };
                         self.addToUnidadArray(unidad);
 
-                        var cege = {
-                            rut: colaborador.empresa,
-                            codigo_unidad: colaborador.id_unidad_negocio,
-                            centro_costo: colaborador.centro_costo,
-                            descripcion: colaborador.nombre_centro_costo.toUpperCase(),
-                        };
-                        self.addToCentroGestionArray(cege);
 
-                        var area = {
+                        var departamento = {
                             rut: colaborador.rut,
                             codigo_unidad: colaborador.id_unidad_negocio,
                             centro_costo: colaborador.centro_costo,
                             descripcion: colaborador.nombre_departamento.toUpperCase(),
                         };
-                        self.addToAreaArray(area);
+                        self.addToAreaArray(departamento);
+                      
+                        var cege = {
+                            rut: colaborador.empresa,
+                            codigo_unidad: colaborador.id_unidad_negocio,
+                            centro_costo: colaborador.centro_costo,
+                            departamento: colaborador.departamento,
+                            descripcion: colaborador.nombre_centro_costo.toUpperCase(),
+                        };
+                        self.addToCentroGestionArray(cege);
                     });
                 },
                 createdRow: function (row, data, dataIndex) {
@@ -326,7 +328,7 @@ export default {
                         .find(".checkbox-datatable")
                         .on("change", function () {
                             if (this.checked) {
-                                if (self.colaboradoresDetalle.length < 10) {
+                                if (self.colaboradoresDetalle.length < 15) {
                                     self.colaboradoresDetalle.push(data);
                                 } else {
                                     this.checked = false;

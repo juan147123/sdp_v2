@@ -66,7 +66,7 @@ class SolicitudController extends Controller
     {
         $new_solicitud = $this->createSolicitud();
         $new_detail = $this->createSolicitudDetail($request, $new_solicitud);
-        return 1;
+        return 'ok';
     }
 
     public function createSolicitud()
@@ -90,6 +90,7 @@ class SolicitudController extends Controller
         return [
             'np_lider' => $npLider,
             'user_created' => $userCreated,
+            'obra' => session('obra') == null ? 0 : session('obra'),
         ];
     }
     private function buildSolicitudDetail($solicitudcolaborador, $new_solicitud)

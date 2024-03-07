@@ -49,7 +49,8 @@ class HandleInertiaRequests extends Middleware
             $usuario_rol = $this->repositoryUsuarioRol->getIdRol();
         }
         return array_merge(parent::share($request), [
-            "rol" => $usuario_rol
+            "rol" => $usuario_rol,
+            "modulo_aprobacion" => session('aprobacion_obra') == null? 0 : session('aprobacion_obra'),
         ]);
     }
 }
