@@ -59,9 +59,9 @@ class AuthController extends Controller
             // $email = 'SEBASTIAN.VALCK@FLESAN.CL';
             // $email = 'mmatamoros@flesan.com.pe';
             // $email = 'ESM@FLESAN.CL';
-            $email = 'jorge.fernandezdelrio@flesan.cl';
+            // $email = 'jorge.fernandezdelrio@flesan.cl';
             // $email = 'david.vilugron@flesan.cl'; //pendiente
-            // $email = 'cesar.munoz@flesan.cl';
+            $email = 'cesar.munoz@flesan.cl';
         }
 
         $extension_correo = substr($email, -2);

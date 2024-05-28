@@ -20,8 +20,9 @@ body {
     z-index: 999;
 }
 .contenedor.close {
-    width: calc(100% - 160px);
+    width: calc(100% - 70px);
     margin-left: 70px;
+    transition: 0.5s;
 }
 .contenedor-sidebar.close {
     margin-left: -160px;
@@ -407,9 +408,16 @@ div:where(.swal2-container) .swal2-html-container {
 .select2-search__field {
     font-size: 12px;
 }
+.select2-search__field:focus {
+    outline: none;
+}
 .select2-selection__rendered {
     font-size: 12px;
 }
+.select2-results__option {
+    font-size: 12px; 
+}
+
 .label-filter{
     font-size: 14px;
 }

@@ -378,7 +378,7 @@ export default {
                     },
                     {
                         data: null,
-                        width: 400,
+                        width: 300,
                         render: function (data, type, row) {
                             return row.first_name + " " + row.last_name;
                         },
@@ -492,7 +492,7 @@ export default {
             });
         },
         filterColumn(i, value) {
-            console.log(value)
+            console.log(value);
             self = this;
             self.table.column(i).search(value).draw();
         },
@@ -521,6 +521,10 @@ export default {
                     this.mensaje = "";
                     this.isLoadingForm = false;
                     this.terminos = response.data;
+                    $(".form-select-modal-multiple").select2({
+                        dropdownParent: $("#modalSolicitudMultiple"),
+                        tags: true,
+                    });
                 });
         },
         reloadTable() {
