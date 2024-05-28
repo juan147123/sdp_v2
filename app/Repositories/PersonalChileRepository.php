@@ -187,7 +187,6 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
         inner join flesan_rrhh.sap_maestro_cargos smc on c.external_cod_cargo = smc.external_code
         inner join public.maestro_rut mr  ON mr.id_sap = c.empresa
         inner JOIN flesan_rrhh.sap_maestro_empresa_dep_un_cc m ON m.external_code_cc = c.centro_costo
-        where smc.planta_noplanta = 'NP'
         and c.empl_status = '41111'
         and cl.correo_lider = :correo_lider
         group by 

@@ -150,6 +150,25 @@
                                     </option>
                                 </select>
                             </div>
+                            <div class="col-md-2 d-flex flex-column">
+                                <label
+                                    for="area"
+                                    class="form-label label-filter"
+                                    >Planta:</label
+                                >
+
+                                <select
+                                    class="form-select column_filter select-filtros"
+                                    name="p_np"
+                                    id="p_np"
+                                    index="8"
+                                    v-model="this.p_np"
+                                >
+                                    <option value="">Seleccione</option>
+                                    <option value="PL">PLANTA</option>
+                                    <option value="NP">NO PLANTA</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -190,6 +209,7 @@
                                     <th>Unidad</th>
                                     <th>Centro de costo</th>
                                     <th>Departamento</th>
+                                    <th>Planta</th>
                                     <th>Solicitud</th>
                                 </tr>
                             </thead>
@@ -251,6 +271,7 @@ export default {
             departamento: "",
             centrocosto: "",
             area: "",
+            p_np: "",
             colaboradoresDetalle: [],
             terminos: [],
         };
@@ -294,25 +315,27 @@ export default {
                         var unidad = {
                             rut: colaborador.rut,
                             codigo_unidad: colaborador.id_unidad_negocio,
-                            descripcion: colaborador.unidad_negocio.toUpperCase(),
+                            descripcion:
+                                colaborador.unidad_negocio.toUpperCase(),
                         };
                         self.addToUnidadArray(unidad);
-
 
                         var departamento = {
                             rut: colaborador.rut,
                             codigo_unidad: colaborador.id_unidad_negocio,
                             centro_costo: colaborador.centro_costo,
-                            descripcion: colaborador.nombre_departamento.toUpperCase(),
+                            descripcion:
+                                colaborador.nombre_departamento.toUpperCase(),
                         };
                         self.addToAreaArray(departamento);
-                      
+
                         var cege = {
                             rut: colaborador.empresa,
                             codigo_unidad: colaborador.id_unidad_negocio,
                             centro_costo: colaborador.centro_costo,
                             departamento: colaborador.departamento,
-                            descripcion: colaborador.nombre_centro_costo.toUpperCase(),
+                            descripcion:
+                                colaborador.nombre_centro_costo.toUpperCase(),
                         };
                         self.addToCentroGestionArray(cege);
                     });
@@ -327,8 +350,18 @@ export default {
                     $(row)
                         .find(".checkbox-datatable")
                         .on("change", function () {
+                            console.log(self.colaboradoresDetalle)
+                            const centroExists = self.colaboradoresDetalle.some(
+                                (item) => item.centro_costo !== data.centro_costo
+                            );
+
                             if (this.checked) {
-                                if (self.colaboradoresDetalle.length < 15) {
+                                if (centroExists) {
+                                    this.checked = false;
+                                    self.setToast2();
+                                } else if (
+                                    self.colaboradoresDetalle.length < 15
+                                ) {
                                     self.colaboradoresDetalle.push(data);
                                 } else {
                                     this.checked = false;
@@ -403,9 +436,12 @@ export default {
                         data: "departamento",
                         width: 300,
                         render: function (data, type, row) {
-                            return data  + " - " +
-                                row.nombre_departamento;
+                            return data + " - " + row.nombre_departamento;
                         },
+                    },
+                    {
+                        data: "planta_noplanta",
+                        className: "text-center",
                     },
                     {
                         data: "solicitudes",
@@ -438,6 +474,15 @@ export default {
                 position: "top-right",
                 summary: "Importante",
                 detail: mensajes.MENSAJE_MAX,
+                life: 3000,
+            });
+        },
+        setToast2() {
+            this.$toast.add({
+                severity: "warn",
+                position: "top-right",
+                summary: "Importante",
+                detail: "Tienen que registrar el mismo centro de costo",
                 life: 3000,
             });
         },
@@ -496,9 +541,9 @@ export default {
         onClickCleanDetalleColaborador() {
             this.colaboradoresDetalle = [];
             this.table
-                .column(1) 
+                .column(1)
                 .nodes()
-                .to$() 
+                .to$()
                 .find(".checkbox-datatable")
                 .prop("checked", false);
         },
@@ -507,6 +552,8 @@ export default {
             $("#unidad_pe").val("").trigger("change");
             $("#centroCosto_pe").val("").trigger("change");
             $("#area_pe").val("").trigger("change");
+            $("#p_np").val("").trigger("change");
+            this.onClickCleanDetalleColaborador();
         },
         async getMotivos() {
             this.terminos = [];
@@ -518,6 +565,10 @@ export default {
                     this.mensaje = "";
                     this.isLoadingForm = false;
                     this.terminos = response.data;
+                    $(".form-select-modal-multiple").select2({
+                        dropdownParent: $("#modalSolicitudMultiple"),
+                        tags: true,
+                    });
                 });
         },
         reloadTable() {

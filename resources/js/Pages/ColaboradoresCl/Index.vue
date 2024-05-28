@@ -188,6 +188,7 @@
                                     <th>Unidad</th>
                                     <th>Centro de costo</th>
                                     <th>Departamento</th>
+                                    <th>Planta</th>
                                     <th>Solicitud</th>
                                 </tr>
                             </thead>
@@ -408,6 +409,10 @@ export default {
                         render: function (data, type, row) {
                             return data + " - " + row.nombre_departamento;
                         },
+                    },
+                    {
+                        data: "planta_noplanta",
+                        className: "text-center",
                     },
                     {
                         data: "solicitudes",

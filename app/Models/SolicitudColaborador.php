@@ -37,7 +37,7 @@ class SolicitudColaborador extends Model
     /**
      * @var array
      */
-    protected $fillable = ['motivo', 'id_solicitud', 'user_id', 'status', 'created_at', 'updated_at', 'fecha_desvinculacion', 'user_created', 'np_lider', 'nombre_completo', 'enable', 'redireccion', 'comentario'];
+    protected $fillable = ['motivo', 'id_solicitud', 'user_id', 'status', 'created_at', 'updated_at', 'fecha_desvinculacion', 'user_created', 'np_lider', 'nombre_completo', 'enable', 'redireccion', 'comentario','rut_empresa','centro_costo'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

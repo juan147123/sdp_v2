@@ -67,6 +67,7 @@
                             <th>Motivo de desvinculación</th>
                             <th>Fecha de desvinculación</th>
                             <th>Correo de redirección</th>
+                            <th>Centro de costo</th>
                             <th>Comentarios</th>
                             <th>Estado</th>
                             <th>Acciones</th>

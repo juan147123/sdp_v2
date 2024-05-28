@@ -65,6 +65,29 @@
                                                     ' ' +
                                                     colaborador.last_name
                                                 "
+                                                readonly
+                                            />
+                                            <input
+                                                type="text"
+                                                style="font-weight: bold"
+                                                class="input-multiple d-none"
+                                                :name="'centro_costo' + index"
+                                                :id="'centro_costo' + index"
+                                                :value="
+                                                    colaborador.centro_costo
+                                                "
+                                                readonly
+                                            />
+                                            <input
+                                                type="text"
+                                                style="font-weight: bold"
+                                                class="input-multiple d-none"
+                                                :name="'rut_empresa' + index"
+                                                :id="'rut_empresa' + index"
+                                                :value="
+                                                    colaborador.rut
+                                                "
+                                                readonly
                                             />
                                         </div>
                                         <div class="mb-3">

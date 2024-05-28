@@ -403,6 +403,7 @@ div:where(.swal2-container) .swal2-html-container {
 /* Select 2 */
 .select2{
     margin: 0 !important;
+    width: 100% !important;
 }
 
 .select2-search__field {
