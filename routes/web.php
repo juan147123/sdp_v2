@@ -48,6 +48,13 @@ Route::middleware([
     Route::post('create/solicitud', [SolicitudController::class, 'create'])->name('create.solicitud');
     Route::post('create/solicitud/multiple', [SolicitudController::class, 'createMultiple'])->name('create.solicitud.multiple');
     
+    //SOLICITUD APROBAR CC 
+    Route::get('redirectpage/solicitud/aprobar', [SolicitudController::class, 'redirectPageSolicitudObraAprobarCC'])->name('redirect.solicitud.aprobar');
+    Route::get('list/solicitud/aprobar', [SolicitudController::class, 'listAllCCAprobar'])->name('list.solicitud.aprobar');
+    //APROBADOR CC ESTADO
+    Route::put('solicitudes/status/cc', [SolicitudColaboradorController::class, 'updateStatusAprobadorCC'])->name('solicitud.colaborador.update.status.cc');
+    Route::put('solicitudes/status/masive/cc', [SolicitudColaboradorController::class, 'updateAllStatusAprobadorCC'])->name('solicitud.colaborador.update.masive.cc');
+
     //SOLICITUD OBRA
     Route::get('redirectpage/solicitud/obra', [SolicitudController::class, 'redirectPageSolicitudObra'])->name('redirect.solicitud.obra');
 

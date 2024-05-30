@@ -108,7 +108,7 @@
                                 @click="setPreloader()"
                             >
                                 <i class="fas fa-file icon-menu"></i>
-                                <strong>Solicitudes</strong>
+                                <strong>Mis Solicitudes</strong>
                             </a>
                         </li>
                     </div>
@@ -145,7 +145,25 @@
                                 @click="setPreloader()"
                             >
                                 <i class="fas fa-file icon-menu"></i>
-                                <strong>Solicitudes</strong>
+                                <strong>Mis Solicitudes</strong>
+                            </a>
+                        </li>
+                    </div>
+                    <div class="solicitudes-obra">
+                        <li class="toogle-li">
+                            <a
+                                :href="this.route('redirect.solicitud.aprobar')"
+                                :class="
+                                    this.route().current(
+                                        'redirect.solicitud.aprobar'
+                                    )
+                                        ? 'active'
+                                        : ''
+                                "
+                                @click="setPreloader()"
+                            >
+                                <i class="fas fa-file icon-menu"></i>
+                                <strong>Aprobar Solicitudes</strong>
                             </a>
                         </li>
                     </div>

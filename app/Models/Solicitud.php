@@ -29,7 +29,7 @@ class Solicitud extends Model
     /**
      * @var array
      */
-    protected $fillable = ['codigo', 'np_lider', 'user_created', 'created_at', 'updated_at', 'enable', 'status', 'obra'];
+    protected $fillable = ['codigo', 'np_lider', 'user_created', 'created_at', 'updated_at', 'enable', 'status', 'obra','centro_costo'];
 
         /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

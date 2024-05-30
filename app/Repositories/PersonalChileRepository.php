@@ -226,6 +226,34 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
         });
         return  $colaboradores;
     }
+    public function getAprobadorObraCL($correo)
+    {
+
+        $query_obra = "
+        WITH nplider AS (
+            SELECT
+            DISTINCT l.lider_departamento::INT,
+            ARRAY_AGG(l.external_code_cc) AS cc
+            FROM flesan_rrhh.sap_maestro_empresa_dep_un_cc l
+            WHERE l.status_cc = 'A' AND l.status_departamento = 'A'
+            AND l.lider_departamento <>''
+            GROUP BY l.lider_departamento
+            )
+            SELECT DISTINCT 
+            lider_departamento,
+            lower(smc.correo_flesan) AS correo_aprobador,
+            np.cc
+            FROM flesan_rrhh.sap_maestro_colaborador smc
+            INNER JOIN nplider np ON np.lider_departamento = smc.user_id
+            AND smc.empl_status = '41111' and lower(smc.correo_flesan) = :correo_lider
+            LIMIT 1;       
+        ";
+
+        $colaborador = DB::connection('dw_chile')->select(DB::raw($query_obra), [
+            'correo_lider' => $correo,
+        ]);
+        return  $colaborador[0];
+    }
 
 
     public function getLideresObraCl()
@@ -250,7 +278,7 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
 
         return $correosLideresObra;
     }
-    
+
     public function getAdministradorDepartamento()
     {
         $query = "

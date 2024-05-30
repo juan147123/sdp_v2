@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Interfaces\PersonalChileRepositoryInterface;
 use App\Interfaces\SolicitudColaboradorRepositoryInterface;
 use App\Interfaces\SolicitudRepositoryInterface;
 use App\Interfaces\UsuarioRolRepositoryInterface;
@@ -18,19 +19,22 @@ class SolicitudController extends Controller
     private $repositoryUsuarioRol;
     private $repositorySolicitudDetalle;
     private $extraService;
+    private $personalChileRepository;
 
     public function __construct(
         SolicitudRepositoryInterface $repository,
         UsuarioRolRepositoryInterface $repositoryUsuarioRol,
         SolicitudColaboradorRepositoryInterface $repositorySolicitudDetalle,
         ExtraServicecontroller $extraService,
-        ArchivoRepository $archivoRepository
+        ArchivoRepository $archivoRepository,
+        PersonalChileRepositoryInterface $personalChileRepository
     ) {
         $this->repository = $repository;
         $this->repositoryUsuarioRol = $repositoryUsuarioRol;
         $this->repositorySolicitudDetalle = $repositorySolicitudDetalle;
         $this->extraService = $extraService;
         $this->archivoRepository = $archivoRepository;
+        $this->personalChileRepository = $personalChileRepository;
     }
 
     public function redirectPage()
@@ -57,6 +61,27 @@ class SolicitudController extends Controller
         return $list;
     }
 
+    public function redirectPageSolicitudObraAprobarCC()
+    {
+        return Inertia::render('AprobacionSolicitudObra/Index');
+    }
+
+    public function listAllCCAprobar()
+    {
+        $aprobador = $this->personalChileRepository->getAprobadorObraCL(Auth::user()->username);
+        $centros_permitidos = explode(',', trim($aprobador->cc, '{}'));
+
+        $result = $this->repository->all(['*'], [
+            'estado',
+            'solicitudColaborador',
+            'solicitudColaborador.archivos',
+            'solicitudColaborador.SapMaestroCausalesTerminos',
+            'solicitudColaborador.checkAreaColaboradores'
+        ])->whereIn('centro_costo', $centros_permitidos);
+
+        return $result->values();
+    }
+
     public function listSolicitudesLider($conditionals)
     {
         return $this->repository->all(['*'], ['estado', 'solicitudColaborador', 'solicitudColaborador.archivos', 'solicitudColaborador.SapMaestroCausalesTerminos', 'solicitudColaborador.checkAreaColaboradores'], $conditionals);
@@ -73,7 +98,16 @@ class SolicitudController extends Controller
     {
         $userCreated = strtoupper(Auth::user()->username);
         $np_lider = session('np_lider');
-        $solicitud = $this->buildSolicitud($np_lider, $userCreated);
+        $solicitud = $this->buildSolicitud($np_lider, $userCreated, null); //aqui el cc
+        $new_solicitud = $this->repository->create($solicitud);
+        return $new_solicitud;
+    }
+
+    public function createSolicitudMultiple($request)
+    {
+        $userCreated = strtoupper(Auth::user()->username);
+        $np_lider = session('np_lider');
+        $solicitud = $this->buildSolicitud($np_lider, $userCreated, $request->centro_costo0);
         $new_solicitud = $this->repository->create($solicitud);
         return $new_solicitud;
     }
@@ -85,11 +119,12 @@ class SolicitudController extends Controller
         return $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $request->file('filesForm'));
     }
 
-    private function buildSolicitud($npLider, $userCreated)
+    private function buildSolicitud($npLider, $userCreated, $centro_costo)
     {
         return [
             'np_lider' => $npLider,
             'user_created' => $userCreated,
+            'centro_costo' => $centro_costo,
             'obra' => session('obra') == null ? 0 : session('obra'),
         ];
     }
@@ -155,7 +190,7 @@ class SolicitudController extends Controller
 
     public function createMultiple(Request $request)
     {
-        $new_solicitud = $this->createSolicitud();
+        $new_solicitud = $this->createSolicitudMultiple($request);
         $requestData = $request->all();
         $groupedIds = [];
 
