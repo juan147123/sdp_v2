@@ -350,7 +350,6 @@ export default {
                     $(row)
                         .find(".checkbox-datatable")
                         .on("change", function () {
-                            console.log(self.colaboradoresDetalle)
                             const centroExists = self.colaboradoresDetalle.some(
                                 (item) => item.centro_costo !== data.centro_costo
                             );

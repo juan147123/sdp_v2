@@ -67,6 +67,31 @@
                                                     (colaborador.last_name ||
                                                         colaborador.apellido)
                                                 "
+                                                readonly
+                                            />
+                                            <input
+                                                type="text"
+                                                style="font-weight: bold"
+                                                class="input-multiple"
+                                                :name="'nombreCompleto' + index"
+                                                :id="'nombreCompleto' + index"
+                                                :value="
+                                                    colaborador.first_name +
+                                                    ' ' +
+                                                    colaborador.last_name
+                                                "
+                                                readonly
+                                            />
+                                            <input
+                                                type="text"
+                                                style="font-weight: bold"
+                                                class="input-multiple d-none"
+                                                :name="'centro_costo' + index"
+                                                :id="'centro_costo' + index"
+                                                :value="
+                                                    colaborador.centro_costo
+                                                "
+                                                readonly
                                             />
                                         </div>
                                         <div class="mb-3">

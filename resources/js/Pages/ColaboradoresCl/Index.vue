@@ -148,6 +148,25 @@
                                     </option>
                                 </select>
                             </div>
+                            <div class="col-md-2 d-flex flex-column">
+                                <label
+                                    for="area"
+                                    class="form-label label-filter"
+                                    >Planta:</label
+                                >
+
+                                <select
+                                    class="form-select column_filter select-filtros"
+                                    name="p_np"
+                                    id="p_np"
+                                    index="8"
+                                    v-model="this.p_np"
+                                >
+                                    <option value="">Seleccione</option>
+                                    <option value="PL">PLANTA</option>
+                                    <option value="NP">NO PLANTA</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -253,6 +272,7 @@ export default {
                 departamento: "",
                 centrocosto: "",
             },
+            p_np: "",
             colaboradoresDetalle: [],
             terminos: [],
         };
@@ -331,8 +351,17 @@ export default {
                     $(row)
                         .find(".checkbox-datatable")
                         .on("change", function () {
+                            const centroExists = self.colaboradoresDetalle.some(
+                                (item) => item.centro_costo !== data.centro_costo
+                            );
+
                             if (this.checked) {
-                                if (self.colaboradoresDetalle.length < 15) {
+                                if (centroExists) {
+                                    this.checked = false;
+                                    self.setToast2();
+                                } else if (
+                                    self.colaboradoresDetalle.length < 15
+                                ) {
                                     self.colaboradoresDetalle.push(data);
                                 } else {
                                     this.checked = false;
@@ -448,6 +477,15 @@ export default {
                 life: 3000,
             });
         },
+        setToast2() {
+            this.$toast.add({
+                severity: "warn",
+                position: "top-right",
+                summary: "Importante",
+                detail: "Tienen que registrar el mismo centro de costo",
+                life: 3000,
+            });
+        },
         addToUnidadArray(unidad) {
             // Verificar si la unidad ya existe en el array
             const unidadExistente = this.unidades.find(
@@ -515,6 +553,8 @@ export default {
             $("#unidad_cl").val("").trigger("change");
             $("#centroCosto_cl").val("").trigger("change");
             $("#departamento_cl").val("").trigger("change");
+            $("#p_np").val("").trigger("change");
+            this.onClickCleanDetalleColaborador();
         },
         async getMotivos() {
             this.terminos = [];

@@ -45,20 +45,9 @@
         <hr />
         <nav class="mb-auto">
             <ul class="mcd-menu">
-                <div
-                    v-if="
-                        this.$page.props.rol.id_rol !==
-                        this.$env.ADMINISTRADOR_AREA
-                    "
-                >
+                <div>
                     <!-- TODO CHILE PERU  -->
-                    <div
-                        class="solicitudes-planta"
-                        v-if="
-                            this.$page.props.rol.id_rol !==
-                            this.$env.ADMINISTRADOR_LIDER_OBRA
-                        "
-                    >
+                    <div class="solicitudes-planta">
                         <li
                             class="toogle-li"
                             v-if="this.$page.props.auth.user.pais == 'PE'"
@@ -113,7 +102,7 @@
                         </li>
                     </div>
                     <!-- TODO OBRA -->
-                    <div class="solicitudes-obra" v-else>
+                    <div class="solicitudes-obra">
                         <li class="toogle-li">
                             <a
                                 :href="
@@ -167,13 +156,7 @@
                             </a>
                         </li>
                     </div>
-                    <li
-                        class="toogle-li"
-                        v-if="
-                            this.$page.props.rol.id_rol ==
-                            this.$env.SUPER_ADMINISTRADOR
-                        "
-                    >
+                    <li class="toogle-li">
                         <a
                             class="no-href"
                             :class="
@@ -207,7 +190,12 @@
                         </ul>
                     </li>
                 </div>
-                <div v-else>
+                <div
+                    v-if="
+                        this.$page.props.rol.id_rol ===
+                        this.$env.ADMINISTRADOR_AREA
+                    "
+                >
                     <li class="toogle-li">
                         <a
                             :href="this.route('redirect.solicitud.area')"
