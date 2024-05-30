@@ -27,7 +27,11 @@
                 </div>
                 <div class="modal-body">
                     <div class="container-fluid">
-                        <div class="mb-3" style="font-weight: bold" v-if="this.colaboradoresDetalle.length > 0">
+                        <div
+                            class="mb-3"
+                            style="font-weight: bold"
+                            v-if="this.colaboradoresDetalle.length > 0"
+                        >
                             {{
                                 this.colaboradoresDetalle[0].user_id +
                                 " / " +
@@ -176,7 +180,7 @@ export default {
             var self = this;
             this.isLoadingForm = true;
             this.mensaje =
-                "registrando la solicitud, esto demarara según la cantidad y tamaño de los archivos";
+                "registrando la solicitud, esto demorará según la cantidad y tamaño de los archivos";
 
             const form = document.getElementById("formSolicitud");
             const formData = new FormData(form);
@@ -186,8 +190,12 @@ export default {
                 " " +
                 this.colaboradoresDetalle[0].last_name;
 
+            var centro_costo = this.colaboradoresDetalle[0].centro_costo;
+            var rut_empresa = this.colaboradoresDetalle[0].rut;
             formData.append("user_id", user_id);
             formData.append("nombre_completo", nombre_completo);
+            formData.append("centro_costo", centro_costo);
+            formData.append("rut_empresa", rut_empresa);
             axios
                 .post(rutaBase + "/create/solicitud", formData, {
                     headers: {

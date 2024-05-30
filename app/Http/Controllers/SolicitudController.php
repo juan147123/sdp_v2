@@ -89,16 +89,16 @@ class SolicitudController extends Controller
 
     public function create(Request $request)
     {
-        $new_solicitud = $this->createSolicitud();
+        $new_solicitud = $this->createSolicitud($request);
         $new_detail = $this->createSolicitudDetail($request, $new_solicitud);
         return 'ok';
     }
 
-    public function createSolicitud()
+    public function createSolicitud($request)
     {
         $userCreated = strtoupper(Auth::user()->username);
         $np_lider = session('np_lider');
-        $solicitud = $this->buildSolicitud($np_lider, $userCreated, null); //aqui el cc
+        $solicitud = $this->buildSolicitud($np_lider, $userCreated, $request->centro_costo);
         $new_solicitud = $this->repository->create($solicitud);
         return $new_solicitud;
     }
@@ -136,7 +136,9 @@ class SolicitudController extends Controller
             'motivo' => $solicitudcolaborador['motivoForm'],
             'fecha_desvinculacion' => $solicitudcolaborador['fechaForm'],
             'redireccion' => $solicitudcolaborador['redireccionForm'],
-            'id_solicitud' => $new_solicitud->id
+            'id_solicitud' => $new_solicitud->id,
+            "rut_empresa" => $solicitudcolaborador["rut_empresa"],
+            "centro_costo" => $solicitudcolaborador["centro_costo"],
         ];
     }
     public function saveDocumentLocal($id, $new_solicitud, $archivos)

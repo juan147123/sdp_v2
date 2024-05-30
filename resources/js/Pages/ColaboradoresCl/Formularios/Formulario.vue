@@ -137,7 +137,7 @@ import { rutaBase } from "../../../../Utils/utils.js";
 import { setSwal } from "../../../../Utils/swal";
 import * as mensajes from "../../../../Utils/message.js";
 export default {
-    props: ["terminos", "colaboradoresDetalle","filters"],
+    props: ["terminos", "colaboradoresDetalle", "filters"],
     emits: ["reloadTable"],
     components: {
         Preloader,
@@ -164,6 +164,7 @@ export default {
             $("#filesForm").val("");
         },
         submit() {
+
             var self = this;
             this.isLoadingForm = true;
             this.mensaje =
@@ -173,12 +174,15 @@ export default {
             const formData = new FormData(form);
             var user_id = this.colaboradoresDetalle[0].user_id;
             var nombre_completo =
-                this.colaboradoresDetalle[0].firstname +
+                this.colaboradoresDetalle[0].first_name +
                 " " +
-                this.colaboradoresDetalle[0].lastname;
-
+                this.colaboradoresDetalle[0].last_name;
+            var centro_costo = this.colaboradoresDetalle[0].centro_costo;
+            var rut_empresa = this.colaboradoresDetalle[0].rut;
             formData.append("user_id", user_id);
             formData.append("nombre_completo", nombre_completo);
+            formData.append("centro_costo", centro_costo);
+            formData.append("rut_empresa", rut_empresa);
             axios
                 .post(rutaBase + "/create/solicitud", formData, {
                     headers: {
