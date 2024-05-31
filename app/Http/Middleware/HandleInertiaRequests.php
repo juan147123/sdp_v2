@@ -44,13 +44,12 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $usuario_rol = null;
+        $permisos = null;
         if (Auth::user()) {
-            $usuario_rol = $this->repositoryUsuarioRol->getIdRol();
+            $permisos = session('objeto_permitido');
         }
         return array_merge(parent::share($request), [
-            "rol" => $usuario_rol,
-            "modulo_aprobacion" => session('aprobacion_obra') == null? 0 : session('aprobacion_obra'),
+            "permisos" => $permisos
         ]);
     }
 }

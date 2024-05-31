@@ -49,11 +49,7 @@ class SolicitudController extends Controller
 
     public function listAll()
     {
-        $usuario_rol = $this->repositoryUsuarioRol->getIdRol();
-        $list = [];
-        $idlideres = [env('ADMINISTRADOR_LIDER'), env('ADMINISTRADOR_LIDER_OBRA')];
-
-        if (in_array($usuario_rol['id_rol'], $idlideres)) {
+        if (in_array('LIDERCL', session('objeto_permitido')) || in_array('LIDERPE', session('objeto_permitido')) || in_array('LIDEROBRACL', session('objeto_permitido'))) {
             $list = $this->listSolicitudesLider(['user_created' => strtoupper(Auth::user()->username)]);
         } else {
             $list = $this->listSolicitudesLider([]);

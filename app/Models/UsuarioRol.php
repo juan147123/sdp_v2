@@ -13,6 +13,6 @@ class UsuarioRol extends Model
     public $timestamps = false;
     protected $primaryKey = 'id_usuario_rol';
     protected $fillable = [
-        'id_aplicacion_usuario', 'id_rol', 'fecha_ini'
+        'id_aplicacion_usuario', 'id_rol', 'fecha_ini','objeto_permitido'
     ];
 }

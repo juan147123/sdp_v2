@@ -52,17 +52,19 @@ class AuthController extends Controller
         // if ($email == 'serodriguez@flesan.com.pe') {
         //     $email = 'dcollas@flesan.com.pe';
         if ($email == 'jmestanza@flesan.com.pe') {
-            // $email = 'dcollas@flesan.com.pe';
+            // $email = 'abeckdorf@flesan.com.pe';
             // $email = 'frida.morales@flesan.cl';
-            $email = 'sebastian.valck@flesan.cl';
+            // $email = 'sebastian.valck@flesan.cl';
             // $email = 'jorge.barrozo@flesan.cl';
-            // $email = 'acandia@flesan.cl';
+            $email = 'acandia@flesan.cl';
             // $email = 'SEBASTIAN.VALCK@FLESAN.CL';
             // $email = 'mmatamoros@flesan.com.pe';
             // $email = 'ESM@FLESAN.CL';
             // $email = 'jorge.fernandezdelrio@flesan.cl';
             // $email = 'david.vilugron@flesan.cl'; //pendiente
             // $email = 'cesar.munoz@flesan.cl';
+            // $email = 'jonathan.gaete@dvc.cl';
+            // $email = 'serodriguez@flesan.com.pe';
         }
 
         $extension_correo = substr($email, -2);
@@ -84,42 +86,60 @@ class AuthController extends Controller
     }
     public function handleGoogleCallback()
     {
-        $AuthUser = null;
 
-        // obtengo el usuario de la cuenta de google
         $usuario = $this->getUser();
+        $usuario_mail = $usuario['username'];
+        $permisos = [];
+        $usuario_seguridad_app = $this->repository->findUserByEmail($usuario_mail);
 
-        //busco el usuario en la tabla interna de usuarios 
-
-        $usuario_bd = $this->repositoryUsuario->findByEmail($usuario['username']);
-
-        //si existe ejecuto las validaciones correspondientes
-        if ($usuario_bd) {
-            $AuthUser = $this->validateTableUser($usuario, $usuario_bd);
+        if ($usuario_seguridad_app) {
+            Auth::login($usuario_seguridad_app);
+            $rol = $this->repositoryRolUsuario->getDataRol($usuario_seguridad_app->id_aplicacion_usuario);
+            $np_lider  = $this->getNpLider();
+            session(['np_lider' => $np_lider]);
+            session(['objeto_permitido' => explode(",", $rol->objeto_permitido)]);
+            return redirect()->route("redirect.colaboradores.cl");
         } else {
-            $pais =  $usuario['pais'];
-            if ($pais == 'PE') {
-                $AuthUser = $this->validateLideresPE($usuario);
-            } else {
-                $AuthUser = $this->validateLideresObraPlantaCL($usuario);
-            }
-        }
-        //si no encuentra el usuario en la BD es por que es un usuarion LIDER
-        if (!$usuario_bd) {
-            $rol = $_ENV['ADMINISTRADOR_LIDER'];
-        } else {
-            $rol = $usuario_bd['rol'];
-        }
 
-        if ($AuthUser) {
-            Auth::login($AuthUser['appUser']);
-            if ($rol == $_ENV['ADMINISTRADOR_LIDER']) {
+
+            $usuario_bd = $this->repositoryUsuario->findByEmail($usuario_mail);
+
+            if ($usuario_bd && env("ADMINISTRADOR_RRHH") == $usuario_bd->rol) array_push($permisos, 'ADMRRHH');
+            if ($usuario_bd && env("ADMINISTRADOR_AREA") == $usuario_bd->rol) array_push($permisos, 'ADMAREA');
+            if ($usuario_bd && env("SUPER_ADMINISTRADOR") == $usuario_bd->rol) array_push($permisos, 'SUPERAD');
+
+            $personalCl = $this->repositoryPersonalCL->getNpLiderByEmail($usuario_mail);
+            $personalPe = $this->repositoryPersonalPE->UserFindByEmail($usuario_mail);
+
+
+            if ($personalCl) array_push($permisos, 'LIDERCL');
+            if ($personalPe) array_push($permisos, 'LIDERPE');
+
+            $liderObracl = $this->repositoryPersonalCL->getLiderObraCl($usuario_mail);
+            if ($liderObracl) array_push($permisos, 'LIDEROBRACL');
+
+            $aprobadorObra = $this->repositoryPersonalCL->getAdministradorDepartamento($usuario_mail);
+            if ($aprobadorObra) array_push($permisos, 'APROBOBRA');
+
+            if ($permisos) {
+                $appUser = $this->createAppUser($usuario);
+
+                $data = [
+                    'id_aplicacion_usuario' =>  $appUser->id_aplicacion_usuario,
+                    'id_rol' => $_ENV['USUARIO_SDP'],
+                    'fecha_ini' => date('Y-m-d'),
+                    'objeto_permitido' =>  implode(",", $permisos)
+                ];
+
+                $this->createRolUser($data);
+                Auth::login($appUser);
                 $np_lider  = $this->getNpLider();
                 session(['np_lider' => $np_lider]);
+                session(['objeto_permitido' => explode(",", implode(",", $permisos))]);
+                return redirect()->route("redirect.colaboradores.cl");
+            } else {
+                return $this->redirectToLogin();
             }
-            return redirect()->route($AuthUser['redirect']);
-        } else {
-            return $this->redirectToLogin();
         }
     }
     private function getNpLider()
@@ -130,43 +150,6 @@ class AuthController extends Controller
         return $personalCl ? $personalCl : $personalPe->dni;
     }
 
-    public function validateTableUser($usuario, $usuario_bd)
-    {
-        //Busca la ruta segun rol
-        $redirect = $this->setRedirect($usuario_bd->rol, $usuario_bd->pais);
-
-        //Busca el usuario en seguridad app
-        $appUser = $this->repository->findUserByEmail($usuario['username']);
-
-        //Si no exist lo crea
-        if (!$appUser) {
-            $appUser = $this->createAppUser($usuario);
-            $userRol = $this->dtoAppUserRol(
-                $appUser->id_aplicacion_usuario,
-                $usuario_bd['rol']
-            );
-            $this->createRolUser($userRol);
-        }
-
-        //Si existe actuaiza su nombre y avatar
-        $this->updateAvatarName($appUser, $usuario);
-
-        // Retorna el usuario a loguear más su ruta de redireccion
-        return array(
-            "appUser" => $appUser,
-            "redirect" => $redirect
-        );
-    }
-
-    public function dtoAppUserRol($id, $rol)
-    {
-        $data = [
-            'id_aplicacion_usuario' => $id,
-            'id_rol' => $rol,
-            'fecha_ini' => date('Y-m-d'),
-        ];
-        return $data;
-    }
 
     public function createAppUser($data)
     {
@@ -201,110 +184,6 @@ class AuthController extends Controller
         return  $redirect;
     }
 
-    public function validateLideresPE($usuario)
-    {
-        $datosLider =  $this->repositoryPersonalPE->UserFindByEmail($usuario['username']);
-        $dniLideres = $this->repositoryPersonalPE->getDniLideres();
-
-        if ($datosLider && in_array($datosLider->dni, $dniLideres)) {
-            //Busca el usuario en seguridad app
-            $appUser = $this->repository->findUserByEmail($usuario['username']);
-
-            //Si no existe lo cre $this->updateAvatarName($appUser, $usuario);a
-            if (!$appUser) {
-                $appUser = $this->createAppUser($usuario);
-                $userRol = $this->dtoAppUserRol(
-                    $appUser->id_aplicacion_usuario,
-                    $_ENV['ADMINISTRADOR_LIDER']
-                );
-                $this->createRolUser($userRol);
-            }
-
-            $redirect = 'redirect.colaboradores.pe';
-            //Si existe actuaiza su nombre y avatar
-            $this->updateAvatarName($appUser, $usuario);
-
-            // Retorna el usuario a loguear más su ruta de redireccion
-            return array(
-                "appUser" => $appUser,
-                "redirect" => $redirect
-            );
-        }
-    }
-
-    public function validateLideresObraPlantaCL($usuario)
-    {
-        $user = null;
-
-        $correoLiderObra = $this->repositoryPersonalCL->getLideresObraCl();
-
-        $this->setModule($usuario);
-        if (in_array($usuario['username'], $correoLiderObra)) {
-            $user = $this->validateLideresCLObra($usuario);
-        } else {
-            $user = $this->validateLiderChile($usuario);
-        }
-        return $user;
-    }
-
-    public function setModule($usuario)
-    {
-        $correoAdminDep = $this->repositoryPersonalCL->getAdministradorDepartamento();
-        if (in_array($usuario['username'], $correoAdminDep)) {
-            session(['aprobacion_obra' => 1]);
-        }
-    }
-
-    public function validateLideresCLObra($usuario)
-    {
-        //Busca el usuario en seguridad app
-        $appUser = $this->repository->findUserByEmail($usuario['username']);
-
-        //Si no existe lo crea
-        if (!$appUser) {
-            $appUser = $this->createAppUser($usuario);
-            $userRol = $this->dtoAppUserRol(
-                $appUser->id_aplicacion_usuario,
-                $_ENV['ADMINISTRADOR_LIDER']
-            );
-            $this->createRolUser($userRol);
-        }
-
-        $redirect = 'redirect.colaboradores.obra.cl';
-        //Si existe actuaiza su nombre y avatar
-        $this->updateAvatarName($appUser, $usuario);
-        session(['obra' => 1]);
-        // Retorna el usuario a loguear más su ruta de redireccion
-        return array(
-            "appUser" => $appUser,
-            "redirect" => $redirect
-        );
-    }
-
-    public function validateLiderChile($usuario)
-    {
-        /* busca usuarios lideres de chile*/
-        $userDwChile = $this->repositoryPersonalCL->UserFindByEmail(strtoupper($usuario['username']));
-        $npLideres = $this->repositoryPersonalCL->getNpLideres();
-
-        if ($userDwChile && in_array($userDwChile->user_id, $npLideres)) {
-            $appUser = $this->repository->findUserByEmail($usuario['username']);
-            //Si no existe lo crea
-            if (!$appUser) {
-                $appUser = $this->createAppUser($usuario);
-                $userRol = $this->dtoAppUserRol(
-                    $appUser->id_aplicacion_usuario,
-                    $_ENV['ADMINISTRADOR_LIDER']
-                );
-                $this->createRolUser($userRol);
-            }
-            $redirect = 'redirect.colaboradores.cl';
-            return array(
-                "appUser" => $appUser,
-                "redirect" => $redirect
-            );
-        }
-    }
 
     public function redirectToLogin()
     {

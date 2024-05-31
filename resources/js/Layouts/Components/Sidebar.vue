@@ -29,16 +29,11 @@
                 />
                 <div class="d-flex flex-column user-props text-center">
                     <span class="mx-2 user-data fw-bold">{{
-                        this.$page.props.rol.descripcion
+                        this.$page.props.auth.user.username
                     }}</span>
                     <span class="mx-2 user-data">{{
                         this.$page.props.auth.user.name
                     }}</span>
-                    <span
-                        class="mx-2 user-data"
-                        v-if="this.$page.props.area != null"
-                        >{{ this.$page.props.area[0].descripcion }}</span
-                    >
                 </div>
             </span>
         </div>
@@ -47,7 +42,17 @@
             <ul class="mcd-menu">
                 <div>
                     <!-- TODO CHILE PERU  -->
-                    <div class="solicitudes-planta">
+                    <div
+                        class="solicitudes-planta"
+                        v-if="
+                            this.$page.props.permisos.includes(
+                                this.$env.LIDERCL
+                            ) ||
+                            this.$page.props.permisos.includes(
+                                this.$env.LIDERPE
+                            )
+                        "
+                    >
                         <li
                             class="toogle-li"
                             v-if="this.$page.props.auth.user.pais == 'PE'"
@@ -102,7 +107,14 @@
                         </li>
                     </div>
                     <!-- TODO OBRA -->
-                    <div class="solicitudes-obra">
+                    <div
+                        class="solicitudes-obra"
+                        v-if="
+                            this.$page.props.permisos.includes(
+                                this.$env.LIDEROBRACL
+                            )
+                        "
+                    >
                         <li class="toogle-li">
                             <a
                                 :href="
@@ -138,7 +150,14 @@
                             </a>
                         </li>
                     </div>
-                    <div class="solicitudes-obra">
+                    <div
+                        class="solicitudes-obra"
+                        v-if="
+                            this.$page.props.permisos.includes(
+                                this.$env.APROBOBRA
+                            )
+                        "
+                    >
                         <li class="toogle-li">
                             <a
                                 :href="this.route('redirect.solicitud.aprobar')"
@@ -156,7 +175,14 @@
                             </a>
                         </li>
                     </div>
-                    <li class="toogle-li">
+                    <li
+                        class="toogle-li"
+                        v-if="
+                            this.$page.props.permisos.includes(
+                                this.$env.SUPERAD
+                            )
+                        "
+                    >
                         <a
                             class="no-href"
                             :class="
@@ -190,13 +216,15 @@
                         </ul>
                     </li>
                 </div>
-                <div
-                    v-if="
-                        this.$page.props.rol.id_rol ===
-                        this.$env.ADMINISTRADOR_AREA
-                    "
-                >
-                    <li class="toogle-li">
+                <div>
+                    <li
+                        class="toogle-li"
+                        v-if="
+                            this.$page.props.permisos.includes(
+                                this.$env.ADMAREA
+                            )
+                        "
+                    >
                         <a
                             :href="this.route('redirect.solicitud.area')"
                             :class="
@@ -236,6 +264,7 @@
 <script>
 import { setSwal } from "../../../Utils/swal.js";
 import Preloader from "@/Components/Preloader.vue";
+import enviroments from "../../../enviroments/enviroments.js";
 export default {
     components: {
         Preloader,

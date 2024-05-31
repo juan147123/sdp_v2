@@ -40,4 +40,16 @@ class UsuarioRolRepository extends BaseRepository implements
 
         return $usuario_rol;
     }
+
+    public function getDataRol($correo)
+    {
+        $usuario_rol = $this->model
+            ->select("*")
+            ->where("id_aplicacion_usuario", $correo)
+            ->first();
+
+        return $usuario_rol;
+    }
+
+    
 }

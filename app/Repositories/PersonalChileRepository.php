@@ -53,7 +53,7 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
         return $this->model
             ->select('user_id')
             ->where('empl_status', 41111)
-            ->where('correo_flesan', $email)
+            ->where(DB::raw('LOWER(correo_flesan)'), strtolower($email))
             ->pluck('user_id')
             ->first();
     }
@@ -279,18 +279,42 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
         return $correosLideresObra;
     }
 
-    public function getAdministradorDepartamento()
+    public function getLiderObraCl($correo)
     {
         $query = "
-        select LOWER(smc.correo_flesan)  as correo from sap_maestro_colaborador smc where smc.user_id  in (
+        select
+            distinct 
+                tabla_encargados_cc.correo
+            from
+                flesan_rrhh.tabla_encargados_cc
+            join sap_maestro_empresa_dep_un_cc on
+                (sap_maestro_empresa_dep_un_cc.external_code_empresa || '-' || sap_maestro_empresa_dep_un_cc.nombre_empresa = tabla_encargados_cc.sociedad
+                    and sap_maestro_empresa_dep_un_cc.external_code_cc || '-' || sap_maestro_empresa_dep_un_cc.nombre_cc = tabla_encargados_cc.centro_coto)
+            left join PUBLIC.maestro_rut on
+                (maestro_rut.id_sap = sap_maestro_empresa_dep_un_cc.external_code_empresa)
+            WHERE correo = :correo_lider;
+            ";
+        $resultados = DB::connection('dw_chile')
+            ->select(DB::raw($query), [
+                'correo_lider' => $correo,
+            ]);
+        return $resultados;
+    }
+
+    public function getAdministradorDepartamento($correo)
+    {
+        $query = "
+        select LOWER(smc.correo_flesan)  as correo from flesan_rrhh.sap_maestro_colaborador smc where smc.user_id  in (
             select distinct  l.lider_departamento::INT from flesan_rrhh.sap_maestro_empresa_dep_un_cc l
             where l.status_cc = 'A' and l.status_departamento = 'A'
             and l.lider_departamento <> ''
             )
-            and smc.empl_status = '41111';";
+            and smc.empl_status = '41111' and LOWER(smc.correo_flesan) = :correo;";
 
         $resultados = DB::connection('dw_chile')
-            ->select(DB::raw($query));
+            ->select(DB::raw($query),[
+                'correo' => $correo,
+            ]);
 
         $correoAdminDep = collect($resultados)->pluck('correo')->toArray();
 

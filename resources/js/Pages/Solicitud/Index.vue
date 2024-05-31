@@ -329,20 +329,18 @@ export default {
                         data: null,
                         className: "text-center",
                         render: function (data, type, row) {
-                            const rol = self.$page.props.rol.id_rol;
-                            var obra = self.solicitudesColaborador.obra;
-                            const rolesAdmin = [79, 78];
+
                             var botones = "";
                             var botonChecklist = "";
-                            if (rolesAdmin.includes(rol) && row.status == 1) {
+                            if (row.status == 1) {
                                 botones =
                                     '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones3" ><i class="fas fa-check text-success"></i> Aprobar</a></li>' +
                                     '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones4" ><i class="fas fa-times text-danger"></i> Desaprobar</a></li>';
                             }
-                            if (obra != 1) {
+                    
                                 botonChecklist =
                                     '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones2" ><i class="fas fa-tasks text-primary"></i> Checklist</a></li>';
-                            }
+                           
 
                             return (
                                 '<div class="btn-group">' +

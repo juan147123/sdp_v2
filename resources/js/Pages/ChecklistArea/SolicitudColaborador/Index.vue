@@ -16,10 +16,6 @@
     </div>
     <div
         class="text-end m-2"
-        v-if="
-            this.$page.props.rol.id_rol == 79 ||
-            this.$page.props.rol.id_rol == 78
-        "
     >
         <div class="btn-group">
             <button
