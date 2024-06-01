@@ -45,9 +45,12 @@
                     <div
                         class="solicitudes-planta"
                         v-if="
-                            this.$page.props.permisos.includes(
+                            (this.$page.props.permisos.includes(
                                 this.$env.LIDERCL
-                            ) ||
+                            ) &&
+                                !this.$page.props.permisos.includes(
+                                    this.$env.LIDEROBRACL
+                                )) ||
                             this.$page.props.permisos.includes(
                                 this.$env.LIDERPE
                             )
