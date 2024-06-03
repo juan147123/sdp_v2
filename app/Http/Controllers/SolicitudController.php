@@ -227,4 +227,24 @@ class SolicitudController extends Controller
     {
         return $this->repository->listSolicitudes();
     }
+
+    //TODO RRHH
+    public function redirectPageSolicitudRrhhAprobar()
+    {
+        return Inertia::render('AprobacionSolicitudRrhh/Index');
+    }
+
+    public function listAllAprobarRrhh()
+    {
+
+        $result = $this->repository->all(['*'], [
+            'estado',
+            'solicitudColaborador',
+            'solicitudColaborador.archivos',
+            'solicitudColaborador.SapMaestroCausalesTerminos',
+            'solicitudColaborador.checkAreaColaboradores'
+        ])->whereIn('estado.id', [3,5]);
+
+        return $result->values();
+    }
 }

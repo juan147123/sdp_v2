@@ -4,51 +4,7 @@
 
         <div id="parte-solicitudes-vista">
             <breadcrumbs :modules="breadcrumbs" />
-            <div class="col-md-12 mt-2">
-                <div class="row">
-                    <div class="col-lg-3 col-6">
-                        <div class="info-box">
-                            <span class="info-box-icon bg-color-custom-creado elevation-1"><i
-                                    class="fas fa-list-ol"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text color-custom-creado">CREADOS</span>
-                                <span class="info-box-number">{{ conteoSolicitudes.creados }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-6">
-                        <div class="info-box">
-                            <span class="info-box-icon bg-color-custom-pendiente elevation-1"><i
-                                    class="fas fa-bookmark"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text color-custom-pendiente">PENDIENTES</span>
-                                <span class="info-box-number">{{ conteoSolicitudes.pendientes }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-6">
-                        <div class="info-box">
-                            <span class="info-box-icon bg-color-custom-aprobado elevation-1"><i
-                                    class="fas fa-check-circle"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text color-custom-aprobado">APROBADOS</span>
-                                <span class="info-box-number">{{ conteoSolicitudes.aprobados }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-6">
-                        <div class="info-box">
-                            <span class="info-box-icon bg-color-custom-rechazado elevation-1"><i
-                                    class="fas fa-times-circle"></i></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text color-custom-rechazado">RECHAZADOS</span>
-                                <span class="info-box-number">{{ conteoSolicitudes.rechazados }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+  
             <div class="box m-1 mt-3">
 
                 <div class="container-fluid">
@@ -202,14 +158,6 @@ export default {
                         },
                     },
                 ],
-                initComplete: function (settings, json) {
-                    const response = json || [];
-                    console.log(response);
-                    self.conteoSolicitudes.creados = response.filter(r => r.estado.descripcion == 'CREADO').length;
-                    self.conteoSolicitudes.pendientes = response.filter(r => r.estado.descripcion == 'PENDIENTE').length;
-                    self.conteoSolicitudes.aprobados = response.filter(r => r.estado.descripcion == 'APROBADO').length;
-                    self.conteoSolicitudes.rechazados = response.filter(r => r.estado.descripcion == 'RECHAZADO').length;
-                }
             });
         },
         createTableDetalle(data) {

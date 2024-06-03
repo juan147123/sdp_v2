@@ -21,14 +21,14 @@
                 type="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
-                :disabled="this.solicitudesColaborador.status == 3"
+                :disabled="this.solicitudesColaborador.status == 5"
             >
                 Acciones
             </button>
             <ul class="dropdown-menu">
                 <li>
                     <a
-                        @click="updateAllStatus(3)"
+                        @click="updateAllStatus(4)"
                         class="dropdown-item"
                         style="cursor: pointer; font-size: 11.5px"
                         ><i class="fas fa-check text-success"></i> Aprobar
@@ -164,7 +164,7 @@ export default {
             this.mensaje = "espere mientras se efectuan los cambios....";
             this.isLoadingForm = true;
             this.form.comentario = comentario;
-            this.form.put(this.route("solicitud.colaborador.update.status.cc"), {
+            this.form.put(this.route("solicitud.colaborador.update.status.rrhh"), {
                 onFinish: () => {
                     this.onFinish();
                 },
@@ -194,14 +194,14 @@ export default {
 
             this.solicitudesColaborador.solicitud_colaborador.forEach(
                 (solicitudColacorador) => {
-                    if (solicitudColacorador.status == 1) {
+                    if (solicitudColacorador.status == 3) {
                         this.ids.push(solicitudColacorador.id);
                     }
                 }
             );
 
             this.$inertia.put(
-                this.route("solicitud.colaborador.update.masive.cc"),
+                this.route("solicitud.colaborador.update.masive.rrhh"),
                 {
                     ids: this.ids,
                     status: status,

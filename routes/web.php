@@ -51,9 +51,17 @@ Route::middleware([
     //SOLICITUD APROBAR CC 
     Route::get('redirectpage/solicitud/aprobar', [SolicitudController::class, 'redirectPageSolicitudObraAprobarCC'])->name('redirect.solicitud.aprobar');
     Route::get('list/solicitud/aprobar', [SolicitudController::class, 'listAllCCAprobar'])->name('list.solicitud.aprobar');
+    //SOLICITUD APROBAR RRHH
+    Route::get('redirectpage/solicitud/rrhh', [SolicitudController::class, 'redirectPageSolicitudRrhhAprobar'])->name('redirect.solicitud.rrhh');
+    Route::get('list/solicitud/rrhh', [SolicitudController::class, 'listAllAprobarRrhh'])->name('list.solicitud.rrhh');
+    
     //APROBADOR CC ESTADO
     Route::put('solicitudes/status/cc', [SolicitudColaboradorController::class, 'updateStatusAprobadorCC'])->name('solicitud.colaborador.update.status.cc');
     Route::put('solicitudes/status/masive/cc', [SolicitudColaboradorController::class, 'updateAllStatusAprobadorCC'])->name('solicitud.colaborador.update.masive.cc');
+   
+    //APROBAR RRHH
+    Route::put('solicitudes/status/rrhh', [SolicitudColaboradorController::class, 'updateStatusAprobadorRrhh'])->name('solicitud.colaborador.update.status.rrhh');
+    Route::put('solicitudes/status/masive/rrhh', [SolicitudColaboradorController::class, 'updateAllStatusAprobadorRrhh'])->name('solicitud.colaborador.update.masive.rrhh');
 
     //SOLICITUD OBRA
     Route::get('redirectpage/solicitud/obra', [SolicitudController::class, 'redirectPageSolicitudObra'])->name('redirect.solicitud.obra');

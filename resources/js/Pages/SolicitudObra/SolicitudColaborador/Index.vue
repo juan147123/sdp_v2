@@ -14,7 +14,7 @@
             {{ this.solicitudesColaborador.codigo }}
         </h5>
     </div>
-    <div
+   <!--  <div
         class="text-end m-2"
     >
         <div class="btn-group">
@@ -48,7 +48,7 @@
                 </li>
             </ul>
         </div>
-    </div>
+    </div> -->
     <div class="contenedor-solicitud" v-if="this.checkView != true">
         <div class="box ml-2 mr-2 mt-1">
             <div class="box-body">
