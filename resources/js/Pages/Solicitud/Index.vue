@@ -350,7 +350,6 @@ export default {
                                 '<ul class="dropdown-menu">' +
                                 '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones1"  data-bs-toggle="modal" data-bs-target="#modalArchivos"><i class="fas fa-file-alt text-info"></i> Archivos</a></li>' +
                                 botonChecklist +
-                                botones +
                                 "</ul>" +
                                 "</div>"
                             );

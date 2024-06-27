@@ -65,4 +65,37 @@ class SolicitudColaboradorController extends Controller
         $this->updateStatusSolicitud($request);
     }
 
+    //update aprobar solicitudes cc
+    public function updateStatusAprobadorRrhh(Request $request)
+    {
+        $this->repository->update(
+            $request->id,
+            $request->except(['id_solicitud'])
+        );
+
+        $this->updateStatusSolicitudRrhh($request);
+        //enviar correo desaprobacion con comentario
+        return redirect()->route('redirect.solicitud.aprobar');
+    }
+
+    public function updateAllStatusAprobadorRrhh(Request $request)
+    {
+        $this->repository->updateStatusMasive($request->status, $request->ids);
+        $this->updateStatusSolicitudRrhh($request);
+    }
+
+    public function updateStatusSolicitudRrhh($request)
+    {
+        $solicitudes = $this->repository->getSolicitudColaboradorPendinte(
+            $request->id_solicitud
+        );
+        if ($solicitudes == 0) {
+            if ($request->status == 4) {
+                $request->status = 5;
+            } else if ($request->status == 2) {
+                $request->status = 4;
+            }
+            $this->repositorySolicitud->update($request->id_solicitud, ["status" => $request->status]);
+        }
+    }
 }

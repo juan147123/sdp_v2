@@ -64,6 +64,7 @@ class AuthController extends Controller
             // $email = 'david.vilugron@flesan.cl'; //pendiente
             // $email = 'cesar.munoz@flesan.cl';
             // $email = 'jonathan.gaete@dvc.cl';
+            // $email = 'sebastian.valck@flesan.cl';
             // $email = 'serodriguez@flesan.com.pe';
         }
 
@@ -96,9 +97,11 @@ class AuthController extends Controller
             Auth::login($usuario_seguridad_app);
             $rol = $this->repositoryRolUsuario->getDataRol($usuario_seguridad_app->id_aplicacion_usuario);
             $np_lider  = $this->getNpLider();
+            $objeto_permitido = explode(",", $rol->objeto_permitido);
             session(['np_lider' => $np_lider]);
-            session(['objeto_permitido' => explode(",", $rol->objeto_permitido)]);
-            return redirect()->route("redirect.colaboradores.cl");
+            session(['objeto_permitido' => $objeto_permitido]);
+
+            return $this->setRedirect($objeto_permitido);
         } else {
 
 
@@ -134,9 +137,10 @@ class AuthController extends Controller
                 $this->createRolUser($data);
                 Auth::login($appUser);
                 $np_lider  = $this->getNpLider();
+                $objeto_permitido = explode(",", implode(",", $permisos));
                 session(['np_lider' => $np_lider]);
-                session(['objeto_permitido' => explode(",", implode(",", $permisos))]);
-                return redirect()->route("redirect.colaboradores.cl");
+                session(['objeto_permitido' => $objeto_permitido]);
+                return $this->setRedirect($objeto_permitido);
             } else {
                 return $this->redirectToLogin();
             }
@@ -165,23 +169,25 @@ class AuthController extends Controller
     {
         $this->repository->update($appUser->id_aplicacion_usuario, ["name" => $usuario['name'], "avatar" => $usuario['avatar']]);
     }
-    public function setRedirect($rol, $pais)
+    public function setRedirect($objeto_permitido)
     {
         $redirect = "";
-        if ($rol == env('ADMINISTRADOR_AREA')) {
-            $redirect = 'redirect.solicitud.area';
-        } else if ($rol == env('ADMINISTRADOR_LIDER') && $pais == "PE") {
-            $redirect = 'redirect.colaboradores.pe';
-        } else if ($rol == env('ADMINISTRADOR_LIDER') && $pais == "CL") {
+        if (in_array(env("LIDERCL"), $objeto_permitido) && !in_array(env("LIDEROBRACL"), $objeto_permitido)) {
             $redirect = 'redirect.colaboradores.cl';
-        } else if ($rol == env('ADMINISTRADOR_LIDER_OBRA')) {
+        } else if (in_array(env("LIDERPE"), $objeto_permitido)) {
+            $redirect = 'redirect.colaboradores.pe';
+        } else if (in_array(env("LIDEROBRACL"), $objeto_permitido)) {
             $redirect = 'redirect.colaboradores.obra.cl';
-        } else if ($rol == env('ADMINISTRADOR_RRHH')) {
+        } else if (in_array(env("APROBOBRA"), $objeto_permitido)) {
+            $redirect = 'redirect.solicitud.aprobar';
+        } else if (in_array(env("ADMRRHH"), $objeto_permitido)) {
             $redirect = 'solicitudes';
-        } else if ($rol == env('SUPER_ADMINISTRADOR')) {
-            $redirect = 'solicitudes';
+        } else if (in_array(env("SUPERAD"), $objeto_permitido)) {
+            $redirect = 'redirect.configuraciones';
+        } else if (in_array(env("ADMAREA"), $objeto_permitido)) {
+            $redirect = 'redirect.solicitud.area';
         }
-        return  $redirect;
+        return redirect()->route($redirect);
     }
 
 

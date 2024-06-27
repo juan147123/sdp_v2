@@ -27,11 +27,11 @@
                     alt=""
                     style="width: 60px; height: 60px"
                 />
-                <div class="d-flex flex-column user-props text-center">
-                    <span class="mx-2 user-data fw-bold">{{
+                <div class="d-flex flex-column user-props text-rigth">
+                    <span class="user-data fw-bold" style="font-size: 9px !important;">{{
                         this.$page.props.auth.user.username
                     }}</span>
-                    <span class="mx-2 user-data">{{
+                    <span class="user-data">{{
                         this.$page.props.auth.user.name
                     }}</span>
                 </div>
@@ -45,9 +45,12 @@
                     <div
                         class="solicitudes-planta"
                         v-if="
-                            this.$page.props.permisos.includes(
+                            (this.$page.props.permisos.includes(
                                 this.$env.LIDERCL
-                            ) ||
+                            ) &&
+                                !this.$page.props.permisos.includes(
+                                    this.$env.LIDEROBRACL
+                                )) ||
                             this.$page.props.permisos.includes(
                                 this.$env.LIDERPE
                             )
@@ -171,7 +174,32 @@
                                 @click="setPreloader()"
                             >
                                 <i class="fas fa-file icon-menu"></i>
-                                <strong>Aprobar Solicitudes</strong>
+                                <strong>Aprobar S. OBRA</strong>
+                            </a>
+                        </li>
+                    </div>
+                    <div
+                        class="solicitudes-obra"
+                        v-if="
+                            this.$page.props.permisos.includes(
+                                this.$env.ADMRRHH
+                            )
+                        "
+                    >
+                        <li class="toogle-li">
+                            <a
+                                :href="this.route('redirect.solicitud.rrhh')"
+                                :class="
+                                    this.route().current(
+                                        'redirect.solicitud.rrhh'
+                                    )
+                                        ? 'active'
+                                        : ''
+                                "
+                                @click="setPreloader()"
+                            >
+                                <i class="fas fa-file icon-menu"></i>
+                                <strong>Aprobar S. RRHH</strong>
                             </a>
                         </li>
                     </div>

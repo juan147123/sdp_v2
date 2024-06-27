@@ -189,6 +189,7 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
         inner JOIN flesan_rrhh.sap_maestro_empresa_dep_un_cc m ON m.external_code_cc = c.centro_costo
         and c.empl_status = '41111'
         and cl.correo_lider = :correo_lider
+        and smc.planta_noplanta = 'NP'
         group by 
             c.user_id,
             c.np_lider,
@@ -245,7 +246,7 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
             np.cc
             FROM flesan_rrhh.sap_maestro_colaborador smc
             INNER JOIN nplider np ON np.lider_departamento = smc.user_id
-            AND smc.empl_status = '41111' and lower(smc.correo_flesan) = :correo_lider
+            AND smc.empl_status = '41111' and lower(smc.correo_flesan) = lower(:correo_lider)
             LIMIT 1;       
         ";
 
