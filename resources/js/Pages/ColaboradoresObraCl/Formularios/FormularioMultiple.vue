@@ -1,217 +1,128 @@
 <template>
-    <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
-    <!-- Modal -->
-    <div
-        class="modal fade"
-        id="modalSolicitudMultiple"
-        tabindex="-1"
-        role="dialog"
-        data-bs-backdrop="static"
-        data-bs-keyboard="false"
-        aria-labelledby="modalSolicitudMultiple"
-        aria-hidden="true"
+    <Dialog
+        header="Registrar solicitud"
+        :visible="visible"
+        :closable="false"
+        modal
     >
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Solicitud de desvinculación</h5>
-                    <button
-                        type="button"
-                        class="btn-close"
-                        id="btn-close-solicitud-multiple"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                    ></button>
-                </div>
-                <div class="modal-body">
-                    <form
-                        @submit.prevent="submit"
-                        id="formSolicitudMultiple"
-                        enctype="multipart/form-data"
-                    >
-                        <div class="row">
-                            <div
-                                class="col-md-6"
-                                v-for="(colaborador, index) in this
-                                    .colaboradoresDetalle"
+        <form class="grid">
+            <div
+                :class="colaboradoresDetalle.length == 1 ? 'col-12' : 'col-6'"
+                v-for="(colaborador, index) in this.colaboradoresDetalle"
+            >
+                <div class="card" style="width: 100%">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="input1" class="form-label"
+                                >Motivo de desvinculación</label
                             >
-                                <div class="card p-3 mt-1 mb-3">
-                                    <div class="card-body">
-                                        <div class="mb-3 d-flex">
-                                            <input
-                                                class="input-multiple"
-                                                style="
-                                                    width: 60px;
-                                                    font-weight: bold;
-                                                "
-                                                type="text"
-                                                :name="'userId' + index"
-                                                :id="'userId' + index"
-                                                :value="
-                                                    colaborador.user_id ||
-                                                    colaborador.dni
-                                                "
-                                                readonly
-                                            />
-                                            /
-                                            <input
-                                                type="text"
-                                                style="font-weight: bold"
-                                                class="input-multiple"
-                                                :name="'nombreCompleto' + index"
-                                                :id="'nombreCompleto' + index"
-                                                :value="
-                                                    colaborador.first_name +
-                                                    ' ' +
-                                                    colaborador.last_name
-                                                "
-                                                readonly
-                                            />
-                                            <input
-                                                type="text"
-                                                style="font-weight: bold"
-                                                class="input-multiple d-none"
-                                                :name="'centro_costo' + index"
-                                                :id="'centro_costo' + index"
-                                                :value="
-                                                    colaborador.centro_costo
-                                                "
-                                                readonly
-                                            />
-                                            <input
-                                                type="text"
-                                                style="font-weight: bold"
-                                                class="input-multiple d-none"
-                                                :name="'rut_empresa' + index"
-                                                :id="'rut_empresa' + index"
-                                                :value="
-                                                    colaborador.rut
-                                                "
-                                                readonly
-                                            />
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="" class="form-label"
-                                                >Motivo de desvinculación</label
-                                            >
-                                            <select
-                                                class="form-select select-sm form-select-modal-multiple"
-                                                :id="'motivo' + index"
-                                                :name="'motivo' + index"
-                                                required
-                                            >
-                                                <option value="">
-                                                    Selecciones Motivo
-                                                </option>
-                                                <option
-                                                    v-for="termino in this
-                                                        .terminos"
-                                                    :value="
-                                                        termino.externalcode
-                                                    "
-                                                >
-                                                    {{ termino.name }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="" class="form-label"
-                                                >Fecha de desvinculación</label
-                                            >
-                                            <input
-                                                class="form-control form-control-sm"
-                                                :id="'fechaMotivo' + index"
-                                                :name="'fechaMotivo' + index"
-                                                style="font-size: 12px"
-                                                type="date"
-                                                required
-                                                :min="
-                                                    new Date(
-                                                        new Date().getFullYear(),
-                                                        new Date().getMonth(),
-                                                        1
-                                                    )
-                                                        .toISOString()
-                                                        .split('T')[0]
-                                                "
-                                            />
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="" class="form-label"
-                                                >Correo de redirección</label
-                                            >
-                                            <input
-                                                class="form-control form-control-sm"
-                                                style="font-size: 12px"
-                                                type="email"
-                                                :name="'redireccion' + index"
-                                                :id="'redireccion' + index"
-                                            />
-                                        </div>
-                                        <div class="mb-3">
-                                            <label
-                                                for="filesForm"
-                                                class="form-label"
-                                                >Adjuntar archivos</label
-                                            >
-                                            <input
-                                                class="form-control form-control-sm"
-                                                type="file"
-                                                :id="'archivos' + index"
-                                                :name="
-                                                    'archivos' + index + '[]'
-                                                "
-                                                multiple
-                                                required
-                                            />
+                            <Dropdown
+                                :options="this.terminos"
+                                option-label="name"
+                                filter
+                                :class="`w-full-important`"
+                                v-model="this.dropdownValues['motivo' + index]"
+                                placeholder="Seleccione"
+                            >
+                                <template #option="slotProps">
+                                    <div
+                                        class="flex align-items-center dropdown-option"
+                                    >
+                                        <div
+                                            :style="{
+                                                'white-space': 'normal',
+                                                'word-wrap': 'break-word',
+                                            }"
+                                        >
+                                            {{ slotProps.option.name }}
                                         </div>
                                     </div>
-                                </div>
-                            </div>
+                                </template>
+                            </Dropdown>
                         </div>
-                        <div class="text-end">
-                            <div class="text-end m-3">
-                                <button
-                                    type="button"
-                                    class="btn btn-danger btn-sm"
-                                    data-bs-dismiss="modal"
-                                    @click="onClickCleanDetalleColaborador"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    class="btn btn-primary btn-sm ml-1"
-                                >
-                                    Guardar
-                                </button>
-                            </div>
+                        <div class="mb-3">
+                            <label for="input1" class="form-label"
+                                >Email address</label
+                            >
+                            <InputText
+                                type="email"
+                                class="form-control"
+                                id="input1"
+                                aria-describedby="emailHelp"
+                            />
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
+
+            <div class="w-full flex justify-content-end p-2">
+                <Button
+                    class="h-2rem m-1"
+                    label="Cancelar"
+                    severity="danger"
+                    icon="pi pi-times"
+                    @click="showModal"
+                />
+                <Button
+                    class="h-2rem m-1"
+                    label="Guardar"
+                    severity="success"
+                    icon="pi pi-check"
+                    @click="submit"
+                />
+            </div>
+        </form>
+    </Dialog>
 </template>
 <script>
 import Preloader from "@/Components/Preloader.vue";
 import { rutaBase } from "../../../../Utils/utils.js";
 import { setSwal } from "../../../../Utils/swal";
+import PrimeVueComponents from "../../../../js/primevue.js";
 import * as mensajes from "../../../../Utils/message.js";
 export default {
-    props: ["terminos", "colaboradoresDetalle"],
-    emits: ["reloadTable", "onClickCleanDetalleColaborador"],
+    props: ["terminos", "colaboradoresDetalle", "visible"],
+    emits: ["reloadTable", "onClickCleanDetalleColaborador", "showModal"],
     components: {
         Preloader,
+        ...PrimeVueComponents,
     },
     data() {
         return {
             mensaje: "",
             isLoadingForm: false,
+            dropdownValues: {},
         };
     },
     mounted() {},
+    watch: {
+        visible: function (newValue, oldValue) {
+            if (newValue == 1) {
+                this.armarVModel();
+            }
+        },
+    },
     methods: {
+        armarVModel() {
+            this.colaboradoresDetalle.forEach((colaborador, index) => {
+                const keys = Object.keys(colaborador);
+                console.log(colaborador);
+                keys.forEach((key) => {
+                    this.dropdownValues["user_id" + index] =
+                        colaborador.user_id;
+                    this.dropdownValues["nombre_completo" + index] =
+                        colaborador.first_name + " " + colaborador.last_name;
+                    this.dropdownValues["motivo" + index] = "";
+                    this.dropdownValues["fecha_desvinculacion" + index] = "";
+                    this.dropdownValues["redireccion" + index] = "";
+                    this.dropdownValues["rut_empresa" + index] =
+                        colaborador.rut;
+                    this.dropdownValues["centro_costo" + index] =
+                        colaborador.centro_costo;
+                });
+            });
+            console.log(this.dropdownValues);
+        },
         onClickCleanFormUnico() {
             $("#motivoForm").val("").trigger("change");
             $("#fechaForm")
@@ -221,6 +132,7 @@ export default {
             $("#filesForm").val("");
         },
         submit() {
+            return "";
             var self = this;
             const form = document.getElementById("formSolicitudMultiple");
             const formData = new FormData(form);
@@ -255,6 +167,10 @@ export default {
         },
         reloadTable() {
             this.$emit("reloadTable");
+        },
+        showModal() {
+            this.$emit("showModal");
+            this.dropdownValues = {};
         },
         onClickCleanDetalleColaborador() {
             this.$emit("onClickCleanDetalleColaborador");

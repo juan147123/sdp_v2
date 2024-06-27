@@ -178,21 +178,14 @@
             <div class="container-fluid">
                 <div class="box-body">
                     <div class="mt-2 mb-3 text-end">
-                        <button
-                            type="button"
-                            class="btn btn-primary btn-sm shadow"
-                            data-bs-toggle="modal"
-                            :data-bs-target="
-                                this.colaboradoresDetalle.length == 1
-                                    ? '#modalSolicitudUnica'
-                                    : '#modalSolicitudMultiple'
-                            "
-                            title="Nueva solicitud"
+                        <Button 
+                            label="Nuevo" icon="pi pi-plus"
+                            class="h-2rem"
+                            style="font-size: 0.9rem;"
+                            severity="info"
+                            @click="showModal"
                             :disabled="this.colaboradoresDetalle.length == 0"
-                            @click="getMotivos"
-                        >
-                            Nueva solicitud
-                        </button>
+                        />
                     </div>
                     <div class="table-responsive">
                         <table
@@ -226,8 +219,10 @@
         />
         <FormularioMultiple
             :terminos="this.terminos"
+            :visible="this.visible"
             :colaboradoresDetalle="colaboradoresDetalle"
             @reloadTable="reloadTable"
+            @showModal="showModal"
             @onClickCleanDetalleColaborador="onClickCleanDetalleColaborador"
         />
     </AppLayout>
@@ -241,6 +236,7 @@ import { rutaBase } from "../../../Utils/utils.js";
 import Formulario from "./Formularios/Formulario.vue";
 import FormularioMultiple from "./Formularios/FormularioMultiple.vue";
 import * as mensajes from "../../../Utils/message.js";
+import PrimeVueComponents from "../../../js/primevue.js";
 export default {
     components: {
         AppLayout,
@@ -248,6 +244,7 @@ export default {
         Preloader,
         Formulario,
         FormularioMultiple,
+           ...PrimeVueComponents,
     },
     data() {
         var self = this;
@@ -261,6 +258,7 @@ export default {
             ],
             mensaje: "",
             isLoadingForm: false,
+            visible: false,
             table: [],
             empresas: [],
             unidades: [],
@@ -351,7 +349,8 @@ export default {
                         .find(".checkbox-datatable")
                         .on("change", function () {
                             const centroExists = self.colaboradoresDetalle.some(
-                                (item) => item.centro_costo !== data.centro_costo
+                                (item) =>
+                                    item.centro_costo !== data.centro_costo
                             );
 
                             if (this.checked) {
@@ -572,6 +571,12 @@ export default {
         },
         reloadTable() {
             this.table.ajax.reload();
+        },
+        showModal() {
+            this.visible = !this.visible;
+            if (this.visible == true) {
+                this.getMotivos();
+            }
         },
     },
 };
