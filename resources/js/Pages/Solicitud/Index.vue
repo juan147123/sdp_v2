@@ -245,7 +245,6 @@ export default {
                 ],
                 initComplete: function (settings, json) {
                     const response = json || [];
-                    console.log(response);
                     self.conteoSolicitudes.creados = response.filter(r => r.estado.descripcion == 'CREADO').length;
                     self.conteoSolicitudes.pendientes = response.filter(r => r.estado.descripcion == 'PENDIENTE').length;
                     self.conteoSolicitudes.aprobados = response.filter(r => r.estado.descripcion == 'APROBADO').length;

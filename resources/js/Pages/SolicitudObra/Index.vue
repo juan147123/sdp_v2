@@ -1,102 +1,201 @@
 <template>
     <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
     <AppLayout>
-
         <div id="parte-solicitudes-vista">
             <breadcrumbs :modules="breadcrumbs" />
             <div class="col-md-12 mt-2">
                 <div class="row">
                     <div class="col-lg-3 col-6">
                         <div class="info-box">
-                            <span class="info-box-icon bg-color-custom-creado elevation-1"><i
-                                    class="fas fa-list-ol"></i></span>
+                            <span
+                                class="info-box-icon bg-color-custom-creado elevation-1"
+                                ><i class="fas fa-list-ol"></i
+                            ></span>
                             <div class="info-box-content">
-                                <span class="info-box-text color-custom-creado">CREADOS</span>
-                                <span class="info-box-number">{{ conteoSolicitudes.creados }}</span>
+                                <span class="info-box-text color-custom-creado"
+                                    >CREADOS</span
+                                >
+                                <span class="info-box-number">{{
+                                    conteoSolicitudes.creados
+                                }}</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-6">
                         <div class="info-box">
-                            <span class="info-box-icon bg-color-custom-pendiente elevation-1"><i
-                                    class="fas fa-bookmark"></i></span>
+                            <span
+                                class="info-box-icon bg-color-custom-pendiente elevation-1"
+                                ><i class="fas fa-bookmark"></i
+                            ></span>
                             <div class="info-box-content">
-                                <span class="info-box-text color-custom-pendiente">PENDIENTES</span>
-                                <span class="info-box-number">{{ conteoSolicitudes.pendientes }}</span>
+                                <span
+                                    class="info-box-text color-custom-pendiente"
+                                    >PENDIENTES</span
+                                >
+                                <span class="info-box-number">{{
+                                    conteoSolicitudes.pendientes
+                                }}</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-6">
                         <div class="info-box">
-                            <span class="info-box-icon bg-color-custom-aprobado elevation-1"><i
-                                    class="fas fa-check-circle"></i></span>
+                            <span
+                                class="info-box-icon bg-color-custom-aprobado elevation-1"
+                                ><i class="fas fa-check-circle"></i
+                            ></span>
                             <div class="info-box-content">
-                                <span class="info-box-text color-custom-aprobado">APROBADOS</span>
-                                <span class="info-box-number">{{ conteoSolicitudes.aprobados }}</span>
+                                <span
+                                    class="info-box-text color-custom-aprobado"
+                                    >APROBADOS</span
+                                >
+                                <span class="info-box-number">{{
+                                    conteoSolicitudes.aprobados
+                                }}</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-6">
                         <div class="info-box">
-                            <span class="info-box-icon bg-color-custom-rechazado elevation-1"><i
-                                    class="fas fa-times-circle"></i></span>
+                            <span
+                                class="info-box-icon bg-color-custom-rechazado elevation-1"
+                                ><i class="fas fa-times-circle"></i
+                            ></span>
                             <div class="info-box-content">
-                                <span class="info-box-text color-custom-rechazado">RECHAZADOS</span>
-                                <span class="info-box-number">{{ conteoSolicitudes.rechazados }}</span>
+                                <span
+                                    class="info-box-text color-custom-rechazado"
+                                    >RECHAZADOS</span
+                                >
+                                <span class="info-box-number">{{
+                                    conteoSolicitudes.rechazados
+                                }}</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="box m-1 mt-3">
-
+            <div class="box m-1 mt-5 bg-white p-3 border-round">
                 <div class="container-fluid">
-
                     <div class="box-body">
-                        <div class="table-responsive pt-2">
-                            <table class="table text-nowrap table-bordered dt-responsive" id="tableSolicitudes">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>Código</th>
-                                        <th>Solicitante</th>
-                                        <th>Fecha de solicitud</th>
-                                        <th>Estado</th>
-                                        <th>Colaboradores</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
+                        <DataTable
+                            dataKey="id"
+                            :value="dataTable.data"
+                            :rows="dataTable.rows"
+                            showGridlines
+                            paginator
+                            :paginatorTemplate="dataTable.paginatorTemplate"
+                            :currentPageReportTemplate="
+                                dataTable.currentPageReportTemplate
+                            "
+                            :rowsPerPageOptions="dataTable.rowsPerPageOptions"
+                            sortMode="single"
+                            :globalFilterFields="dataTable.globalFilterFields"
+                        >
+                            <template #header>
+                                <div
+                                    class="flex justify-content-end align-items-center"
+                                >
+                                    <!-- <InputText
+                                            placeholder="Buscador general"
+                                            v-model="
+                                                dataTable.filters['global']
+                                                    .value
+                                            "
+                                            style="
+                                                font-size: 0.9rem;
+                                                height: 30px;
+                                            "
+                                        /> -->
+                                </div>
+                            </template>
+                            <template #empty>
+                                <div class="w-full flex justify-content-center">
+                                    <span>Cargando datos</span>
+                                </div>
+                            </template>
+                            <Column
+                                field="codigo"
+                                header="Código de solicitud"
+                                headerStyle="width: 3rem;background-color:black; color:white"
+                            >
+                            </Column>
+                            <Column
+                                field="user_created"
+                                header="Solicitante"
+                                headerStyle="width: 3rem;background-color:black; color:white"
+                            >
+                            </Column>
+                            <Column
+                                field="centro_costo"
+                                header="Centro de costo"
+                                headerStyle="width: 3rem;background-color:black; color:white"
+                            >
+                            </Column>
+                            <Column
+                                field="created_at"
+                                header="Centro de costo"
+                                headerStyle="width: 3rem;background-color:black; color:white"
+                            >
+                                <template #body="{ data }">
+                                    <div>
+                                        {{ dateFormatChangeApi(data) }}
+                                    </div>
+                                </template>
+                            </Column>
+                        </DataTable>
+                        <table
+                            class="table text-nowrap table-bordered dt-responsive"
+                            id="tableSolicitudes"
+                        >
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Solicitante</th>
+                                    <th>Fecha de solicitud</th>
+                                    <th>Estado</th>
+                                    <th>Colaboradores</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
         <div class="hidden" id="parte-solicitudes-detalle">
-            <SolicitudesColaborador @changeViewDetail="this.changeViewDetail" @reloadTable="reloadTable"
-                :solicitudesColaborador="solicitudesColaborador" :archivosList="archivosList" />
+            <SolicitudesColaborador
+                @changeViewDetail="this.changeViewDetail"
+                @reloadTable="reloadTable"
+                :solicitudesColaborador="solicitudesColaborador"
+                :archivosList="archivosList"
+            />
         </div>
     </AppLayout>
 </template>
 <script>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import breadcrumbs from "@/Components/Breadcrumbs.vue";
-import { rutaBase } from "../../../Utils/utils.js";
+import { rutaBase, dateFormatChange } from "../../../Utils/utils.js";
 import SolicitudesColaborador from "./SolicitudColaborador/Index.vue";
 import { setSwal } from "../../../Utils/swal";
 import Preloader from "@/Components/Preloader.vue";
-
+import setLocaleES from "../../primevue.config.js";
 import dayjs from "dayjs";
-import { createVNode } from "vue";
+import PrimeVueComponents from "../../../js/primevue.js";
+
 export default {
     components: {
         AppLayout,
         breadcrumbs,
         SolicitudesColaborador,
         Preloader,
+        ...PrimeVueComponents,
+    },
+    setup() {
+        setLocaleES();
     },
     data() {
-        var self = this;
         return {
             breadcrumbs: [
                 {
@@ -123,12 +222,21 @@ export default {
                 creados: 0,
                 pendientes: 0,
                 aprobados: 0,
-                rechazados: 0
-            }
+                rechazados: 0,
+            },
+            dataTable: {
+                rows: 10,
+                data: [],
+                rowsPerPageOptions: [10, 20, 50, 100],
+                paginatorTemplate:
+                    "RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink",
+                currentPageReportTemplate:
+                    "Página {currentPage} de {totalPages}",
+            },
         };
     },
-    mounted() {
-        this.createTable();
+    async mounted() {
+        await this.getData();
     },
     methods: {
         createTable() {
@@ -171,26 +279,26 @@ export default {
                         },
                     },
                     {
-                        data: "estado", className: "text-center", width: 80,
+                        data: "estado",
+                        className: "text-center",
+                        width: 80,
                         render: function (data, type, row) {
-
-                            let claseColor = ''
+                            let claseColor = "";
                             switch (data.descripcion) {
-                                case 'CREADO':
-                                    claseColor = 'bg-color-custom-creado'
+                                case "CREADO":
+                                    claseColor = "bg-color-custom-creado";
                                     break;
-                                case 'PENDIENTE':
+                                case "PENDIENTE":
                                     claseColor = `bg-color-custom-pendiente`;
                                     break;
-                                case 'APROBADO':
+                                case "APROBADO":
                                     claseColor = `bg-color-custom-aprobado`;
                                     break;
-                                case 'RECHAZADO':
+                                case "RECHAZADO":
                                     claseColor = `bg-color-custom-rechazado`;
                                     break;
                             }
                             return `<div><span style="font-size:10.5px;" class="badge text-white ${claseColor}">${data.descripcion}</span></div>`;
-
                         },
                     },
                     {
@@ -204,12 +312,19 @@ export default {
                 ],
                 initComplete: function (settings, json) {
                     const response = json || [];
-                    console.log(response);
-                    self.conteoSolicitudes.creados = response.filter(r => r.estado.descripcion == 'CREADO').length;
-                    self.conteoSolicitudes.pendientes = response.filter(r => r.estado.descripcion == 'PENDIENTE').length;
-                    self.conteoSolicitudes.aprobados = response.filter(r => r.estado.descripcion == 'APROBADO').length;
-                    self.conteoSolicitudes.rechazados = response.filter(r => r.estado.descripcion == 'RECHAZADO').length;
-                }
+                    self.conteoSolicitudes.creados = response.filter(
+                        (r) => r.estado.descripcion == "CREADO"
+                    ).length;
+                    self.conteoSolicitudes.pendientes = response.filter(
+                        (r) => r.estado.descripcion == "PENDIENTE"
+                    ).length;
+                    self.conteoSolicitudes.aprobados = response.filter(
+                        (r) => r.estado.descripcion == "APROBADO"
+                    ).length;
+                    self.conteoSolicitudes.rechazados = response.filter(
+                        (r) => r.estado.descripcion == "RECHAZADO"
+                    ).length;
+                },
             });
         },
         createTableDetalle(data) {
@@ -250,7 +365,7 @@ export default {
                 },
                 columns: [
                     { data: "user_id", width: 90, className: "text-center" },
-                    { data: "nombre_completo"},
+                    { data: "nombre_completo" },
                     {
                         data: "sap_maestro_causales_terminos.name",
                         className: "text-center",
@@ -284,15 +399,14 @@ export default {
                         data: null,
                         className: "text-center",
                         render: function (data, type, row) {
-
                             var botones = "";
                             var botonChecklist = "";
-                            if ( row.status == 1) {
+                            if (row.status == 1) {
                                 botones =
                                     '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones3" ><i class="fas fa-check text-success"></i> Aprobar</a></li>' +
                                     '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones4" ><i class="fas fa-times text-danger"></i> Desaprobar</a></li>';
                             }
-                        
+
                             return (
                                 '<div class="btn-group">' +
                                 '<button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
@@ -415,7 +529,20 @@ export default {
                 }
             );
         },
-       
+        /* NUEVO CODIGO */
+        async getData() {
+            await axios
+                .get(rutaBase + "/list/solicitud")
+                .then(async (response) => {
+                    if (response.status == 200) {
+                        console.log(response);
+                        this.dataTable.data = response.data;
+                    }
+                });
+        },
+        dateFormatChangeApi(data){
+           return  dateFormatChange(data)
+        }
     },
 };
 </script>

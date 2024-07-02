@@ -248,7 +248,6 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import breadcrumbs from "@/Components/Breadcrumbs.vue";
 import Preloader from "@/Components/Preloader.vue";
 import { rutaBase } from "../../../Utils/utils.js";
-import Formulario from "./Formularios/Formulario.vue";
 import FormularioMultiple from "./Formularios/FormularioMultiple.vue";
 import PrimeVueComponents from "../../../js/primevue.js";
 import { FilterMatchMode } from "primevue/api";
@@ -258,7 +257,6 @@ export default {
         AppLayout,
         breadcrumbs,
         Preloader,
-        Formulario,
         FormularioMultiple,
         ...PrimeVueComponents,
     },
