@@ -162,6 +162,7 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
             c.np_lider,
             c.first_name,
             c.last_name,
+            c.first_name || ' ' || c.last_name AS full_name,
             c.national_id,
             c.correo_flesan,
             c.correo_gmail,      
@@ -175,11 +176,14 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
             c.empresa,
             c.centro_costo,
             c.nombre_centro_costo,
-            c.departamento,
+            c.centro_costo || ' ' || c.nombre_centro_costo AS full_ceco,
             m.nombre_cc,
             m.nombre_un AS unidad_negocio,
             m.external_code_un AS id_unidad_negocio,
+            m.external_code_un || ' ' || m.nombre_un AS full_unidad,
+            c.departamento,
             c.nombre_departamento,
+            c.departamento || ' ' || c.nombre_departamento AS full_dep,
             c.division,
             c.nombre_division
         from cecos_lider cl 
@@ -313,7 +317,7 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
             and smc.empl_status = '41111' and LOWER(smc.correo_flesan) = :correo;";
 
         $resultados = DB::connection('dw_chile')
-            ->select(DB::raw($query),[
+            ->select(DB::raw($query), [
                 'correo' => $correo,
             ]);
 

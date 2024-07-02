@@ -4,6 +4,9 @@
         header="Registrar solicitud"
         :visible="visible"
         :closable="false"
+        :draggable="false"
+        pt:mask:class="backdrop-blur-sm"
+        maximizable
         modal
         :style="{
             width: colaboradoresDetalle.length === 1 ? '50rem' : '70rem',
@@ -16,6 +19,14 @@
             >
                 <div class="card" style="width: 100%">
                     <div class="card-body">
+                        <div class="mb-3 flex flex-column">
+                            <div class="align-items-center ">
+                                <i class="pi pi-user mr-2 ml-1" style="font-size: 1rem"></i>
+                                {{ colaborador.first_name }}
+                                {{ colaborador.last_name }}
+                                ( NP: {{ colaborador.user_id }} )
+                            </div>
+                        </div>
                         <div class="mb-3 flex flex-column">
                             <label for="input1" class="form-label"
                                 >Motivo de desvinculación</label
@@ -197,7 +208,7 @@ import PrimeVueComponents from "../../../../js/primevue.js";
 import * as mensajes from "../../../../Utils/message.js";
 export default {
     props: ["terminos", "colaboradoresDetalle", "visible"],
-    emits: ["reloadTable", "onClickCleanDetalleColaborador", "showModal"],
+    emits: ["onClickClean", "showModal","getData"],
     components: {
         Preloader,
         ...PrimeVueComponents,
@@ -231,7 +242,7 @@ export default {
                     this.formData["rut_empresa" + index] = colaborador.rut;
                     this.formData["centro_costo" + index] =
                         colaborador.centro_costo;
-                        /* archivos */
+                    /* archivos */
                     this.formData["carta_firmada" + index] = null;
                     this.formData["cese_dt" + index] = null;
                     this.formData["cese_afc" + index] = null;
@@ -239,7 +250,7 @@ export default {
                     this.formData["cert_defuncion" + index] = null;
                     this.formData["boleta_funebre" + index] = null;
                     this.formData["info_bancaria" + index] = null;
-                    this.formData["pathname"+index] = pathName;
+                    this.formData["pathname" + index] = pathName;
                 });
             });
             this.$inertia.form(this.formData);
@@ -263,7 +274,7 @@ export default {
                 {
                     onFinish: () => {
                         this.showModal();
-                        this.reloadTable();
+                        this.getData();
                         this.isLoadingForm = false;
                         this.mensaje = "";
                         this.$toast.add({
@@ -277,15 +288,18 @@ export default {
                 }
             );
         },
-        reloadTable() {
-            this.$emit("reloadTable");
+        onClickClean() {
+            this.$emit("onClickClean");
+        },
+        getData() {
+            this.$emit("getData");
         },
         showModal() {
             this.$emit("showModal");
             this.formData = {};
         },
-        onClickCleanDetalleColaborador() {
-            this.$emit("onClickCleanDetalleColaborador");
+        onClickClean() {
+            this.$emit("onClickClean");
         },
         handleDropdownChange(index, value) {
             let external_code = this.formData["motivo" + index].externalcode;

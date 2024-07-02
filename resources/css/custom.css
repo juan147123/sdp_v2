@@ -146,10 +146,6 @@
   font-size: 14px;
 }
 
-.p-datatable .p-datatable-header {
-  text-align: center;
-}
-
 .p-dropdown {
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -289,4 +285,13 @@ ul.p-carousel-indicators{
 }
 .color-custom-rechazado{
   color: #f41b35;
+}
+
+.p-sortable-column-icon{
+  color: white !important;
+}
+.p-datatable .p-datatable-tbody>tr.p-highlight{
+  background-color: #818181 !important;
+  color: white !important;
+  font-weight: bold;
 }

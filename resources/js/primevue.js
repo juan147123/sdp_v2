@@ -20,6 +20,7 @@ import ProgressSpinner from 'primevue/progressspinner';
 import Carousel from 'primevue/carousel';
 import MultiSelect from 'primevue/multiselect';
 import Tooltip from 'primevue/tooltip';
+import Badge from 'primevue/badge';
 
 
 export default {
@@ -44,5 +45,6 @@ export default {
     ProgressSpinner,
     Carousel,
     MultiSelect,
-    Tooltip
+    Tooltip,
+    Badge
 }
