@@ -1,9 +1,13 @@
 <template>
+    <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
     <Dialog
         header="Registrar solicitud"
         :visible="visible"
         :closable="false"
         modal
+        :style="{
+            width: colaboradoresDetalle.length === 1 ? '50rem' : '70rem',
+        }"
     >
         <form class="grid">
             <div
@@ -12,7 +16,7 @@
             >
                 <div class="card" style="width: 100%">
                     <div class="card-body">
-                        <div class="mb-3">
+                        <div class="mb-3 flex flex-column">
                             <label for="input1" class="form-label"
                                 >Motivo de desvinculación</label
                             >
@@ -20,35 +24,146 @@
                                 :options="this.terminos"
                                 option-label="name"
                                 filter
-                                :class="`w-full-important`"
-                                v-model="this.dropdownValues['motivo' + index]"
+                                :class="`w-full`"
+                                v-model="this.formData['motivo' + index]"
                                 placeholder="Seleccione"
+                                @change="handleDropdownChange(index, $event)"
                             >
                                 <template #option="slotProps">
                                     <div
                                         class="flex align-items-center dropdown-option"
                                     >
-                                        <div
-                                            :style="{
-                                                'white-space': 'normal',
-                                                'word-wrap': 'break-word',
-                                            }"
-                                        >
+                                        <div>
                                             {{ slotProps.option.name }}
                                         </div>
                                     </div>
                                 </template>
                             </Dropdown>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 flex flex-column">
                             <label for="input1" class="form-label"
-                                >Email address</label
+                                >Fecha a desvincular</label
                             >
-                            <InputText
-                                type="email"
-                                class="form-control"
-                                id="input1"
-                                aria-describedby="emailHelp"
+                            <Calendar
+                                showIcon
+                                class="w-full"
+                                locale="es"
+                                v-model="
+                                    this.formData[
+                                        'fecha_desvinculacion' + index
+                                    ]
+                                "
+                            />
+                        </div>
+                        <div class="mb-3 flex flex-column border p-2">
+                            <label for="input1" class="form-label"
+                                >Carta firmada o comprobante de envio por correo
+                                certificado</label
+                            >
+                            <input
+                                type="file"
+                                @change="
+                                    handleFileChange(
+                                        $event,
+                                        index,
+                                        'carta_firmada'
+                                    )
+                                "
+                            />
+                        </div>
+                        <div class="mb-3 flex flex-column border p-2">
+                            <label for="input1" class="form-label"
+                                >CESE DT</label
+                            >
+                            <input
+                                type="file"
+                                @change="
+                                    handleFileChange($event, index, 'cese_dt')
+                                "
+                            />
+                        </div>
+                        <div class="mb-3 flex flex-column border p-2">
+                            <label for="input1" class="form-label"
+                                >CESE AFC</label
+                            >
+                            <input
+                                type="file"
+                                @change="
+                                    handleFileChange($event, index, 'cese_afc')
+                                "
+                            />
+                        </div>
+                        <!-- ocultos -->
+                        <div
+                            class="mb-3 flex flex-column border p-2 d-none"
+                            :id="'aporte_empleador' + index"
+                        >
+                            <label for="input1" class="form-label"
+                                >Aporte empleador AFC</label
+                            >
+                            <input
+                                type="file"
+                                @change="
+                                    handleFileChange(
+                                        $event,
+                                        index,
+                                        'aporte_empleador'
+                                    )
+                                "
+                            />
+                        </div>
+                        <div
+                            class="mb-3 flex flex-column border p-2 d-none"
+                            :id="'cert_defuncion' + index"
+                        >
+                            <label for="input1" class="form-label"
+                                >CERTIFICADO DE DEFUNCIÓN</label
+                            >
+                            <input
+                                type="file"
+                                @change="
+                                    handleFileChange(
+                                        $event,
+                                        index,
+                                        'cert_defuncion'
+                                    )
+                                "
+                            />
+                        </div>
+                        <div
+                            class="mb-3 flex flex-column border p-2 d-none"
+                            :id="'boleta_funebre' + index"
+                        >
+                            <label for="input1" class="form-label"
+                                >Boleta o comprobante de gastos funebres</label
+                            >
+                            <input
+                                type="file"
+                                @change="
+                                    handleFileChange(
+                                        $event,
+                                        index,
+                                        'boleta_funebre'
+                                    )
+                                "
+                            />
+                        </div>
+                        <div
+                            class="mb-3 flex flex-column border p-2 d-none"
+                            :id="'info_bancaria' + index"
+                        >
+                            <label for="input1" class="form-label"
+                                >Información bancaria del beneficiario</label
+                            >
+                            <input
+                                type="file"
+                                @change="
+                                    handleFileChange(
+                                        $event,
+                                        index,
+                                        'info_bancaria'
+                                    )
+                                "
                             />
                         </div>
                     </div>
@@ -76,7 +191,7 @@
 </template>
 <script>
 import Preloader from "@/Components/Preloader.vue";
-import { rutaBase } from "../../../../Utils/utils.js";
+import { rutaBase, pathName } from "../../../../Utils/utils.js";
 import { setSwal } from "../../../../Utils/swal";
 import PrimeVueComponents from "../../../../js/primevue.js";
 import * as mensajes from "../../../../Utils/message.js";
@@ -91,7 +206,7 @@ export default {
         return {
             mensaje: "",
             isLoadingForm: false,
-            dropdownValues: {},
+            formData: this.$inertia.form({}),
         };
     },
     mounted() {},
@@ -106,22 +221,29 @@ export default {
         armarVModel() {
             this.colaboradoresDetalle.forEach((colaborador, index) => {
                 const keys = Object.keys(colaborador);
-                console.log(colaborador);
                 keys.forEach((key) => {
-                    this.dropdownValues["user_id" + index] =
-                        colaborador.user_id;
-                    this.dropdownValues["nombre_completo" + index] =
+                    this.formData["user_id" + index] = colaborador.user_id;
+                    this.formData["nombre_completo" + index] =
                         colaborador.first_name + " " + colaborador.last_name;
-                    this.dropdownValues["motivo" + index] = "";
-                    this.dropdownValues["fecha_desvinculacion" + index] = "";
-                    this.dropdownValues["redireccion" + index] = "";
-                    this.dropdownValues["rut_empresa" + index] =
-                        colaborador.rut;
-                    this.dropdownValues["centro_costo" + index] =
+                    this.formData["motivo" + index] = "";
+                    this.formData["fecha_desvinculacion" + index] = new Date();
+                    this.formData["redireccion" + index] = "";
+                    this.formData["rut_empresa" + index] = colaborador.rut;
+                    this.formData["centro_costo" + index] =
                         colaborador.centro_costo;
+                        /* archivos */
+                    this.formData["carta_firmada" + index] = null;
+                    this.formData["cese_dt" + index] = null;
+                    this.formData["cese_afc" + index] = null;
+                    this.formData["aporte_empleador" + index] = null;
+                    this.formData["cert_defuncion" + index] = null;
+                    this.formData["boleta_funebre" + index] = null;
+                    this.formData["info_bancaria" + index] = null;
+                    this.formData["pathname"+index] = pathName;
                 });
             });
-            console.log(this.dropdownValues);
+            this.$inertia.form(this.formData);
+            console.log(this.formData);
         },
         onClickCleanFormUnico() {
             $("#motivoForm").val("").trigger("change");
@@ -132,48 +254,66 @@ export default {
             $("#filesForm").val("");
         },
         submit() {
-            return "";
-            var self = this;
-            const form = document.getElementById("formSolicitudMultiple");
-            const formData = new FormData(form);
-
             this.isLoadingForm = true;
             this.mensaje =
                 "registrando la solicitud, esto demorara según la cantidad y tamaño de los archivos";
-
-            axios
-                .post(rutaBase + "/create/solicitud/multiple", formData, {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
+            this.$inertia.post(
+                rutaBase + "/create/solicitud/multiple",
+                this.formData,
+                {
+                    onFinish: () => {
+                        this.showModal();
+                        this.reloadTable();
+                        this.isLoadingForm = false;
+                        this.mensaje = "";
+                        this.$toast.add({
+                            severity: "success",
+                            position: "top-right",
+                            summary: "Notificación",
+                            detail: mensajes.MENSAJE_EXITO,
+                            life: 3000,
+                        });
                     },
-                })
-                .then((response) => {
-                    this.isLoadingForm = false;
-                    this.mensaje = "";
-                    $("#btn-close-solicitud-multiple").trigger("click");
-                    self.onClickCleanDetalleColaborador();
-                    self.reloadTable();
-                    this.$toast.add({
-                        severity: "success",
-                        position: "top-right",
-                        summary: "Notificación",
-                        detail: mensajes.MENSAJE_EXITO,
-                        life: 3000,
-                    });
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
+                }
+            );
         },
         reloadTable() {
             this.$emit("reloadTable");
         },
         showModal() {
             this.$emit("showModal");
-            this.dropdownValues = {};
+            this.formData = {};
         },
         onClickCleanDetalleColaborador() {
             this.$emit("onClickCleanDetalleColaborador");
+        },
+        handleDropdownChange(index, value) {
+            let external_code = this.formData["motivo" + index].externalcode;
+            if (external_code == "03") {
+                $("#cert_defuncion" + index).removeClass("d-none");
+                $("#boleta_funebre" + index).removeClass("d-none");
+                $("#info_bancaria" + index).removeClass("d-none");
+            } else {
+                $("#cert_defuncion" + index).addClass("d-none");
+                $("#boleta_funebre" + index).addClass("d-none");
+                $("#info_bancaria" + index).addClass("d-none");
+            }
+
+            if (
+                external_code == "03" ||
+                external_code == "18" ||
+                external_code == "19"
+            ) {
+                $("#aporte_empleador" + index).removeClass("d-none");
+            } else {
+                $("#aporte_empleador" + index).addClass("d-none");
+            }
+        },
+        handleFileChange(event, index, column) {
+            const file = event.target.files[0];
+            if (file) {
+                this.formData[column + index] = [file];
+            }
         },
     },
 };

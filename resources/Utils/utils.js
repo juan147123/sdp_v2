@@ -5,3 +5,4 @@ export function setDateNow() {
 }
 
 export var rutaBase = window.location.origin;
+export var pathName = window.location.pathname;

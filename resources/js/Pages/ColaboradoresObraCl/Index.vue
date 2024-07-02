@@ -571,6 +571,7 @@ export default {
         },
         reloadTable() {
             this.table.ajax.reload();
+            this.onClickCleanDetalleColaborador();
         },
         showModal() {
             this.visible = !this.visible;

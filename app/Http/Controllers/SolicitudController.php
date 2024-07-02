@@ -188,32 +188,50 @@ class SolicitudController extends Controller
 
     public function createMultiple(Request $request)
     {
+
         $new_solicitud = $this->createSolicitudMultiple($request);
         $requestData = $request->all();
         $groupedIds = [];
-
         foreach ($requestData as $key => $value) {
-            $gruopId = substr($key, -1);
-            if (!in_array($gruopId, $groupedIds)) {
-                $groupedIds[] = $gruopId;
+
+            if (strpos($key, 'user_id') !== false) {
+                $groupId = substr($key, -1);
+                if (!in_array($groupId, $groupedIds)) {
+                    $groupedIds[] = $groupId;
+                }
             }
         }
-
         foreach ($groupedIds as $index => $value) {
             $data = array(
-                "user_id" => $request->{"userId$index"},
-                "nombre_completo" => $request->{"nombreCompleto$index"},
-                "motivo" => $request->{"motivo$index"},
-                "fecha_desvinculacion" => $request->{"fechaMotivo$index"},
+                "user_id" => $request->{"user_id$index"},
+                "nombre_completo" => $request->{"nombre_completo$index"},
+                "motivo" => $request->{"motivo$index"}['externalcode'],
+                "fecha_desvinculacion" => $request->{"fecha_desvinculacion$index"},
                 "redireccion" => $request->{"redireccion$index"},
                 "rut_empresa" => $request->{"rut_empresa$index"},
                 "centro_costo" => $request->{"centro_costo$index"},
                 'id_solicitud' => $new_solicitud->id
             );
-            $archivos = $request->file("archivos$index");
+            $archivos1 = $request->file("carta_firmada$index");
+            $archivos2 = $request->file("cese_dt$index");
+            $archivos3 = $request->file("cese_afc$index");
+            $archivos4 = $request->file("aporte_empleador$index");
+            $archivos5 = $request->file("cert_defuncion$index");
+            $archivos6 = $request->file("boleta_funebre$index");
+            $archivos7 = $request->file("info_bancaria$index");
+
             $newSolicitudDetail =  $this->repositorySolicitudDetalle->create($data);
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos);
+
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos1);
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos2);
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos3);
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos4);
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos5);
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos6);
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos7);
         }
+
+        return redirect($request->pathname0);
     }
 
     //   TODO AREA
@@ -243,7 +261,7 @@ class SolicitudController extends Controller
             'solicitudColaborador.archivos',
             'solicitudColaborador.SapMaestroCausalesTerminos',
             'solicitudColaborador.checkAreaColaboradores'
-        ])->whereIn('estado.id', [3,5]);
+        ])->whereIn('estado.id', [3, 5]);
 
         return $result->values();
     }
