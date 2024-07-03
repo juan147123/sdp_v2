@@ -2674,8 +2674,8 @@
 }
 
 .p-speeddial-button.p-button.p-button-icon-only {
-    width: 4rem;
-    height: 4rem
+    width: 3rem;
+    height: 3rem
 }
 
 .p-speeddial-button.p-button.p-button-icon-only .p-button-icon {
@@ -2710,7 +2710,7 @@
 }
 
 .p-speeddial-direction-up .p-speeddial-item {
-    margin: .25rem 0
+    margin: .15rem 0
 }
 
 .p-speeddial-direction-up .p-speeddial-item:first-child {

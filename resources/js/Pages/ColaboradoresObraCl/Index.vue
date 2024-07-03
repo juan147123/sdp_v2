@@ -9,6 +9,7 @@
                         v-model:selection="colaboradoresDetalle"
                         dataKey="user_id"
                         :value="dataTable.data"
+                        FilterMatchMode 
                         :rows="dataTable.rows"
                         showGridlines
                         paginator
@@ -252,6 +253,7 @@ import FormularioMultiple from "./Formularios/FormularioMultiple.vue";
 import PrimeVueComponents from "../../../js/primevue.js";
 import { FilterMatchMode } from "primevue/api";
 import setLocaleES from "../../primevue.config.js";
+
 export default {
     components: {
         AppLayout,

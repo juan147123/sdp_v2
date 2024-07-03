@@ -17,7 +17,7 @@ class Estados extends Model
     /**
      * @var array
      */
-    protected $fillable = ['user_created', 'created_at', 'updated_at', 'enable', 'descripcion'];
+    protected $fillable = ['user_created', 'created_at', 'updated_at', 'enable', 'descripcion','color'];
 
     /**
      * The connection name for the model.

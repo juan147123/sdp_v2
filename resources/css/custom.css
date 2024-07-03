@@ -295,3 +295,7 @@ ul.p-carousel-indicators{
   color: white !important;
   font-weight: bold;
 }
+
+.p-menuitem-content{
+  margin-left:-30px !important;
+}

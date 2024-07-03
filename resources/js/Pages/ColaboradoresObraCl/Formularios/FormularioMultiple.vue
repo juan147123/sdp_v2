@@ -12,7 +12,7 @@
             width: colaboradoresDetalle.length === 1 ? '50rem' : '70rem',
         }"
     >
-        <form class="grid">
+        <form class="grid" @submit.prevent="submit">
             <div
                 :class="colaboradoresDetalle.length == 1 ? 'col-12' : 'col-6'"
                 v-for="(colaborador, index) in this.colaboradoresDetalle"
@@ -20,8 +20,11 @@
                 <div class="card" style="width: 100%">
                     <div class="card-body">
                         <div class="mb-3 flex flex-column">
-                            <div class="align-items-center ">
-                                <i class="pi pi-user mr-2 ml-1" style="font-size: 1rem"></i>
+                            <div class="align-items-center">
+                                <i
+                                    class="pi pi-user mr-2 ml-1"
+                                    style="font-size: 1rem"
+                                ></i>
                                 {{ colaborador.first_name }}
                                 {{ colaborador.last_name }}
                                 ( NP: {{ colaborador.user_id }} )
@@ -39,6 +42,7 @@
                                 v-model="this.formData['motivo' + index]"
                                 placeholder="Seleccione"
                                 @change="handleDropdownChange(index, $event)"
+                                required
                             >
                                 <template #option="slotProps">
                                     <div
@@ -64,6 +68,7 @@
                                         'fecha_desvinculacion' + index
                                     ]
                                 "
+                                required
                             />
                         </div>
                         <div class="mb-3 flex flex-column border p-2">
@@ -80,6 +85,7 @@
                                         'carta_firmada'
                                     )
                                 "
+                                required
                             />
                         </div>
                         <div class="mb-3 flex flex-column border p-2">
@@ -91,6 +97,7 @@
                                 @change="
                                     handleFileChange($event, index, 'cese_dt')
                                 "
+                                required
                             />
                         </div>
                         <div class="mb-3 flex flex-column border p-2">
@@ -98,6 +105,7 @@
                                 >CESE AFC</label
                             >
                             <input
+                                required
                                 type="file"
                                 @change="
                                     handleFileChange($event, index, 'cese_afc')
@@ -113,6 +121,7 @@
                                 >Aporte empleador AFC</label
                             >
                             <input
+                                required
                                 type="file"
                                 @change="
                                     handleFileChange(
@@ -131,6 +140,7 @@
                                 >CERTIFICADO DE DEFUNCIÓN</label
                             >
                             <input
+                                required
                                 type="file"
                                 @change="
                                     handleFileChange(
@@ -149,6 +159,7 @@
                                 >Boleta o comprobante de gastos funebres</label
                             >
                             <input
+                                required
                                 type="file"
                                 @change="
                                     handleFileChange(
@@ -167,6 +178,7 @@
                                 >Información bancaria del beneficiario</label
                             >
                             <input
+                                required
                                 type="file"
                                 @change="
                                     handleFileChange(
@@ -194,7 +206,7 @@
                     label="Guardar"
                     severity="success"
                     icon="pi pi-check"
-                    @click="submit"
+                    type="submit"
                 />
             </div>
         </form>
@@ -208,7 +220,7 @@ import PrimeVueComponents from "../../../../js/primevue.js";
 import * as mensajes from "../../../../Utils/message.js";
 export default {
     props: ["terminos", "colaboradoresDetalle", "visible"],
-    emits: ["onClickClean", "showModal","getData"],
+    emits: ["onClickClean", "showModal", "getData"],
     components: {
         Preloader,
         ...PrimeVueComponents,

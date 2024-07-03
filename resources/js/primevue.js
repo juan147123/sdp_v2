@@ -21,6 +21,8 @@ import Carousel from 'primevue/carousel';
 import MultiSelect from 'primevue/multiselect';
 import Tooltip from 'primevue/tooltip';
 import Badge from 'primevue/badge';
+import SplitButton from 'primevue/splitbutton';
+import SpeedDial from 'primevue/speeddial';
 
 
 export default {
@@ -46,5 +48,7 @@ export default {
     Carousel,
     MultiSelect,
     Tooltip,
-    Badge
+    Badge,
+    SplitButton,
+    SpeedDial
 }
