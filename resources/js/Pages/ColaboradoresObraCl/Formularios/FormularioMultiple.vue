@@ -215,7 +215,6 @@
 <script>
 import Preloader from "@/Components/Preloader.vue";
 import { rutaBase, pathName } from "../../../../Utils/utils.js";
-import { setSwal } from "../../../../Utils/swal";
 import PrimeVueComponents from "../../../../js/primevue.js";
 import * as mensajes from "../../../../Utils/message.js";
 export default {

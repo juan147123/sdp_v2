@@ -174,7 +174,7 @@
                                 @click="setPreloader()"
                             >
                                 <i class="fas fa-file icon-menu"></i>
-                                <strong>Aprobar S. OBRA</strong>
+                                <strong>Aprobar</strong>
                             </a>
                         </li>
                     </div>
@@ -199,7 +199,7 @@
                                 @click="setPreloader()"
                             >
                                 <i class="fas fa-file icon-menu"></i>
-                                <strong>Aprobar S. RRHH</strong>
+                                <strong>Aprobar rrhh</strong>
                             </a>
                         </li>
                     </div>

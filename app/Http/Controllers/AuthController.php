@@ -53,7 +53,7 @@ class AuthController extends Controller
         //     $email = 'dcollas@flesan.com.pe';
         if ($email == 'jmestanza@flesan.com.pe') {
             // $email = 'abeckdorf@flesan.com.pe';
-            $email = 'frida.morales@flesan.cl';
+            // $email = 'frida.morales@flesan.cl';
             // $email = 'sebastian.valck@flesan.cl';
             // $email = 'jorge.barrozo@flesan.cl';
             // $email = 'acandia@flesan.cl';
@@ -66,6 +66,7 @@ class AuthController extends Controller
             // $email = 'jonathan.gaete@dvc.cl';
             // $email = 'sebastian.valck@flesan.cl';
             // $email = 'serodriguez@flesan.com.pe';
+            $email = 'carolina.rojas@flesan.cl';
         }
 
         $extension_correo = substr($email, -2);
