@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Scopes\EnableScope;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -37,7 +38,7 @@ class SolicitudColaborador extends Model
     /**
      * @var array
      */
-    protected $fillable = ['motivo', 'id_solicitud', 'user_id', 'status', 'created_at', 'updated_at', 'fecha_desvinculacion', 'user_created', 'np_lider', 'nombre_completo', 'enable', 'redireccion', 'comentario','rut_empresa','centro_costo'];
+    protected $fillable = ['motivo', 'id_solicitud', 'user_id', 'status', 'created_at', 'updated_at', 'fecha_desvinculacion', 'user_created', 'np_lider', 'nombre_completo', 'enable', 'redireccion', 'comentario_admin_obra','comentario_rrhh','rut_empresa','centro_costo'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -76,5 +77,11 @@ class SolicitudColaborador extends Model
     public function estado()
     {
         return $this->belongsTo('App\Models\Estados', 'status', 'id');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope(new EnableScope);
     }
 }

@@ -329,6 +329,7 @@ export default {
                 }
             );
         },
+        
         /* NUEVO CODIGO */
         async getData() {
             self = this;

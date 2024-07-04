@@ -160,24 +160,8 @@
                         >
                             <template #body="{ data }">
                                 <Badge
-                                    :value="
-                                        data.status === 1
-                                            ? 'pendiente'
-                                            : data.status === 2
-                                            ? 'cancelado'
-                                            : data.status === 3
-                                            ? 'aprobado'
-                                            : ''
-                                    "
-                                    :severity="
-                                        data.status === 1
-                                            ? 'warning'
-                                            : data.status === 2
-                                            ? 'danger'
-                                            : data.status === 3
-                                            ? 'success'
-                                            : ''
-                                    "
+                                    :value="data.estado.descripcion"
+                                    :severity="data.estado.color"
                                 />
                             </template>
                             <template #filter="{ filterModel }">
@@ -205,9 +189,25 @@
                                     <SplitButton
                                         menuButtonIcon="pi pi-cog"
                                         :model="getItems(data)"
-                                    >
-                                        {{}}
+                                        style="
+                                            width: 2rem !important;
+                                            height: 2rem !important;
+                                        "
+                                        >{{  }}
                                     </SplitButton>
+                                    <Button
+                                        v-if="
+                                            data.status == 6 && data.enable == 1
+                                        "
+                                        icon="pi pi-exclamation-triangle "
+                                        class="ml-2"
+                                        style="
+                                            width: 2rem !important;
+                                            height: 2rem !important;
+                                        "
+                                        severity="warning"
+                                        @click="alertaAdminObra(data)"
+                                    />
                                 </div>
                             </template>
                         </Column>
@@ -218,6 +218,46 @@
                     :visible="this.visible"
                     @setImagenes="this.setImagenes"
                 />
+
+                <Dialog
+                    v-model:visible="visibleComentarioAdmin"
+                    modal
+                    header=" "
+                    :style="{ width: '25rem' }"
+                >
+                    <template #header>
+                        <span class="p-text-secondary"
+                            >Comentario del Administrador de Obra</span
+                        >
+                    </template>
+                    <div class="pl-1 p-text-secondary border p-3">
+                        {{ this.comentario_admin_obra }}
+                    </div>
+
+                    <div class="flex flex-column pt-4">
+                        <div
+                            class="mb-3 p-text-secondary text-center"
+                            style="font-size: 14px"
+                        >
+                            ¿Desea retornar al flujo inicial a este colaborador?
+                        </div>
+                        <div class="flex justify-content-end gap-2">
+                            <Button
+                                type="button"
+                                label="Retornar"
+                                severity="info"
+                                @click="desactivarSolicitudcolaborador()"
+                                class="h-2rem"
+                            ></Button>
+                            <Button
+                                type="button"
+                                label="Cancelar"
+                                @click="visibleComentarioAdmin = false"
+                                class="h-2rem"
+                            ></Button>
+                        </div>
+                    </div>
+                </Dialog>
             </div>
         </div>
     </div>
@@ -231,10 +271,11 @@ import { setSwal } from "../../../../Utils/swal";
 import { FilterMatchMode } from "primevue/api";
 import PrimeVueComponents from "../../../../js/primevue.js";
 import setLocaleES from "../../../primevue.config.js";
+import { rutaBase, dateFormatChange } from "../../../../Utils/utils.js";
 
 export default {
     props: ["solicitud_selected"],
-    emits: ["ChangeView"],
+    emits: ["ChangeView", "getData"],
     components: {
         AppLayout,
         breadcrumbs,
@@ -260,8 +301,11 @@ export default {
             isLoadingForm: false,
             ids: [],
             visible: false,
+            visibleComentarioAdmin: false,
             optionDropdown: null,
             archivosList: [],
+            comentario_admin_obra: "",
+            id_deactivate: 0,
             form: this.$inertia.form({
                 id: 0,
                 status: 0,
@@ -327,7 +371,18 @@ export default {
             },
         };
     },
+    watch: {
+        solicitud_selected: function (newValue, oldValue) {
+            if (newValue) {
+                this.dataTable.data =
+                    this.solicitud_selected.solicitud_colaborador;
+            }
+        },
+    },
     methods: {
+        getData() {
+            this.$emit("getData");
+        },
         ChangeView() {
             this.$emit("ChangeView");
         },
@@ -383,10 +438,31 @@ export default {
                     label: "Archivos",
                     icon: "pi pi-folder",
                     command: () => {
-                        this.setImagenes(data); // Llama a la función con data
+                        this.setImagenes(data);
                     },
                 },
             ];
+        },
+        alertaAdminObra(data) {
+            this.visibleComentarioAdmin = !this.visibleComentarioAdmin;
+            this.comentario_admin_obra = data.comentario_admin_obra;
+            this.id_deactivate = data.id;
+        },
+        async desactivarSolicitudcolaborador() {
+            try {
+                const response = await axios.delete(
+                    rutaBase +
+                        "/solicitud/colaborador/delete/" +
+                        this.id_deactivate
+                );
+
+                this.getData();
+                this.id_deactivate = 0;
+                this.comentario_admin_obra = "";
+                this.visibleComentarioAdmin = false;
+            } catch (error) {
+                console.error("error:", error);
+            }
         },
     },
 };

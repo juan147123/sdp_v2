@@ -70,6 +70,7 @@ Route::middleware([
     //SOLICITUD COLABORADOR
     Route::put('solicitudes/status', [SolicitudColaboradorController::class, 'updateStatus'])->name('solicitud.colaborador.update.status');
     Route::put('solicitudes/status/masive', [SolicitudColaboradorController::class, 'updateAllStatus'])->name('solicitud.colaborador.update.masive');
+    Route::delete('solicitud/colaborador/delete/{id}', [SolicitudColaboradorController::class, 'delete'])->name('solicitud.colaborador.delete');
 
     //CONFIGURACION AREA
     Route::get('redirectpage/configuraciones/areas', [ConfiguracionController::class, 'listAllArea'])->name('configuracion.list.area');

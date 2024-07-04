@@ -299,3 +299,6 @@ ul.p-carousel-indicators{
 .p-menuitem-content{
   margin-left:-30px !important;
 }
+.p-button-label{
+  font-weight: 100 !important;
+}

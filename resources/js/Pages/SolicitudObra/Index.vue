@@ -235,6 +235,7 @@
         <div id="parte-solicitudes-detalle" v-else>
             <SolicitudesColaborador
                 @ChangeView="this.ChangeView"
+                @getData="this.getData"
                 :solicitud_selected="solicitud_selected"
             />
         </div>
@@ -407,14 +408,26 @@ export default {
                 }
             );
         },
-        /* NUEVO CODIGO */
+
         async getData() {
+            this.mensaje = "Cargando datos espere ...";
+            this.isLoadingForm = true;
+            self = this;
             await axios
                 .get(rutaBase + "/list/solicitud")
                 .then(async (response) => {
                     if (response.status == 200) {
                         this.dataTable.data = response.data;
+                        if (this.details == true) {
+                            let oldId = self.solicitud_selected.id;
+                            let newselected = self.dataTable.data.find(
+                                (item) => item.id === oldId
+                            );
+                            this.solicitud_selected = newselected;
+                        }
                     }
+                    this.mensaje = "";
+                    this.isLoadingForm = false;
                 });
         },
         initializeDropdownsData() {

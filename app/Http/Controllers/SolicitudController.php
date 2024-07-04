@@ -88,7 +88,7 @@ class SolicitudController extends Controller
     // LISTADO DE SOLICITUDES POR LIDER
     public function listSolicitudesLider($conditionals)
     {
-        return $this->repository->all(['*'], ['estado', 'solicitudColaborador', 'solicitudColaborador.archivos', 'solicitudColaborador.SapMaestroCausalesTerminos', 'solicitudColaborador.checkAreaColaboradores'], $conditionals);
+        return $this->repository->all(['*'], ['estado', 'solicitudColaborador', 'solicitudColaborador.estado', 'solicitudColaborador.archivos', 'solicitudColaborador.SapMaestroCausalesTerminos', 'solicitudColaborador.checkAreaColaboradores'], $conditionals);
     }
 
     // CREACIÓN DE SOLICITUD UNITARIA Y/O MULTIPLE 

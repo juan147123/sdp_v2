@@ -214,6 +214,7 @@
                                         <SplitButton
                                             menuButtonIcon="pi pi-cog"
                                             :model="getItems(data)"
+                                            style="width: 2rem !important; height: 2rem !important;"
                                         >
                                             {{}}
                                         </SplitButton>
@@ -277,7 +278,7 @@ export default {
                 id: 0,
                 status: 0,
                 id_solicitud: 0,
-                comentario: "",
+                comentario_admin_obra: "",
             }),
             breadcrumbs: [
                 {
@@ -470,15 +471,15 @@ export default {
             await new Promise((resolve) => {
                 setSwal({
                     value: "updateStatusInput",
-                    callback: async (comentario) => {
+                    callback: async (comentario_admin_obra) => {
                         resolve();
-                        this.update(comentario);
+                        this.update(comentario_admin_obra);
                     },
                 });
             });
         },
-        async update(comentario) {
-            this.form.comentario = comentario;
+        async update(comentario_admin_obra) {
+            this.form.comentario_admin_obra = comentario_admin_obra;
             await axios
                 .put(
                     this.route("solicitud.colaborador.update.status.cc"),

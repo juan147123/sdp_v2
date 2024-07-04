@@ -19,6 +19,12 @@ class SolicitudColaboradorController extends Controller
         $this->repositorySolicitud = $repositorySolicitud;
     }
 
+    
+    public function delete($id)
+    {
+        $this->repository->update($id, ["enable" => 0]);
+    }
+    
     public function updateStatus(Request $request)
     {
         $this->repository->update(
