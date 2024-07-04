@@ -41,13 +41,34 @@
                                         Solicitud:
                                         {{ this.solicitud_selected.codigo }}
                                     </h5>
-                                    <InputText
-                                        placeholder="Buscador general"
-                                        v-model="
-                                            dataTable.filters['global'].value
-                                        "
-                                        style="font-size: 0.9rem; height: 30px"
-                                    />
+                                    <div>
+                                        <InputText
+                                            placeholder="Buscador general"
+                                            v-model="
+                                                dataTable.filters['global']
+                                                    .value
+                                            "
+                                            style="
+                                                font-size: 0.9rem;
+                                                height: 30px;
+                                            "
+                                        />
+                                        <SplitButton
+                                            menuButtonIcon="pi pi-cog"
+                                            :model="getItemsAll()"
+                                            style="
+                                                font-size: 0.9rem;
+                                                height: 30px;
+                                                margin-left: 5px;
+                                            "
+                                            :disabled="
+                                                this.solicitud_selected
+                                                    .status == 5
+                                            "
+                                        >
+                                            {{}}
+                                        </SplitButton>
+                                    </div>
                                 </div>
                             </template>
                             <template #empty>
@@ -165,24 +186,8 @@
                             >
                                 <template #body="{ data }">
                                     <Badge
-                                        :value="
-                                            data.status === 1
-                                                ? 'pendiente'
-                                                : data.status === 2
-                                                ? 'cancelado'
-                                                : data.status === 3
-                                                ? 'aprobado'
-                                                : ''
-                                        "
-                                        :severity="
-                                            data.status === 1
-                                                ? 'warning'
-                                                : data.status === 2
-                                                ? 'danger'
-                                                : data.status === 3
-                                                ? 'success'
-                                                : ''
-                                        "
+                                        :value="data.estado.descripcion"
+                                        :severity="data.estado.color"
                                     />
                                 </template>
                                 <template #filter="{ filterModel }">
@@ -202,7 +207,6 @@
                                 :field="null"
                                 header="Acciones"
                                 headerStyle="background-color:black; color:white"
-                                sortable
                                 :showFilterMatchModes="false"
                             >
                                 <template #body="{ data }">
@@ -237,10 +241,11 @@ import { setSwal } from "../../../../Utils/swal";
 import { FilterMatchMode } from "primevue/api";
 import PrimeVueComponents from "../../../../js/primevue.js";
 import setLocaleES from "../../../primevue.config.js";
+import * as mensajes from "../../../../Utils/message.js";
 
 export default {
     props: ["solicitud_selected", "details"],
-    emits: ["ChangeView"],
+    emits: ["ChangeView", "getData"],
     components: {
         AppLayout,
         breadcrumbs,
@@ -336,15 +341,25 @@ export default {
     watch: {
         details: function (newValue, oldValue) {
             if (newValue == true) {
-                this.dataTable.data = this.solicitud_selected.solicitud_colaborador;
-                  this.initializeDropdownsData();
-                  console.log(this.filtersDropdownData)
+                this.dataTable.data =
+                    this.solicitud_selected.solicitud_colaborador;
+                this.initializeDropdownsData();
+            }
+        },
+        solicitud_selected: function (newValue, oldValue) {
+            if (newValue) {
+                this.dataTable.data =
+                    this.solicitud_selected.solicitud_colaborador;
             }
         },
     },
     methods: {
         ChangeView() {
             this.$emit("ChangeView");
+        },
+
+        getData() {
+            this.$emit("getData");
         },
 
         initializeDropdownsData() {
@@ -392,8 +407,26 @@ export default {
             this.visible = !this.visible;
             this.archivosList = data ? data.archivos : [];
         },
-        getItems(data) {
+        getItemsAll() {
             return [
+                {
+                    label: "Aprobar solicitudes",
+                    icon: "pi pi-check",
+                    command: () => {
+                        this.updateAllStatus(5);
+                    },
+                },
+                {
+                    label: "Desaprobar solicitudes",
+                    icon: "pi pi-times",
+                    command: () => {
+                        this.updateAllStatus(6);
+                    },
+                },
+            ];
+        },
+        getItems(data) {
+            const items = [
                 {
                     label: "Archivos",
                     icon: "pi pi-folder",
@@ -401,7 +434,104 @@ export default {
                         this.setImagenes(data);
                     },
                 },
+                {
+                    label: "Aprobar",
+                    icon: "pi pi-check",
+                    command: () => {
+                        this.updateStatus(data.id, 5, data.id_solicitud);
+                    },
+                },
+                {
+                    label: "Desaprobar",
+                    icon: "pi pi-times",
+                    command: () => {
+                        this.updateStatus(data.id, 6, data.id_solicitud);
+                    },
+                },
             ];
+
+            return items.filter((item) => {
+              
+                if (item.label === "Aprobar" && (data.status == 5 || data.status == 6) ) {
+                    return false;
+                }
+                if (item.label === "Desaprobar" && (data.status == 5 || data.status == 6) ) {
+                    return false;
+                }
+                return true;
+            });
+        },
+
+        async updateStatus(id, status, id_solicitud) {
+            this.form.id = id;
+            this.form.status = status;
+            this.form.id_solicitud = id_solicitud;
+
+            await new Promise((resolve) => {
+                setSwal({
+                    value: "updateStatusInput",
+                    callback: async (comentario) => {
+                        resolve();
+                        this.update(comentario);
+                    },
+                });
+            });
+        },
+        async update(comentario) {
+            this.form.comentario = comentario;
+            await axios
+                .put(
+                    this.route("solicitud.colaborador.update.status.cc"),
+                    this.form
+                )
+                .then(async (response) => {
+                    this.getData();
+                });
+        },
+
+        async updateAllStatus(status) {
+            await new Promise((resolve) => {
+                setSwal({
+                    value: "updateStatus",
+                    callback: async () => {
+                        resolve();
+                        this.updateAll(status);
+                    },
+                });
+            });
+        },
+        async updateAll(status) {
+            this.solicitud_selected.solicitud_colaborador.forEach(
+                (solicitudColacorador) => {
+                    if (solicitudColacorador.status == 7) {
+                        this.ids.push(solicitudColacorador.id);
+                    }
+                }
+            );
+
+            await axios
+                .put(this.route("solicitud.colaborador.update.masive.cc"), {
+                    ids: this.ids,
+                    status: status,
+                    id_solicitud: this.solicitud_selected.id,
+                })
+                .then(async (response) => {
+                    this.getData();
+                });
+
+            /*  this.$inertia.put(
+                this.route("solicitud.colaborador.update.masive.cc"),
+                {
+                    ids: this.ids,
+                    status: status,
+                    id_solicitud: this.solicitudesColaborador.id,
+                },
+                {
+                    onFinish: () => {
+                        this.onFinish();
+                    },
+                }
+            ); */
         },
     },
 };

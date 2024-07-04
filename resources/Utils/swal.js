@@ -222,7 +222,7 @@ export function setSwal(options) {
         case "updateStatusInput":
             Swal.fire({
                 title: "¿Desea ejecutar la acción?",
-                text: "Debe ingresar el motivo de la desaprobación",
+                text: "Ingrese un comentario si es necesario",
                 icon: "warning",
                 input: "textarea",
                 inputAttributes: {

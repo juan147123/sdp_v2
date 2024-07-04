@@ -159,10 +159,10 @@
                     </div>
                 </div>
             </div>
-
         </div>
         <SolicitudesColaborador
             @ChangeView="this.ChangeView"
+            @getData="this.getData"
             :solicitud_selected="solicitud_selected"
             :details="this.details"
         />
@@ -331,12 +331,26 @@ export default {
         },
         /* NUEVO CODIGO */
         async getData() {
+            self = this;
+
+            this.mensaje = "Cargando datos espere ...";
+            this.isLoadingForm = true;
             await axios
                 .get(rutaBase + "/list/solicitud/aprobar")
                 .then(async (response) => {
                     if (response.status == 200) {
                         this.dataTable.data = response.data;
+                        if (this.details == true) {
+                            let oldId = self.solicitud_selected.id;
+                            let newselected = self.dataTable.data.find(
+                                (item) => item.id === oldId
+                            );
+                            this.solicitud_selected = newselected;
+                        }
                     }
+
+                    this.mensaje = "";
+                    this.isLoadingForm = false;
                 });
         },
         initializeDropdownsData() {

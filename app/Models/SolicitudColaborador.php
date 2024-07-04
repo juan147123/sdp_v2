@@ -69,4 +69,12 @@ class SolicitudColaborador extends Model
     {
         return $this->belongsTo('App\Models\SapMaestroCausalesTerminos', 'motivo', 'externalcode');
     }
+
+            /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function estado()
+    {
+        return $this->belongsTo('App\Models\Estados', 'status', 'id');
+    }
 }

@@ -32,7 +32,7 @@ class SolicitudColaboradorRepository extends BaseRepository implements
     public function getSolicitudColaboradorPendinte($idSolicitud)
     {
         $data = $this->model
-            ->where('status', 1)
+            ->where('status', 7)
             ->where('id_solicitud', $idSolicitud)
             ->get()
             ->count();
