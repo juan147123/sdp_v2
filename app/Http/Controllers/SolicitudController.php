@@ -218,6 +218,7 @@ class SolicitudController extends Controller
             'estado',
             'solicitudColaborador',
             'solicitudColaborador.archivos',
+            'solicitudColaborador.estado',
             'solicitudColaborador.SapMaestroCausalesTerminos',
             'solicitudColaborador.checkAreaColaboradores'
         ])->whereIn('estado.id', [3, 5]);

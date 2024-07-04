@@ -1,67 +1,202 @@
 <template>
     <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
     <AppLayout>
-        <div id="parte-solicitudes-vista">
+        <div v-if="this.details != true">
             <breadcrumbs :modules="breadcrumbs" />
-
-            <div class="box m-1 mt-3">
+            <div class="box m-1 mt-5 bg-white p-3 border-round">
                 <div class="container-fluid">
                     <div class="box-body">
-                        <div class="table-responsive pt-2">
-                            <table
-                                class="table text-nowrap table-bordered dt-responsive"
-                                id="tableSolicitudes"
+                        <DataTable
+                            dataKey="id"
+                            :value="dataTable.data"
+                            :rows="dataTable.rows"
+                            showGridlines
+                            paginator
+                            :paginatorTemplate="dataTable.paginatorTemplate"
+                            :currentPageReportTemplate="
+                                dataTable.currentPageReportTemplate
+                            "
+                            :rowsPerPageOptions="dataTable.rowsPerPageOptions"
+                            sortMode="single"
+                            :globalFilterFields="dataTable.globalFilterFields"
+                            v-model:filters="dataTable.filters"
+                            filterDisplay="menu"
+                            FilterMatchMode
+                        >
+                            <template #header>
+                                <div
+                                    class="flex justify-content-end align-items-center"
+                                >
+                                    <InputText
+                                        placeholder="Buscador general"
+                                        v-model="
+                                            dataTable.filters['global'].value
+                                        "
+                                        style="font-size: 0.9rem; height: 30px"
+                                    />
+                                </div>
+                            </template>
+                            <template #empty>
+                                <div class="w-full flex justify-content-center">
+                                    <span>Cargando datos</span>
+                                </div>
+                            </template>
+                            <Column
+                                field="codigo"
+                                header="Código de solicitud"
+                                headerStyle="background-color:black; color:white"
+                                sortable
+                                filterField="codigo"
+                                :showFilterMatchModes="false"
                             >
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>Código</th>
-                                        <th>Solicitante</th>
-                                        <th>Fecha de solicitud</th>
-                                        <th>Estado</th>
-                                        <th>Colaboradores</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
+                                <template #filter="{ filterModel }">
+                                    <MultiSelect
+                                        v-model="filterModel.value"
+                                        :options="filtersDropdownData.codigo"
+                                        placeholder="Cualquiera"
+                                        class="p-column-filter"
+                                        optionLabel="codigo"
+                                        optionValue="codigo"
+                                    >
+                                    </MultiSelect>
+                                </template>
+                            </Column>
+                            <Column
+                                field="user_created"
+                                header="Solicitante"
+                                headerStyle="background-color:black; color:white"
+                                sortable
+                                filterField="user_id"
+                                :showFilterMatchModes="false"
+                            >
+                            </Column>
+                            <Column
+                                field="centro_costo"
+                                header="Centro de costo"
+                                headerStyle="background-color:black; color:white"
+                                sortable
+                                filterField="centro_costo"
+                                :showFilterMatchModes="false"
+                            >
+                                <template #filter="{ filterModel }">
+                                    <MultiSelect
+                                        v-model="filterModel.value"
+                                        :options="
+                                            filtersDropdownData.centro_costo
+                                        "
+                                        placeholder="Cualquiera"
+                                        class="p-column-filter"
+                                        optionLabel="centro_costo"
+                                        optionValue="centro_costo"
+                                    >
+                                    </MultiSelect
+                                ></template>
+                            </Column>
+                            <Column
+                                field="created_at"
+                                header="Fecha de creación"
+                                headerStyle="background-color:black; color:white"
+                                sortable
+                                filterField="created_at"
+                                :showFilterMatchModes="false"
+                            >
+                                <template #body="{ data }">
+                                    <div>
+                                        {{
+                                            dateFormatChangeApi(data.created_at)
+                                        }}
+                                    </div>
+                                </template>
+                            </Column>
+                            <Column
+                                field="estado.descripcion"
+                                filterField="estado"
+                                header="Estado"
+                                headerStyle="background-color:black; color:white"
+                                style="text-align: center"
+                                sortable
+                                :showFilterMatchModes="false"
+                            >
+                                <template #body="{ data }">
+                                    <Badge
+                                        :value="data.estado.descripcion"
+                                        :severity="data.estado.color"
+                                    />
+                                </template>
+                                <template #filter="{ filterModel }">
+                                    <MultiSelect
+                                        v-model="filterModel.value"
+                                        :options="filtersDropdownData.estado"
+                                        placeholder="Cualquiera"
+                                        class="p-column-filter"
+                                        optionLabel="estado.descripcion"
+                                        optionValue="estado"
+                                    >
+                                    </MultiSelect
+                                ></template>
+                            </Column>
+                            <Column
+                                :field="null"
+                                filterField="user_id"
+                                header="Colaboradores"
+                                headerStyle="background-color:black; color:white"
+                                sortable
+                                style="text-align: center"
+                                :showFilterMatchModes="false"
+                            >
+                                <template #body="{ data }">
+                                    <Button
+                                        icon="pi pi-users"
+                                        class="ml-2"
+                                        style="font-size: 0.9rem; height: 30px"
+                                        severity="info"
+                                        @click="ChangeView(data)"
+                                        v-tooltip.top="'colaboradores'"
+                                    />
+                                </template>
+                            </Column>
+                        </DataTable>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="hidden" id="parte-solicitudes-detalle">
-            <SolicitudesColaborador
-                @changeViewDetail="this.changeViewDetail"
-                @reloadTable="reloadTable"
-                :solicitudesColaborador="solicitudesColaborador"
-                :archivosList="archivosList"
-            />
-        </div>
+        <SolicitudesColaborador
+            @ChangeView="this.ChangeView"
+            @getData="this.getData"
+            :solicitud_selected="solicitud_selected"
+            :details="this.details"
+        />
     </AppLayout>
 </template>
 <script>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import breadcrumbs from "@/Components/Breadcrumbs.vue";
-import { rutaBase } from "../../../Utils/utils.js";
+import { rutaBase, dateFormatChange } from "../../../Utils/utils.js";
 import SolicitudesColaborador from "./SolicitudColaborador/Index.vue";
 import { setSwal } from "../../../Utils/swal";
 import Preloader from "@/Components/Preloader.vue";
-
+import setLocaleES from "../../primevue.config.js";
 import dayjs from "dayjs";
-import { createVNode } from "vue";
+import { FilterMatchMode } from "primevue/api";
+import PrimeVueComponents from "../../../js/primevue.js";
+
 export default {
     components: {
         AppLayout,
         breadcrumbs,
         SolicitudesColaborador,
         Preloader,
+        ...PrimeVueComponents,
+    },
+    setup() {
+        setLocaleES();
     },
     data() {
-        var self = this;
         return {
             breadcrumbs: [
                 {
                     label: "Solicitudes",
-                    url: "/redirectpage/solicitud",
+                    url: "/redirectpage/solicitud/aprobar",
                     icon: "fa fa-book",
                 },
             ],
@@ -70,234 +205,67 @@ export default {
             table: [],
             tableDetalle: [],
             part: 0,
-            solicitudesColaborador: [],
-            archivosList: [],
-            checkusuariolist: [],
+            solicitud_selected: [],
             form: this.$inertia.form({
                 id: 0,
                 status: 0,
                 id_solicitud: 0,
                 comentario: "",
             }),
-            conteoSolicitudes: {
-                creados: 0,
-                pendientes: 0,
-                aprobados: 0,
-                rechazados: 0,
+            dataTable: {
+                rows: 10,
+                data: [],
+                rowsPerPageOptions: [10, 20, 50, 100],
+                paginatorTemplate:
+                    "RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink",
+                currentPageReportTemplate:
+                    "Página {currentPage} de {totalPages}",
+                filters: {
+                    global: {
+                        value: null,
+                        matchMode: FilterMatchMode.CONTAINS,
+                    },
+                    codigo: {
+                        value: null,
+                        matchMode: FilterMatchMode.CONTAINS,
+                    },
+                    centro_costo: {
+                        value: null,
+                        matchMode: FilterMatchMode.CONTAINS,
+                    },
+                    created_at: {
+                        value: null,
+                        matchMode: FilterMatchMode.CONTAINS,
+                    },
+                    estado: {
+                        value: null,
+                        matchMode: FilterMatchMode.CONTAINS,
+                    },
+                },
+                globalFilterFields: [
+                    "user_id",
+                    "nombre_completo",
+                    "sap_maestro_causales_terminos",
+                    "fecha_desvinculacion",
+                    "centro_costo",
+                    "comentario",
+                ],
             },
+            filtersDropdownData: {
+                user_id: [],
+                nombre_completo: [],
+                sap_maestro_causales_terminos: [],
+                centro_costo: [],
+                comentario: [],
+            },
+            details: false,
         };
     },
-    mounted() {
-        this.createTable();
+    async mounted() {
+        await this.getData();
+        this.initializeDropdownsData();
     },
     methods: {
-        createTable() {
-            var self = this;
-            this.table = new DataTable("#tableSolicitudes", {
-                language: {
-                    url: "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json",
-                },
-                ajax: {
-                    url: rutaBase + "/list/solicitud/rrhh",
-                    dataSrc: "",
-                },
-                responsive: true,
-                loadingRecords: "Cargando...",
-                autoFill: true,
-                columnDefs: [
-                    { responsivePriority: 1, targets: 0 },
-                    { responsivePriority: 3, targets: -1 },
-                ],
-                drawCallback: function (settings) {
-                    $("ul.pagination").addClass("pagination-sm");
-                },
-                createdRow: function (row, data, dataIndex) {
-                    $(row)
-                        .find(".btnColaboradoresSolicitud")
-                        .on("click", function () {
-                            self.solicitudesColaborador = data;
-                            self.ChangeView(data);
-                        });
-                },
-                columns: [
-                    { data: "codigo", className: "text-center", width: 130 },
-                    { data: "user_created", className: "text-center" },
-                    {
-                        data: "created_at",
-                        width: 300,
-                        className: "text-center",
-                        render: function (data, type, row) {
-                            return dayjs(data).format("DD/MM/YYYY");
-                        },
-                    },
-                    {
-                        data: "estado",
-                        className: "text-center",
-                        width: 80,
-                        render: function (data, type, row) {
-                            let claseColor = "";
-                            switch (data.id) {
-                                case 1:
-                                    claseColor = "bg-color-custom-creado";
-                                    break;
-                                case 2:
-                                    claseColor = `bg-color-custom-pendiente`;
-                                    break;
-                                case 3:
-                                    claseColor = `bg-color-custom-aprobado`;
-                                    break;
-                                case 4:
-                                    claseColor = `bg-color-custom-rechazado`;
-                                    break;
-                                case 5:
-                                    claseColor = `bg-color-custom-aprobado`;
-                                    break;
-                            }
-                            return `<div><span style="font-size:10.5px;" class="badge text-white ${claseColor}">${data.descripcion}</span></div>`;
-                        },
-                    },
-                    {
-                        data: null,
-                        width: 100,
-                        className: "text-center",
-                        render: function (data, type, row) {
-                            return `<button style="font-size: 12px;" class="btn btn-outline-primary btn-sm btnColaboradoresSolicitud"><i class="fas fa-users"></i></button>`;
-                        },
-                    },
-                ],
-            });
-        },
-        createTableDetalle(data) {
-            var self = this;
-            this.tableDetalle = new DataTable("#tableSolicitudesDetalle", {
-                language: {
-                    url: "//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json",
-                },
-                responsive: true,
-                loadingRecords: "Cargando...",
-                autoFill: true,
-                data: data.solicitud_colaborador,
-                columnDefs: [
-                    { responsivePriority: 1, targets: 0 },
-                    { responsivePriority: 2, targets: -2 },
-                    { responsivePriority: 3, targets: -1 },
-                ],
-                drawCallback: function (settings) {
-                    $("ul.pagination").addClass("pagination-sm");
-                },
-                createdRow: function (row, data, dataIndex) {
-                    $(row)
-                        .find("#acciones1")
-                        .on("click", function () {
-                            self.archivosList = data.archivos;
-                        });
-                    $(row)
-                        .find("#acciones3")
-                        .on("click", function () {
-                            console.log(data.id);
-                            self.updateStatus(data.id, 3, data.id_solicitud);
-                        });
-                    $(row)
-                        .find("#acciones4")
-                        .on("click", function () {
-                            self.updateStatus(data.id, 2, data.id_solicitud);
-                        });
-                },
-                columns: [
-                    { data: "user_id", width: 90, className: "text-center" },
-                    { data: "nombre_completo" },
-                    {
-                        data: "sap_maestro_causales_terminos.name",
-                        className: "text-center",
-                    },
-                    { data: "fecha_desvinculacion", className: "text-center" },
-                    { data: "redireccion", className: "text-center" },
-                    { data: "centro_costo", className: "text-center" },
-                    { data: "comentario", className: "text-center" },
-                    {
-                        data: null,
-                        className: "text-center",
-                        width: 100,
-                        render: function (data, type, row) {
-                            var desc = "";
-                            var color = "";
-
-                            if (row.status == 1) {
-                                desc = "pendiente";
-                                color = "info";
-                            } else if (row.status == 2) {
-                                desc = "cancelado";
-                                color = "danger";
-                            } else if (row.status == 3) {
-                                desc = "aprobado administrador";
-                                color = "success";
-                            } else if (row.status == 4) {
-                                desc = "aprobado rrhh";
-                                color = "success";
-                            }
-                            return `<span class="badge bg-${color} text-white">${desc}</span>`;
-                        },
-                    },
-                    {
-                        data: null,
-                        className: "text-center",
-                        render: function (data, type, row) {
-                            var botones = "";
-                            var botonChecklist = "";
-                            botones =
-                                '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones3" ><i class="fas fa-check text-success"></i> Aprobar</a></li>' +
-                                '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones4" ><i class="fas fa-times text-danger"></i> Desaprobar</a></li>';
-
-                            return (
-                                '<div class="btn-group">' +
-                                '<button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                                '<i class="fa fa-cogs"></i>' +
-                                "</button>" +
-                                '<ul class="dropdown-menu">' +
-                                '<li><a class="dropdown-item" style="cursor:pointer;font-size:11.5px;" id="acciones1"  data-bs-toggle="modal" data-bs-target="#modalArchivos"><i class="fas fa-file-alt text-info"></i> Archivos</a></li>' +
-                                botones +
-                                "</ul>" +
-                                "</div>"
-                            );
-                        },
-                    },
-                ],
-            });
-        },
-        ChangeView(data) {
-            var togglerSolicitud = document.getElementById(
-                "parte-solicitudes-vista"
-            );
-            var togglerDetalle = document.getElementById(
-                "parte-solicitudes-detalle"
-            );
-            togglerSolicitud.classList.toggle("hidden");
-            togglerDetalle.classList.toggle("hidden");
-            this.createTableDetalle(data);
-        },
-        changeViewDetailChecklist() {
-            var togglerDetalle = document.getElementById(
-                "parte-solicitudes-detalle"
-            );
-            var togglerchecklist = document.getElementById(
-                "parte-solicitudes-checklist"
-            );
-            togglerchecklist.classList.toggle("hidden");
-            togglerDetalle.classList.toggle("hidden");
-        },
-        changeViewDetail() {
-            var togglerSolicitud = document.getElementById(
-                "parte-solicitudes-vista"
-            );
-            var togglerDetalle = document.getElementById(
-                "parte-solicitudes-detalle"
-            );
-            togglerSolicitud.classList.toggle("hidden");
-            togglerDetalle.classList.toggle("hidden");
-            if (this.tableDetalle) {
-                this.tableDetalle.destroy();
-            }
-        },
         async updateStatus(id, status, id_solicitud) {
             this.form.id = id;
             this.form.status = status;
@@ -318,24 +286,11 @@ export default {
             this.mensaje = "espere mientras se efectuan los cambios....";
             this.isLoadingForm = true;
             this.form.comentario = comentario;
-            this.form.put(
-                this.route("solicitud.colaborador.update.status.cc"),
-                {
-                    onFinish: () => {
-                        this.onFinish();
-                    },
-                }
-            );
-        },
-
-        onFinish() {
-            this.mensaje = "";
-            this.isLoadingForm = false;
-            this.reloadTable();
-            this.changeViewDetail();
-        },
-        reloadTable() {
-            this.table.ajax.reload();
+            this.form.put(this.route("solicitud.colaborador.update.status"), {
+                onFinish: () => {
+                    this.onFinish();
+                },
+            });
         },
         async updateAllStatus(status) {
             await new Promise((resolve) => {
@@ -361,7 +316,7 @@ export default {
             );
 
             this.$inertia.put(
-                this.route("solicitud.colaborador.update.masive.cc"),
+                this.route("solicitud.colaborador.update.masive"),
                 {
                     ids: this.ids,
                     status: status,
@@ -373,6 +328,72 @@ export default {
                     },
                 }
             );
+        },
+        
+        /* NUEVO CODIGO */
+        async getData() {
+            self = this;
+
+            this.mensaje = "Cargando datos espere ...";
+            this.isLoadingForm = true;
+            await axios
+                .get(rutaBase + "/list/solicitud/rrhh")
+                .then(async (response) => {
+                    if (response.status == 200) {
+                        this.dataTable.data = response.data;
+                        if (this.details == true) {
+                            let oldId = self.solicitud_selected.id;
+                            let newselected = self.dataTable.data.find(
+                                (item) => item.id === oldId
+                            );
+                            this.solicitud_selected = newselected;
+                        }
+                    }
+
+                    this.mensaje = "";
+                    this.isLoadingForm = false;
+                });
+        },
+        initializeDropdownsData() {
+            this.filtersDropdownData.codigo = [
+                ...new Set(
+                    this.dataTable.data
+                        .filter((s) => s.codigo != "")
+                        .map((s) => s.codigo)
+                ),
+            ].map((o) => {
+                return { codigo: o };
+            });
+
+            this.filtersDropdownData.centro_costo = [
+                ...new Set(
+                    this.dataTable.data
+                        .filter((s) => s.centro_costo != "")
+                        .map((s) => s.centro_costo)
+                ),
+            ].map((o) => {
+                return { centro_costo: o };
+            });
+
+            this.filtersDropdownData.estado = [
+                ...new Map(
+                    this.dataTable.data
+                        .filter(
+                            (s) =>
+                                s.estado != "" && s.estado.descripcion != null
+                        )
+                        .map((s) => [s.estado.descripcion, s.estado])
+                ).values(),
+            ].map((o) => {
+                return { estado: o };
+            });
+        },
+        dateFormatChangeApi(data) {
+            return dateFormatChange(data);
+        },
+        ChangeView(data) {
+            this.details = !this.details;
+            this.solicitud_selected = data ? data : [];
         },
     },
 };
