@@ -1,7 +1,7 @@
 <template>
     <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
     <AppLayout>
-        <div id="parte-solicitudes-vista" v-if="this.details == false">
+        <div v-if="this.details != true">
             <breadcrumbs :modules="breadcrumbs" />
             <div class="col-md-12 mt-2">
                 <div class="row">
@@ -253,13 +253,13 @@
                 </div>
             </div>
         </div>
-        <div id="parte-solicitudes-detalle" v-else>
-            <SolicitudesColaborador
-                @ChangeView="this.ChangeView"
-                @getData="this.getData"
-                :solicitud_selected="solicitud_selected"
-            />
-        </div>
+
+        <SolicitudesColaborador
+            @ChangeView="this.ChangeView"
+            @getData="this.getData"
+            :solicitud_selected="solicitud_selected"
+            :details="this.details"
+        />
     </AppLayout>
 </template>
 <script>

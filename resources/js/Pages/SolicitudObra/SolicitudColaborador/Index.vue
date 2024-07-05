@@ -1,265 +1,272 @@
 <template>
-    <breadcrumbs :modules="breadcrumbs" />
-    <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
-    <div class="mt-4">
-        <Button
-            icon="pi pi-arrow-left"
-            class="ml-2"
-            label="regresar"
-            style="font-size: 0.9rem; height: 30px"
-            severity="danger"
-            @click="ChangeView"
-        />
-    </div>
-    <div class="contenedor-solicitud">
-        <div class="box m-1 mt-3 bg-white p-3 border-round">
-            <div class="container-fluid">
-                <div class="box-body">
-                    <DataTable
-                        dataKey="id"
-                        :value="dataTable.data"
-                        :rows="dataTable.rows"
-                        showGridlines
-                        paginator
-                        :paginatorTemplate="dataTable.paginatorTemplate"
-                        :currentPageReportTemplate="
-                            dataTable.currentPageReportTemplate
-                        "
-                        :rowsPerPageOptions="dataTable.rowsPerPageOptions"
-                        sortMode="single"
-                        :globalFilterFields="dataTable.globalFilterFields"
-                        v-model:filters="dataTable.filters"
-                        filterDisplay="menu"
-                        FilterMatchMode
-                    >
-                        <template #header>
-                            <div
-                                class="flex justify-content-between align-items-center"
-                            >
-                                <h5>
-                                    Solicitud:
-                                    {{ this.solicitud_selected.codigo }}
-                                </h5>
-                                <InputText
-                                    placeholder="Buscador general"
-                                    v-model="dataTable.filters['global'].value"
-                                    style="font-size: 0.9rem; height: 30px"
-                                />
-                            </div>
-                        </template>
-                        <template #empty>
-                            <div class="w-full flex justify-content-center">
-                                <span>No hay datos que mostrar</span>
-                            </div>
-                        </template>
-                        <Column
-                            filterField="user_id"
-                            field="user_id"
-                            header="NP Usuario"
-                            headerStyle="background-color:black; color:white"
-                            sortable
-                            :showFilterMatchModes="false"
+    <div v-if="this.details != false">
+        <breadcrumbs :modules="breadcrumbs" />
+        <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
+        <div class="mt-4">
+            <Button
+                icon="pi pi-arrow-left"
+                class="ml-2"
+                label="regresar"
+                style="font-size: 0.9rem; height: 30px"
+                severity="danger"
+                @click="ChangeView"
+            />
+        </div>
+        <div class="contenedor-solicitud">
+            <div class="box m-1 mt-3 bg-white p-3 border-round">
+                <div class="container-fluid">
+                    <div class="box-body">
+                        <DataTable
+                            dataKey="id"
+                            :value="dataTable.data"
+                            :rows="dataTable.rows"
+                            showGridlines
+                            paginator
+                            :paginatorTemplate="dataTable.paginatorTemplate"
+                            :currentPageReportTemplate="
+                                dataTable.currentPageReportTemplate
+                            "
+                            :rowsPerPageOptions="dataTable.rowsPerPageOptions"
+                            sortMode="single"
+                            :globalFilterFields="dataTable.globalFilterFields"
+                            v-model:filters="dataTable.filters"
+                            filterDisplay="menu"
+                            FilterMatchMode
                         >
-                            <template #filter="{ filterModel }">
-                                <MultiSelect
-                                    v-model="filterModel.value"
-                                    :options="filtersDropdownData.user_id"
-                                    placeholder="Cualquiera"
-                                    class="p-column-filter"
-                                    optionLabel="user_id"
-                                    optionValue="user_id"
-                                    filter
+                            <template #header>
+                                <div
+                                    class="flex justify-content-between align-items-center"
                                 >
-                                </MultiSelect>
-                            </template>
-                        </Column>
-                        <Column
-                            filterField="nombre_completo"
-                            field="nombre_completo"
-                            header="Nombres y apellidos"
-                            headerStyle="background-color:black; color:white"
-                            sortable
-                            :showFilterMatchModes="false"
-                        >
-                            <template #filter="{ filterModel }">
-                                <MultiSelect
-                                    v-model="filterModel.value"
-                                    :options="
-                                        filtersDropdownData.nombre_completo
-                                    "
-                                    placeholder="Cualquiera"
-                                    class="p-column-filter"
-                                    optionLabel="nombre_completo"
-                                    optionValue="nombre_completo"
-                                    filter
-                                >
-                                </MultiSelect>
-                            </template>
-                        </Column>
-                        <Column
-                            filterField="sap_maestro_causales_terminos"
-                            field="sap_maestro_causales_terminos.name"
-                            header="Motivo de desvinculación"
-                            headerStyle="background-color:black; color:white"
-                            sortable
-                            :showFilterMatchModes="false"
-                        >
-                            <template #filter="{ filterModel }">
-                                <MultiSelect
-                                    v-model="filterModel.value"
-                                    :options="
-                                        filtersDropdownData.sap_maestro_causales_terminos
-                                    "
-                                    placeholder="Cualquiera"
-                                    class="p-column-filter"
-                                    optionLabel="sap_maestro_causales_terminos"
-                                    optionValue="sap_maestro_causales_terminos"
-                                    filter
-                                >
-                                </MultiSelect>
-                            </template>
-                        </Column>
-                        <Column
-                            filterField="fecha_desvinculacion"
-                            field="fecha_desvinculacion"
-                            header="Fecha a desvincular"
-                            headerStyle="background-color:black; color:white"
-                            sortable
-                            :showFilterMatchModes="false"
-                        >
-                        </Column>
-                        <Column
-                            filterField="centro_costo"
-                            field="centro_costo"
-                            header="Centro de costo"
-                            headerStyle="background-color:black; color:white"
-                            sortable
-                            :showFilterMatchModes="false"
-                        >
-                            <template #filter="{ filterModel }">
-                                <MultiSelect
-                                    v-model="filterModel.value"
-                                    :options="filtersDropdownData.centro_costo"
-                                    placeholder="Cualquiera"
-                                    class="p-column-filter"
-                                    optionLabel="centro_costo"
-                                    optionValue="centro_costo"
-                                    filter
-                                >
-                                </MultiSelect>
-                            </template>
-                        </Column>
-                        <Column
-                            filterField="status"
-                            field="status"
-                            header="Estado"
-                            headerStyle="background-color:black; color:white"
-                            style="text-align: center"
-                            sortable
-                            :showFilterMatchModes="false"
-                        >
-                            <template #body="{ data }">
-                                <Tag
-                                    :value="data.estado.descripcion"
-                                    :severity="data.estado.color"
-                                />
-                            </template>
-                            <template #filter="{ filterModel }">
-                                <MultiSelect
-                                    v-model="filterModel.value"
-                                    :options="filtersDropdownData.status"
-                                    placeholder="Cualquiera"
-                                    class="p-column-filter"
-                                    optionLabel="status"
-                                    optionValue="status"
-                                    filter
-                                >
-                                </MultiSelect>
-                            </template>
-                        </Column>
-                        <Column
-                            :field="null"
-                            header="Acciones"
-                            headerStyle="background-color:black; color:white"
-                            sortable
-                            :showFilterMatchModes="false"
-                        >
-                            <template #body="{ data }">
-                                <div class="text-center">
-                                    <SplitButton
-                                        menuButtonIcon="pi pi-cog"
-                                        :model="getItems(data)"
-                                        style="
-                                            width: 2rem !important;
-                                            height: 2rem !important;
+                                    <h5>
+                                        Solicitud:
+                                        {{ this.solicitud_selected.codigo }}
+                                    </h5>
+                                    <InputText
+                                        placeholder="Buscador general"
+                                        v-model="
+                                            dataTable.filters['global'].value
                                         "
-                                        >{{}}
-                                    </SplitButton>
-                                    <Button
-                                        v-if="
-                                            (data.status == 6 ||
-                                                data.status == 9) &&
-                                            data.enable == 1
-                                        "
-                                        icon="pi pi-exclamation-triangle "
-                                        class="ml-2"
-                                        style="
-                                            width: 2rem !important;
-                                            height: 2rem !important;
-                                        "
-                                        severity="warning"
-                                        @click="alertaAdminObra(data)"
+                                        style="font-size: 0.9rem; height: 30px"
                                     />
                                 </div>
                             </template>
-                        </Column>
-                    </DataTable>
+                            <template #empty>
+                                <div class="w-full flex justify-content-center">
+                                    <span>No hay datos que mostrar</span>
+                                </div>
+                            </template>
+                            <Column
+                                filterField="user_id"
+                                field="user_id"
+                                header="NP Usuario"
+                                headerStyle="background-color:black; color:white"
+                                sortable
+                                :showFilterMatchModes="false"
+                            >
+                                <template #filter="{ filterModel }">
+                                    <MultiSelect
+                                        v-model="filterModel.value"
+                                        :options="filtersDropdownData.user_id"
+                                        placeholder="Cualquiera"
+                                        class="p-column-filter"
+                                        optionLabel="user_id"
+                                        optionValue="user_id"
+                                        filter
+                                    >
+                                    </MultiSelect>
+                                </template>
+                            </Column>
+                            <Column
+                                filterField="nombre_completo"
+                                field="nombre_completo"
+                                header="Nombres y apellidos"
+                                headerStyle="background-color:black; color:white"
+                                sortable
+                                :showFilterMatchModes="false"
+                            >
+                                <template #filter="{ filterModel }">
+                                    <MultiSelect
+                                        v-model="filterModel.value"
+                                        :options="
+                                            filtersDropdownData.nombre_completo
+                                        "
+                                        placeholder="Cualquiera"
+                                        class="p-column-filter"
+                                        optionLabel="nombre_completo"
+                                        optionValue="nombre_completo"
+                                        filter
+                                    >
+                                    </MultiSelect>
+                                </template>
+                            </Column>
+                            <Column
+                                field="sap_maestro_causales_terminos.name"
+                                filterField="sap_maestro_causales_terminos"
+                                header="Motivo de desvinculación"
+                                headerStyle="background-color:black; color:white"
+                                style="text-align: center"
+                                sortable
+                                :showFilterMatchModes="false"
+                            >
+                                <template #body="{ data }">
+                                    {{data.sap_maestro_causales_terminos.name}}
+                                </template>
+                                <template #filter="{ filterModel }">
+                                    <MultiSelect
+                                        v-model="filterModel.value"
+                                        :options="filtersDropdownData.sap_maestro_causales_terminos"
+                                        placeholder="Cualquiera"
+                                        class="p-column-filter"
+                                        optionLabel="sap_maestro_causales_terminos.name"
+                                        optionValue="sap_maestro_causales_terminos"
+                                    >
+                                    </MultiSelect
+                                ></template>
+                            </Column>
+                            <Column
+                                filterField="fecha_desvinculacion"
+                                field="fecha_desvinculacion"
+                                header="Fecha a desvincular"
+                                headerStyle="background-color:black; color:white"
+                                sortable
+                                :showFilterMatchModes="false"
+                            >
+                            </Column>
+                            <Column
+                                filterField="centro_costo"
+                                field="centro_costo"
+                                header="Centro de costo"
+                                headerStyle="background-color:black; color:white"
+                                sortable
+                                :showFilterMatchModes="false"
+                            >
+                                <template #filter="{ filterModel }">
+                                    <MultiSelect
+                                        v-model="filterModel.value"
+                                        :options="
+                                            filtersDropdownData.centro_costo
+                                        "
+                                        placeholder="Cualquiera"
+                                        class="p-column-filter"
+                                        optionLabel="centro_costo"
+                                        optionValue="centro_costo"
+                                        filter
+                                    >
+                                    </MultiSelect>
+                                </template>
+                            </Column>
+                            <Column
+                                field="estado.descripcion"
+                                filterField="estado"
+                                header="Estado"
+                                headerStyle="background-color:black; color:white"
+                                style="text-align: center"
+                                sortable
+                                :showFilterMatchModes="false"
+                            >
+                                <template #body="{ data }">
+                                    <Tag
+                                        :value="data.estado.descripcion"
+                                        :severity="data.estado.color"
+                                    />
+                                </template>
+                                <template #filter="{ filterModel }">
+                                    <MultiSelect
+                                        v-model="filterModel.value"
+                                        :options="filtersDropdownData.estado"
+                                        placeholder="Cualquiera"
+                                        class="p-column-filter"
+                                        optionLabel="estado.descripcion"
+                                        optionValue="estado"
+                                    >
+                                    </MultiSelect
+                                ></template>
+                            </Column>
+                            <Column
+                                :field="null"
+                                header="Acciones"
+                                headerStyle="background-color:black; color:white"
+                                sortable
+                                :showFilterMatchModes="false"
+                            >
+                                <template #body="{ data }">
+                                    <div class="text-center">
+                                        <SplitButton
+                                            menuButtonIcon="pi pi-cog"
+                                            :model="getItems(data)"
+                                            style="
+                                                width: 2rem !important;
+                                                height: 2rem !important;
+                                            "
+                                            >{{}}
+                                        </SplitButton>
+                                        <Button
+                                            v-if="
+                                                (data.status == 6 ||
+                                                    data.status == 9) &&
+                                                data.enable == 1
+                                            "
+                                            icon="pi pi-exclamation-triangle "
+                                            class="ml-2"
+                                            style="
+                                                width: 2rem !important;
+                                                height: 2rem !important;
+                                            "
+                                            severity="warning"
+                                            @click="alertaAdminObra(data)"
+                                        />
+                                    </div>
+                                </template>
+                            </Column>
+                        </DataTable>
+                    </div>
+                    <Modal
+                        :archivosList="this.archivosList"
+                        :visible="this.visible"
+                        @setImagenes="this.setImagenes"
+                    />
+
+                    <Dialog
+                        v-model:visible="visibleComentarioAdmin"
+                        modal
+                        header=" "
+                        :style="{ width: '25rem' }"
+                    >
+                        <template #header>
+                            <span class="p-text-secondary">{{
+                                this.title
+                            }}</span>
+                        </template>
+                        <div class="pl-1 p-text-secondary border p-3">
+                            {{ this.comentario }}
+                        </div>
+
+                        <div class="flex flex-column pt-4">
+                            <div
+                                class="mb-3 p-text-secondary text-center"
+                                style="font-size: 14px"
+                            >
+                                ¿Desea retornar al flujo inicial a este
+                                colaborador?
+                            </div>
+                            <div class="flex justify-content-end gap-2">
+                                <Button
+                                    type="button"
+                                    label="Retornar"
+                                    severity="info"
+                                    @click="desactivarSolicitudcolaborador()"
+                                    class="h-2rem"
+                                ></Button>
+                                <Button
+                                    type="button"
+                                    label="Cancelar"
+                                    @click="visibleComentarioAdmin = false"
+                                    class="h-2rem"
+                                ></Button>
+                            </div>
+                        </div>
+                    </Dialog>
                 </div>
-                <Modal
-                    :archivosList="this.archivosList"
-                    :visible="this.visible"
-                    @setImagenes="this.setImagenes"
-                />
-
-                <Dialog
-                    v-model:visible="visibleComentarioAdmin"
-                    modal
-                    header=" "
-                    :style="{ width: '25rem' }"
-                >
-                    <template #header>
-                        <span class="p-text-secondary"
-                            >{{this.title}}</span
-                        >
-                    </template>
-                    <div class="pl-1 p-text-secondary border p-3">
-                        {{ this.comentario }}
-                    </div>
-
-                    <div class="flex flex-column pt-4">
-                        <div
-                            class="mb-3 p-text-secondary text-center"
-                            style="font-size: 14px"
-                        >
-                            ¿Desea retornar al flujo inicial a este colaborador?
-                        </div>
-                        <div class="flex justify-content-end gap-2">
-                            <Button
-                                type="button"
-                                label="Retornar"
-                                severity="info"
-                                @click="desactivarSolicitudcolaborador()"
-                                class="h-2rem"
-                            ></Button>
-                            <Button
-                                type="button"
-                                label="Cancelar"
-                                @click="visibleComentarioAdmin = false"
-                                class="h-2rem"
-                            ></Button>
-                        </div>
-                    </div>
-                </Dialog>
             </div>
         </div>
     </div>
@@ -276,7 +283,7 @@ import setLocaleES from "../../../primevue.config.js";
 import { rutaBase, dateFormatChange } from "../../../../Utils/utils.js";
 
 export default {
-    props: ["solicitud_selected"],
+    props: ["solicitud_selected", "details"],
     emits: ["ChangeView", "getData"],
     components: {
         AppLayout,
@@ -300,7 +307,7 @@ export default {
             ],
             checkView: false,
             mensaje: "",
-            title:"",
+            title: "",
             isLoadingForm: false,
             ids: [],
             visible: false,
@@ -340,15 +347,19 @@ export default {
                         value: null,
                         matchMode: FilterMatchMode.CONTAINS,
                     },
-                    codigo: {
+                    user_id: {
+                        value: null,
+                        matchMode: FilterMatchMode.CONTAINS,
+                    },
+                    nombre_completo: {
+                        value: null,
+                        matchMode: FilterMatchMode.CONTAINS,
+                    },
+                    sap_maestro_causales_terminos: {
                         value: null,
                         matchMode: FilterMatchMode.CONTAINS,
                     },
                     centro_costo: {
-                        value: null,
-                        matchMode: FilterMatchMode.CONTAINS,
-                    },
-                    created_at: {
                         value: null,
                         matchMode: FilterMatchMode.CONTAINS,
                     },
@@ -358,23 +369,28 @@ export default {
                     },
                 },
                 globalFilterFields: [
-                    "codigo",
-                    "user_created",
+                    "user_id",
+                    "nombre_completo",
+                    "sap_maestro_causales_terminos",
                     "centro_costo",
-                    "created_at",
                     "estado",
                 ],
             },
             filtersDropdownData: {
-                codigo: [],
-                user_created: [],
+                user_id: [],
+                nombre_completo: [],
+                sap_maestro_causales_terminos: [],
                 centro_costo: [],
-                created_at: [],
                 estado: [],
             },
         };
     },
     watch: {
+        details: function (newValue, oldValue) {
+            if (newValue == true) {
+                this.initializeDropdownsData();
+            }
+        },
         solicitud_selected: function (newValue, oldValue) {
             if (newValue) {
                 this.dataTable.data =
@@ -391,26 +407,38 @@ export default {
         },
 
         initializeDropdownsData() {
-            this.filtersDropdownData.codigo = [
+            this.filtersDropdownData.user_id = [
                 ...new Set(
                     this.dataTable.data
-                        .filter((s) => s.codigo != "")
-                        .map((s) => s.codigo)
+                        .filter((s) => s.user_id != "")
+                        .map((s) => s.user_id)
                 ),
             ].map((o) => {
-                return { codigo: o };
+                return { user_id: o };
             });
-
-            this.filtersDropdownData.user_created = [
+           
+            this.filtersDropdownData.nombre_completo = [
                 ...new Set(
                     this.dataTable.data
-                        .filter((s) => s.user_created != "")
-                        .map((s) => s.user_created)
+                        .filter((s) => s.nombre_completo != "")
+                        .map((s) => s.nombre_completo)
                 ),
             ].map((o) => {
-                return { user_created: o };
+                return { nombre_completo: o };
             });
-
+        
+            this.filtersDropdownData.sap_maestro_causales_terminos = [
+                ...new Map(
+                    this.dataTable.data
+                        .filter(
+                            (s) =>
+                                s.sap_maestro_causales_terminos != "" && s.sap_maestro_causales_terminos.name != null
+                        )
+                        .map((s) => [s.sap_maestro_causales_terminos.name, s.sap_maestro_causales_terminos])
+                ).values(),
+            ].map((o) => {
+                return { sap_maestro_causales_terminos: o };
+            });
             this.filtersDropdownData.centro_costo = [
                 ...new Set(
                     this.dataTable.data
@@ -422,14 +450,19 @@ export default {
             });
 
             this.filtersDropdownData.estado = [
-                ...new Set(
+                ...new Map(
                     this.dataTable.data
-                        .filter((s) => s.estado != "")
-                        .map((s) => s.estado)
-                ),
+                        .filter(
+                            (s) =>
+                                s.estado != "" && s.estado.descripcion != null
+                        )
+                        .map((s) => [s.estado.descripcion, s.estado])
+                ).values(),
             ].map((o) => {
                 return { estado: o };
             });
+            console.log(this.filtersDropdownData.estado)
+
         },
         setImagenes(data) {
             this.visible = !this.visible;

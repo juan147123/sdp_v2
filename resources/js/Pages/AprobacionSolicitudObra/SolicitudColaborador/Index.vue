@@ -328,18 +328,18 @@ export default {
                     },
                 },
                 globalFilterFields: [
-                    "codigo",
-                    "user_created",
+                    "user_id",
+                    "nombre_completo",
+                    "sap_maestro_causales_terminos",
                     "centro_costo",
-                    "created_at",
                     "estado",
                 ],
             },
             filtersDropdownData: {
-                codigo: [],
-                user_created: [],
+                user_id: [],
+                nombre_completo: [],
+                sap_maestro_causales_terminos: [],
                 centro_costo: [],
-                created_at: [],
                 estado: [],
             },
         };
@@ -369,26 +369,42 @@ export default {
         },
 
         initializeDropdownsData() {
-            this.filtersDropdownData.codigo = [
+            this.filtersDropdownData.user_id = [
                 ...new Set(
                     this.dataTable.data
-                        .filter((s) => s.codigo != "")
-                        .map((s) => s.codigo)
+                        .filter((s) => s.user_id != "")
+                        .map((s) => s.user_id)
                 ),
             ].map((o) => {
-                return { codigo: o };
+                return { user_id: o };
             });
 
-            this.filtersDropdownData.user_created = [
+            this.filtersDropdownData.nombre_completo = [
                 ...new Set(
                     this.dataTable.data
-                        .filter((s) => s.user_created != "")
-                        .map((s) => s.user_created)
+                        .filter((s) => s.nombre_completo != "")
+                        .map((s) => s.nombre_completo)
                 ),
             ].map((o) => {
-                return { user_created: o };
+                return { nombre_completo: o };
             });
 
+            this.filtersDropdownData.sap_maestro_causales_terminos = [
+                ...new Map(
+                    this.dataTable.data
+                        .filter(
+                            (s) =>
+                                s.sap_maestro_causales_terminos != "" &&
+                                s.sap_maestro_causales_terminos.name != null
+                        )
+                        .map((s) => [
+                            s.sap_maestro_causales_terminos.name,
+                            s.sap_maestro_causales_terminos,
+                        ])
+                ).values(),
+            ].map((o) => {
+                return { sap_maestro_causales_terminos: o };
+            });
             this.filtersDropdownData.centro_costo = [
                 ...new Set(
                     this.dataTable.data
@@ -400,14 +416,18 @@ export default {
             });
 
             this.filtersDropdownData.estado = [
-                ...new Set(
+                ...new Map(
                     this.dataTable.data
-                        .filter((s) => s.estado != "")
-                        .map((s) => s.estado)
-                ),
+                        .filter(
+                            (s) =>
+                                s.estado != "" && s.estado.descripcion != null
+                        )
+                        .map((s) => [s.estado.descripcion, s.estado])
+                ).values(),
             ].map((o) => {
                 return { estado: o };
             });
+            console.log(this.filtersDropdownData.estado);
         },
         setImagenes(data) {
             this.visible = !this.visible;
