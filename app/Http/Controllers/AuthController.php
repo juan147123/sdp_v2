@@ -65,9 +65,10 @@ class AuthController extends Controller
             // $email = 'sebastian.valck@flesan.cl';
             // $email = 'serodriguez@flesan.com.pe';
             // $email = 'ctenazoa@flesan.com.pe';
-            // $email = 'frida.morales@flesan.cl'; //solicitante
+            
+            $email = 'frida.morales@flesan.cl'; //solicitante DMMTRM0070
             // $email = 'carolina.rojas@flesan.cl'; //aprobador de obra
-            $email = 'cesar.munoz@flesan.cl'; // aprobador rrhh
+            // $email = 'cesar.munoz@flesan.cl'; // aprobador rrhh
         }
 
         $extension_correo = substr($email, -2);
@@ -183,7 +184,7 @@ class AuthController extends Controller
         } else if (in_array(env("APROBOBRA"), $objeto_permitido)) {
             $redirect = 'redirect.solicitud.aprobar';
         } else if (in_array(env("ADMRRHH"), $objeto_permitido)) {
-            $redirect = 'solicitudes';
+            $redirect = 'redirect.solicitud.rrhh';
         } else if (in_array(env("SUPERAD"), $objeto_permitido)) {
             $redirect = 'redirect.configuraciones';
         } else if (in_array(env("ADMAREA"), $objeto_permitido)) {

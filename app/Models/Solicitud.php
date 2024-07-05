@@ -29,9 +29,9 @@ class Solicitud extends Model
     /**
      * @var array
      */
-    protected $fillable = ['codigo', 'np_lider', 'user_created', 'created_at', 'updated_at', 'enable', 'status', 'obra','centro_costo'];
+    protected $fillable = ['codigo', 'np_lider', 'user_created', 'created_at', 'updated_at', 'enable', 'status', 'obra', 'centro_costo'];
 
-        /**
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function estado()
@@ -46,5 +46,10 @@ class Solicitud extends Model
     public function solicitudColaborador()
     {
         return $this->hasMany('App\Models\SolicitudColaborador', 'id_solicitud');
+    }
+
+    public function solicitudColaborador2()
+    {
+        return $this->hasMany('App\Models\SolicitudColaborador', 'id_solicitud')->where('status','!=', 6);
     }
 }

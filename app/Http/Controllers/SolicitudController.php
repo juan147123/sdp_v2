@@ -216,11 +216,11 @@ class SolicitudController extends Controller
 
         $result = $this->repository->all(['*'], [
             'estado',
-            'solicitudColaborador',
-            'solicitudColaborador.archivos',
-            'solicitudColaborador.estado',
-            'solicitudColaborador.SapMaestroCausalesTerminos',
-            'solicitudColaborador.checkAreaColaboradores'
+            'solicitudColaborador2',
+            'solicitudColaborador2.archivos',
+            'solicitudColaborador2.estado',
+            'solicitudColaborador2.SapMaestroCausalesTerminos',
+            'solicitudColaborador2.checkAreaColaboradores'
         ])->whereIn('estado.id', [5,8,9]);
 
         return $result->values();

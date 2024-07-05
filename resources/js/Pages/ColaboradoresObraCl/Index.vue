@@ -368,11 +368,15 @@ export default {
             }
         },
         async getData() {
+            this.mensaje = "Cargando datos ...";
+            this.isLoadingForm = true;
             await axios
                 .get(rutaBase + "/colaboradores/obra/cl")
                 .then(async (response) => {
                     if (response.status == 200) {
                         this.dataTable.data = response.data;
+                        this.mensaje = "";
+                        this.isLoadingForm = false;
                     }
                 });
         },

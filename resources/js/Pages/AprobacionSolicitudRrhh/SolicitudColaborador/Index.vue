@@ -356,14 +356,14 @@ export default {
         details: function (newValue, oldValue) {
             if (newValue == true) {
                 this.dataTable.data =
-                    this.solicitud_selected.solicitud_colaborador;
+                    this.solicitud_selected.solicitud_colaborador2;
                 this.initializeDropdownsData();
             }
         },
         solicitud_selected: function (newValue, oldValue) {
             if (newValue) {
                 this.dataTable.data =
-                    this.solicitud_selected.solicitud_colaborador;
+                    this.solicitud_selected.solicitud_colaborador2;
             }
         },
     },
@@ -520,7 +520,7 @@ export default {
             });
         },
         async updateAll(status) {
-            this.solicitud_selected.solicitud_colaborador.forEach(
+            this.solicitud_selected.solicitud_colaborador2.forEach(
                 (solicitudColacorador) => {
                     if (solicitudColacorador.status == 7) {
                         this.ids.push(solicitudColacorador.id);
