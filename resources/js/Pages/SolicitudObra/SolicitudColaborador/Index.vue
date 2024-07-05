@@ -193,11 +193,13 @@
                                             width: 2rem !important;
                                             height: 2rem !important;
                                         "
-                                        >{{  }}
+                                        >{{}}
                                     </SplitButton>
                                     <Button
                                         v-if="
-                                            data.status == 6 && data.enable == 1
+                                            (data.status == 6 ||
+                                                data.status == 9) &&
+                                            data.enable == 1
                                         "
                                         icon="pi pi-exclamation-triangle "
                                         class="ml-2"
@@ -227,11 +229,11 @@
                 >
                     <template #header>
                         <span class="p-text-secondary"
-                            >Comentario del Administrador de Obra</span
+                            >{{this.title}}</span
                         >
                     </template>
                     <div class="pl-1 p-text-secondary border p-3">
-                        {{ this.comentario_admin_obra }}
+                        {{ this.comentario }}
                     </div>
 
                     <div class="flex flex-column pt-4">
@@ -298,13 +300,14 @@ export default {
             ],
             checkView: false,
             mensaje: "",
+            title:"",
             isLoadingForm: false,
             ids: [],
             visible: false,
             visibleComentarioAdmin: false,
             optionDropdown: null,
             archivosList: [],
-            comentario_admin_obra: "",
+            comentario: "",
             id_deactivate: 0,
             form: this.$inertia.form({
                 id: 0,
@@ -445,7 +448,13 @@ export default {
         },
         alertaAdminObra(data) {
             this.visibleComentarioAdmin = !this.visibleComentarioAdmin;
-            this.comentario_admin_obra = data.comentario_admin_obra;
+            if (data.status == 5) {
+                this.title = "Comentario del Administrador de Obra";
+                this.comentario = data.comentario_admin_obra;
+            } else {
+                this.title = "Comentario del Administrador de RRHH";
+                this.comentario = data.comentario_rrhh;
+            }
             this.id_deactivate = data.id;
         },
         async desactivarSolicitudcolaborador() {

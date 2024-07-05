@@ -220,10 +220,31 @@
                                     <Button
                                         icon="pi pi-users"
                                         class="ml-2"
-                                        style="font-size: 0.9rem; height: 30px"
+                                        style="
+                                            font-size: 0.9rem;
+                                            height: 30px;
+                                            width: 2rem !important;
+                                            height: 2rem !important;
+                                        "
                                         severity="info"
                                         @click="ChangeView(data)"
                                         v-tooltip.top="'colaboradores'"
+                                    />
+
+                                    <Button
+                                        v-if="
+                                            setAlertButton(
+                                                data.solicitud_colaborador
+                                            ) == true
+                                        "
+                                        icon="pi pi-exclamation-triangle "
+                                        class="ml-2"
+                                        style="
+                                            width: 2rem !important;
+                                            height: 2rem !important;
+                                        "
+                                        severity="warning"
+                                        @click="ChangeView(data)"
                                     />
                                 </template>
                             </Column>
@@ -490,6 +511,18 @@ export default {
         ChangeView(data) {
             this.details = !this.details;
             this.solicitud_selected = data ? data : [];
+        },
+        setAlertButton(data) {
+            let existencia = false;
+            data.forEach((colaborador) => {
+                const existen =
+                    (colaborador.status === 6 || colaborador.status === 9) &&
+                    colaborador.enable === 1;
+                if (existen) {
+                    existencia = true;
+                }
+            });
+            return existencia;
         },
     },
 };
