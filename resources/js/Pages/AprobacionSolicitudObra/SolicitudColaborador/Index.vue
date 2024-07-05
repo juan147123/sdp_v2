@@ -63,7 +63,9 @@
                                             "
                                             :disabled="
                                                 this.solicitud_selected
-                                                    .status == 5
+                                                    .status == 5 ||
+                                                this.solicitud_selected
+                                                    .status == 6
                                             "
                                         >
                                             {{}}
@@ -73,7 +75,7 @@
                             </template>
                             <template #empty>
                                 <div class="w-full flex justify-content-center">
-                                    <span>Cargando datos</span>
+                                    <span>No hay datos que mostrar</span>
                                 </div>
                             </template>
                             <Column
@@ -185,7 +187,7 @@
                                 :showFilterMatchModes="false"
                             >
                                 <template #body="{ data }">
-                                    <Badge
+                                    <Tag
                                         :value="data.estado.descripcion"
                                         :severity="data.estado.color"
                                     />
@@ -214,7 +216,10 @@
                                         <SplitButton
                                             menuButtonIcon="pi pi-cog"
                                             :model="getItems(data)"
-                                            style="width: 2rem !important; height: 2rem !important;"
+                                            style="
+                                                width: 2rem !important;
+                                                height: 2rem !important;
+                                            "
                                         >
                                             {{}}
                                         </SplitButton>
@@ -452,11 +457,16 @@ export default {
             ];
 
             return items.filter((item) => {
-              
-                if (item.label === "Aprobar" && (data.status == 5 || data.status == 6) ) {
+                if (
+                    item.label === "Aprobar" &&
+                    (data.status == 5 || data.status == 6)
+                ) {
                     return false;
                 }
-                if (item.label === "Desaprobar" && (data.status == 5 || data.status == 6) ) {
+                if (
+                    item.label === "Desaprobar" &&
+                    (data.status == 5 || data.status == 6)
+                ) {
                     return false;
                 }
                 return true;

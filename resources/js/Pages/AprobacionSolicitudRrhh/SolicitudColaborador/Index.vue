@@ -63,7 +63,9 @@
                                             "
                                             :disabled="
                                                 this.solicitud_selected
-                                                    .status == 5
+                                                    .status == 8 ||
+                                                this.solicitud_selected
+                                                    .status == 9
                                             "
                                         >
                                             {{}}
@@ -73,7 +75,7 @@
                             </template>
                             <template #empty>
                                 <div class="w-full flex justify-content-center">
-                                    <span>Cargando datos</span>
+                                    <span>No hay datos que mostrar</span>
                                 </div>
                             </template>
                             <Column
@@ -179,15 +181,23 @@
                                 filterField="status"
                                 field="status"
                                 header="Estado"
-                                headerStyle="background-color:black; color:white"
+                                headerStyle="background-color:black; color:white;"
                                 style="text-align: center"
                                 sortable
                                 :showFilterMatchModes="false"
                             >
                                 <template #body="{ data }">
-                                    <Badge
-                                        :value="data.estado.descripcion"
-                                        :severity="data.estado.color"
+                                    <Tag
+                                        :value="
+                                            data.estado.id == 5
+                                                ? 'PENDIENTE'
+                                                : data.estado.descripcion
+                                        "
+                                        :severity="
+                                            data.estado.id == 5
+                                                ? 'warning'
+                                                : data.estado.color
+                                        "
                                     />
                                 </template>
                                 <template #filter="{ filterModel }">
@@ -214,7 +224,10 @@
                                         <SplitButton
                                             menuButtonIcon="pi pi-cog"
                                             :model="getItems(data)"
-                                            style="width: 2rem !important; height: 2rem !important;"
+                                            style="
+                                                width: 2rem !important;
+                                                height: 2rem !important;
+                                            "
                                         >
                                             {{}}
                                         </SplitButton>
@@ -278,7 +291,7 @@ export default {
                 id: 0,
                 status: 0,
                 id_solicitud: 0,
-                comentario_admin_obra: "",
+                comentario_rrhh: "",
             }),
             breadcrumbs: [
                 {
@@ -414,14 +427,14 @@ export default {
                     label: "Aprobar solicitudes",
                     icon: "pi pi-check",
                     command: () => {
-                        this.updateAllStatus(5);
+                        this.updateAllStatus(8);
                     },
                 },
                 {
                     label: "Desaprobar solicitudes",
                     icon: "pi pi-times",
                     command: () => {
-                        this.updateAllStatus(6);
+                        this.updateAllStatus(9);
                     },
                 },
             ];
@@ -439,24 +452,29 @@ export default {
                     label: "Aprobar",
                     icon: "pi pi-check",
                     command: () => {
-                        this.updateStatus(data.id, 5, data.id_solicitud);
+                        this.updateStatus(data.id, 8, data.id_solicitud);
                     },
                 },
                 {
                     label: "Desaprobar",
                     icon: "pi pi-times",
                     command: () => {
-                        this.updateStatus(data.id, 6, data.id_solicitud);
+                        this.updateStatus(data.id, 9, data.id_solicitud);
                     },
                 },
             ];
 
             return items.filter((item) => {
-              
-                if (item.label === "Aprobar" && (data.status == 5 || data.status == 6) ) {
+                if (
+                    item.label === "Aprobar" &&
+                    (data.status == 8 || data.status == 9)
+                ) {
                     return false;
                 }
-                if (item.label === "Desaprobar" && (data.status == 5 || data.status == 6) ) {
+                if (
+                    item.label === "Desaprobar" &&
+                    (data.status == 8 || data.status == 9)
+                ) {
                     return false;
                 }
                 return true;
@@ -471,18 +489,18 @@ export default {
             await new Promise((resolve) => {
                 setSwal({
                     value: "updateStatusInput",
-                    callback: async (comentario_admin_obra) => {
+                    callback: async (comentario_rrhh) => {
                         resolve();
-                        this.update(comentario_admin_obra);
+                        this.update(comentario_rrhh);
                     },
                 });
             });
         },
-        async update(comentario_admin_obra) {
-            this.form.comentario_admin_obra = comentario_admin_obra;
+        async update(comentario_rrhh) {
+            this.form.comentario_rrhh = comentario_rrhh;
             await axios
                 .put(
-                    this.route("solicitud.colaborador.update.status.cc"),
+                    this.route("solicitud.colaborador.update.status.rrhh"),
                     this.form
                 )
                 .then(async (response) => {
@@ -511,7 +529,7 @@ export default {
             );
 
             await axios
-                .put(this.route("solicitud.colaborador.update.masive.cc"), {
+                .put(this.route("solicitud.colaborador.update.masive.rrhh"), {
                     ids: this.ids,
                     status: status,
                     id_solicitud: this.solicitud_selected.id,
@@ -519,20 +537,6 @@ export default {
                 .then(async (response) => {
                     this.getData();
                 });
-
-            /*  this.$inertia.put(
-                this.route("solicitud.colaborador.update.masive.cc"),
-                {
-                    ids: this.ids,
-                    status: status,
-                    id_solicitud: this.solicitudesColaborador.id,
-                },
-                {
-                    onFinish: () => {
-                        this.onFinish();
-                    },
-                }
-            ); */
         },
     },
 };

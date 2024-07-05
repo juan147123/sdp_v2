@@ -38,7 +38,7 @@
                             </template>
                             <template #empty>
                                 <div class="w-full flex justify-content-center">
-                                    <span>Cargando datos</span>
+                                    <span>No hay datos que mostrar</span>
                                 </div>
                             </template>
                             <Column
@@ -118,9 +118,17 @@
                                 :showFilterMatchModes="false"
                             >
                                 <template #body="{ data }">
-                                    <Badge
-                                        :value="data.estado.descripcion"
-                                        :severity="data.estado.color"
+                                    <Tag
+                                        :value="
+                                            data.estado.id == 5
+                                                ? 'PENDIENTE'
+                                                : data.estado.descripcion
+                                        "
+                                        :severity="
+                                            data.estado.id == 5
+                                                ? 'warning'
+                                                : data.estado.color
+                                        "
                                     />
                                 </template>
                                 <template #filter="{ filterModel }">
@@ -329,7 +337,7 @@ export default {
                 }
             );
         },
-        
+
         /* NUEVO CODIGO */
         async getData() {
             self = this;

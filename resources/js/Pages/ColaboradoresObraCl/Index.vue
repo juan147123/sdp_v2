@@ -58,7 +58,7 @@
                         </template>
                         <template #empty>
                             <div class="w-full flex justify-content-center">
-                                <span>Cargando datos</span>
+                                <span>No hay datos que mostrar</span>
                             </div>
                         </template>
                         <Column
@@ -217,7 +217,7 @@
                             style="text-align: center"
                             sortable
                             ><template #body="{ data }">
-                                <Badge
+                                <Tag
                                     value="4"
                                     :severity="
                                         data.solicitudes != 0
@@ -227,7 +227,7 @@
                                 >
                                     {{
                                         data.solicitudes != 0 ? "Sí" : "No"
-                                    }}</Badge
+                                    }}</Tag
                                 >
                             </template>
                         </Column>

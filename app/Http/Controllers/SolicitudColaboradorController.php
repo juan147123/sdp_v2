@@ -19,12 +19,12 @@ class SolicitudColaboradorController extends Controller
         $this->repositorySolicitud = $repositorySolicitud;
     }
 
-    
+
     public function delete($id)
     {
         $this->repository->update($id, ["enable" => 0]);
     }
-    
+
     public function updateStatus(Request $request)
     {
         $this->repository->update(
@@ -36,12 +36,13 @@ class SolicitudColaboradorController extends Controller
 
         return redirect()->route('redirect.solicitud');
     }
-    public function updateStatusSolicitud($request)
+    public function updateStatusSolicitud($request, $status)
     {
         $solicitudes = $this->repository->getSolicitudColaboradorPendinte(
-            $request->id_solicitud
+            $request->id_solicitud,
+            $status
         );
-        
+
         if ($solicitudes == 0) {
             $this->repositorySolicitud->update($request->id_solicitud, ["status" => $request->status]);
         }
@@ -50,7 +51,7 @@ class SolicitudColaboradorController extends Controller
     public function updateAllStatus(Request $request)
     {
         $this->repository->updateStatusMasive($request->status, $request->ids);
-        $this->updateStatusSolicitud($request);
+        $this->updateStatusSolicitud($request, 7);
     }
 
     //update aprobar solicitudes administrador de obra
@@ -62,7 +63,7 @@ class SolicitudColaboradorController extends Controller
         );
 
         if (env('STATUS_APROBADO') == $request->status) {
-            $this->updateStatusSolicitud($request);
+            $this->updateStatusSolicitud($request, 7);
         }
 
         //enviar correos de estado
@@ -72,20 +73,20 @@ class SolicitudColaboradorController extends Controller
     public function updateAllStatusAprobadorCC(Request $request)
     {
         $this->repository->updateStatusMasive($request->status, $request->ids);
-        $this->updateStatusSolicitud($request);
+        $this->updateStatusSolicitud($request, 7);
     }
 
-    //update aprobar solicitudes cc
+    //update aprobar solicitudes RRHH
     public function updateStatusAprobadorRrhh(Request $request)
     {
-        $this->repository->update(
+        $update = $this->repository->update(
             $request->id,
             $request->except(['id_solicitud'])
         );
 
         $this->updateStatusSolicitudRrhh($request);
         //enviar correo desaprobacion con comentario
-        return redirect()->route('redirect.solicitud.aprobar');
+        return $update;
     }
 
     public function updateAllStatusAprobadorRrhh(Request $request)
@@ -97,14 +98,10 @@ class SolicitudColaboradorController extends Controller
     public function updateStatusSolicitudRrhh($request)
     {
         $solicitudes = $this->repository->getSolicitudColaboradorPendinte(
-            $request->id_solicitud
+            $request->id_solicitud,
+            5
         );
         if ($solicitudes == 0) {
-            if ($request->status == 4) {
-                $request->status = 5;
-            } else if ($request->status == 2) {
-                $request->status = 4;
-            }
             $this->repositorySolicitud->update($request->id_solicitud, ["status" => $request->status]);
         }
     }

@@ -121,7 +121,7 @@
                                 >Aporte empleador AFC</label
                             >
                             <input
-                                required
+                        
                                 type="file"
                                 @change="
                                     handleFileChange(
@@ -140,7 +140,7 @@
                                 >CERTIFICADO DE DEFUNCIÓN</label
                             >
                             <input
-                                required
+                       
                                 type="file"
                                 @change="
                                     handleFileChange(
@@ -159,7 +159,7 @@
                                 >Boleta o comprobante de gastos funebres</label
                             >
                             <input
-                                required
+                      
                                 type="file"
                                 @change="
                                     handleFileChange(
@@ -178,7 +178,6 @@
                                 >Información bancaria del beneficiario</label
                             >
                             <input
-                                required
                                 type="file"
                                 @change="
                                     handleFileChange(

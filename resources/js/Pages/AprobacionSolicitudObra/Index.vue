@@ -38,7 +38,7 @@
                             </template>
                             <template #empty>
                                 <div class="w-full flex justify-content-center">
-                                    <span>Cargando datos</span>
+                                    <span>No hay datos que mostrar</span>
                                 </div>
                             </template>
                             <Column
@@ -118,7 +118,7 @@
                                 :showFilterMatchModes="false"
                             >
                                 <template #body="{ data }">
-                                    <Badge
+                                    <Tag
                                         :value="data.estado.descripcion"
                                         :severity="data.estado.color"
                                     />

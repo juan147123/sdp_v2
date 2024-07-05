@@ -23,7 +23,7 @@ import Tooltip from 'primevue/tooltip';
 import Badge from 'primevue/badge';
 import SplitButton from 'primevue/splitbutton';
 import SpeedDial from 'primevue/speeddial';
-
+import Tag from 'primevue/tag';
 
 export default {
     Button,
@@ -50,5 +50,6 @@ export default {
     Tooltip,
     Badge,
     SplitButton,
-    SpeedDial
+    SpeedDial,
+    Tag
 }

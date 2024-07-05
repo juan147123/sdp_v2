@@ -29,10 +29,10 @@ class SolicitudColaboradorRepository extends BaseRepository implements
     {
         return $this->model->whereIn('id', $ids)->update(['status' => $status]);
     }
-    public function getSolicitudColaboradorPendinte($idSolicitud)
+    public function getSolicitudColaboradorPendinte($idSolicitud,$status)
     {
         $data = $this->model
-            ->where('status', 7)
+            ->where('status', $status)
             ->where('id_solicitud', $idSolicitud)
             ->get()
             ->count();
