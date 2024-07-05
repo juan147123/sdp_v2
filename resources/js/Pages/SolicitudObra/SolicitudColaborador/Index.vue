@@ -461,7 +461,6 @@ export default {
             ].map((o) => {
                 return { estado: o };
             });
-            console.log(this.filtersDropdownData.estado)
 
         },
         setImagenes(data) {

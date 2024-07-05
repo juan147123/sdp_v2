@@ -347,8 +347,6 @@ export default {
     watch: {
         details: function (newValue, oldValue) {
             if (newValue == true) {
-                this.dataTable.data =
-                    this.solicitud_selected.solicitud_colaborador;
                 this.initializeDropdownsData();
             }
         },
