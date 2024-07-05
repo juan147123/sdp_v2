@@ -32,7 +32,7 @@ class SolicitudColaboradorController extends Controller
             $request->except(['id_solicitud'])
         );
 
-        $this->updateStatusSolicitud($request);
+        $this->updateStatusSolicitud($request,7);
 
         return redirect()->route('redirect.solicitud');
     }
