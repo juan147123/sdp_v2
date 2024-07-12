@@ -51,7 +51,7 @@ class AuthController extends Controller
 
         // if ($email == 'serodriguez@flesan.com.pe') {
         //     $email = 'dcollas@flesan.com.pe';
-        // if ($email == 'jmestanza@flesan.com.pe') {
+        if ($email == 'jmestanza@flesan.com.pe') {
         // $email = 'abeckdorf@flesan.com.pe';
         // $email = 'sebastian.valck@flesan.cl';
         // $email = 'jorge.barrozo@flesan.cl';
@@ -64,12 +64,50 @@ class AuthController extends Controller
         // $email = 'jonathan.gaete@dvc.cl';
         // $email = 'sebastian.valck@flesan.cl';
         // $email = 'serodriguez@flesan.com.pe';
-        // $email = 'ctenazoa@flesan.com.pe';
+        
+        // $email = 'fabian.castro@flesan.cl';
+        $email = 'carlos.hermosilla@flesan.cl';
+
 
         // $email = 'frida.morales@flesan.cl'; //solicitante DMMTRM0070
         // $email = 'carolina.rojas@flesan.cl'; //aprobador de obra
         // $email = 'cesar.munoz@flesan.cl'; // aprobador rrhh
-        // }
+
+
+
+        }
+
+        // catalina.fuentes@flesan.cl aprobador de RRHH
+        // cecilia.silva@flesan.cl Solicitante
+        // carolina.carreno@flesan.cl administrador de Obra
+        // cristobal.figueroa@flesan.cl solicitante
+        // nicolas.toro@flesan.cl administrador de obra
+
+
+        if ($email == 'catalina.fuentes@flesan.cl') { // aprobador rrhh
+            $email = 'catalina.fuentes@flesan.cl';
+        }
+
+        if ($email == 'cecilia.silva@flesan.cl') {  //solicitante DMOPR12118GG 
+            $email = 'fabian.castro@flesan.cl';
+        }
+        
+        if ($email == 'carolina.carreno@flesan.cl') {  //administrador de Obra DMOPR12118GG 
+            $email = 'miguel.opazo@flesan.cl';
+        }
+       
+        if ($email == 'cristobal.figueroa@flesan.cl') {  //SOLICITANTE de Obra DMOPR8110PU  
+            $email = 'felisa.castillo@flesan.cl';
+        }
+        
+        if ($email == 'nicolas.toro@flesan.cl') {  //administrador de Obra DMOPR8110PU  
+            $email = 'carlos.hermosilla@flesan.cl';
+        }
+        
+
+
+
+
 
         if ($email == 'david.vilugron@flesan.cl') {  //solicitante DMMTRM0070
             $email = 'frida.morales@flesan.cl';
@@ -79,7 +117,7 @@ class AuthController extends Controller
             $email = 'carolina.rojas@flesan.cl';
         }
 
-        if ($email == 'david.vilugron@flesan.cl') { // aprobador rrhh
+        if ($email == 'cesar.munoz@flesan.cl') { // aprobador rrhh
             $email = 'cesar.munoz@flesan.cl';
         }
 
