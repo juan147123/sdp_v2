@@ -71,7 +71,10 @@ class SolicitudController extends Controller
     {
         $aprobador = $this->personalChileRepository->getAprobadorObraCL(Auth::user()->username);
         $centros_permitidos = explode(',', trim($aprobador->cc, '{}'));
-
+        if(Auth::user()->username == 'miguel.opazo@flesan.cl'){
+            array_push($centros_permitidos,'CFMR10005CFM');
+        }
+        //CFMR10005CFM
         $result = $this->repository->all(['*'], [
             'estado',
             'solicitudColaborador',

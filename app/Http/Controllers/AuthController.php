@@ -66,7 +66,7 @@ class AuthController extends Controller
         // $email = 'serodriguez@flesan.com.pe';
         
         // $email = 'fabian.castro@flesan.cl';
-        $email = 'carlos.hermosilla@flesan.cl';
+        $email = 'miguel.opazo@flesan.cl';
 
 
         // $email = 'frida.morales@flesan.cl'; //solicitante DMMTRM0070
@@ -102,6 +102,11 @@ class AuthController extends Controller
         
         if ($email == 'nicolas.toro@flesan.cl') {  //administrador de Obra DMOPR8110PU  
             $email = 'carlos.hermosilla@flesan.cl';
+        }
+        
+   
+        if ($email == 'lorena.faray@flesan.cl') {  //aSOLICITANTE de Obra CFMR10005CFM  
+            $email = 'marcos.gallardo@flesan.cl';
         }
         
 
