@@ -24,6 +24,7 @@ import Badge from 'primevue/badge';
 import SplitButton from 'primevue/splitbutton';
 import SpeedDial from 'primevue/speeddial';
 import Tag from 'primevue/tag';
+import Avatar from 'primevue/avatar';
 
 export default {
     Button,
@@ -51,5 +52,6 @@ export default {
     Badge,
     SplitButton,
     SpeedDial,
-    Tag
+    Tag,
+    Avatar
 }

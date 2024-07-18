@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\{
+    AplicacionUsuarioController,
     SolicitudController,
     AuthController,
     ColaboradoresChileController,
@@ -102,8 +103,13 @@ Route::middleware([
     Route::post('usuarios/create', [UsuarioController::class, 'create'])->name('usuarios.create');
     Route::put('usuarios/update', [UsuarioController::class, 'update'])->name('usuarios.update');
     Route::put('usuarios/delete', [UsuarioController::class, 'delete'])->name('usuarios.delete');
-
+    
     //CKECKLIST AREAS
     Route::get('solicitudes/area', [SolicitudController::class, 'redirectByArea'])->name('redirect.solicitud.area');
     Route::get('list/solicitudes/area', [SolicitudController::class, 'listSolicitudesByArea'])->name('list.solicitud.area');
+    
+    //APLICACION USUARIO
+    Route::get('redirectpage/usuarios', [AplicacionUsuarioController::class, 'redirectUsers'])->name('redirect.usuarios');
+    Route::get('list/usuarios', [AplicacionUsuarioController::class, 'listAll'])->name('list.usuarios.seguridad');
+    Route::delete('delete/usuarios/{id}', [AplicacionUsuarioController::class, 'delete'])->name('delete.usuarios.seguridad');
 });

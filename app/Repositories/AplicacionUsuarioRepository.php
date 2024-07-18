@@ -23,10 +23,18 @@ class AplicacionUsuarioRepository extends BaseRepository implements AplicacionUs
         $this->model = $model;
     }
     
+    public function listAllActive(){
+        return $this->model
+        ->where("estado_sesion", 1)
+        ->where("id_aplicacion",  $_ENV['ID_APLICACION'])
+        ->get();
+    }
+
     public function findUserByEmail($email)
     {
         return $this->model
             ->where("username", $email)
+            ->where("estado_sesion", 1)
             ->where("id_aplicacion",  $_ENV['ID_APLICACION'])
             ->first();
     }

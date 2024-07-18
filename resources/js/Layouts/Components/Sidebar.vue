@@ -28,9 +28,11 @@
                     style="width: 60px; height: 60px"
                 />
                 <div class="d-flex flex-column user-props text-rigth">
-                    <span class="user-data fw-bold" style="font-size: 9px !important;">{{
-                        this.$page.props.auth.user.username
-                    }}</span>
+                    <span
+                        class="user-data fw-bold"
+                        style="font-size: 9px !important"
+                        >{{ this.$page.props.auth.user.username }}</span
+                    >
                     <span class="user-data">{{
                         this.$page.props.auth.user.name
                     }}</span>
@@ -158,6 +160,9 @@
                         v-if="
                             this.$page.props.permisos.includes(
                                 this.$env.APROBOBRA
+                            ) ||
+                            this.$page.props.permisos.includes(
+                                this.$env.SUPERAD
                             )
                         "
                     >
@@ -174,7 +179,7 @@
                                 @click="setPreloader()"
                             >
                                 <i class="fas fa-file icon-menu"></i>
-                                <strong>Aprobar</strong>
+                                <strong>Aprobar S. Obra</strong>
                             </a>
                         </li>
                     </div>
@@ -183,6 +188,9 @@
                         v-if="
                             this.$page.props.permisos.includes(
                                 this.$env.ADMRRHH
+                            ) ||
+                            this.$page.props.permisos.includes(
+                                this.$env.SUPERAD
                             )
                         "
                     >
@@ -214,7 +222,10 @@
                         <a
                             class="no-href"
                             :class="
-                                this.route().current('redirect.configuraciones')
+                                this.route().current('redirect.configuraciones')||
+                                        this.route().current(
+                                            'redirect.usuarios'
+                                        )
                                     ? 'active'
                                     : ''
                             "
@@ -239,6 +250,23 @@
                                 >
                                     <i class="fa fa-globe"></i>areas /
                                     checklist</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    :href="
+                                        this.route('redirect.usuarios')
+                                    "
+                                    :class="
+                                        this.route().current(
+                                            'redirect.usuarios'
+                                        )
+                                            ? 'active'
+                                            : ''
+                                    "
+                                    @click="setPreloader()"
+                                >
+                                    <i class="fa fa-globe"></i>usuarios</a
                                 >
                             </li>
                         </ul>
