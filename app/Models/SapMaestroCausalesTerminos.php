@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Scopes\EnableScope;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -38,7 +39,7 @@ class SapMaestroCausalesTerminos extends Model
     /**
      * @var array
      */
-    protected $fillable = ['status', 'name', 'event', 'emplstatus'];
+    protected $fillable = ['status', 'name', 'event', 'emplstatus'.'enable'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -46,5 +47,11 @@ class SapMaestroCausalesTerminos extends Model
     public function solicitudColaboradores()
     {
         return $this->hasMany('App\Models\SolicitudColaborador', 'motivo', 'externalcode');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope(new EnableScope);
     }
 }

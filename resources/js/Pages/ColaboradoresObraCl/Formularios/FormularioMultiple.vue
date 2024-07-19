@@ -71,7 +71,10 @@
                                 required
                             />
                         </div>
-                        <div class="mb-3 flex flex-column border p-2">
+                        <div
+                            class="mb-3 flex flex-column border p-2"
+                            :id="'carta_firmada' + index"
+                        >
                             <label for="input1" class="form-label"
                                 >Carta firmada o comprobante de envio por correo
                                 certificado</label
@@ -88,7 +91,10 @@
                                 required
                             />
                         </div>
-                        <div class="mb-3 flex flex-column border p-2">
+                        <div
+                            class="mb-3 flex flex-column border p-2"
+                            :id="'cese_dt' + index"
+                        >
                             <label for="input1" class="form-label"
                                 >CESE DT</label
                             >
@@ -100,7 +106,10 @@
                                 required
                             />
                         </div>
-                        <div class="mb-3 flex flex-column border p-2">
+                        <div
+                            class="mb-3 flex flex-column border p-2"
+                            :id="'cese_afc' + index"
+                        >
                             <label for="input1" class="form-label"
                                 >CESE AFC</label
                             >
@@ -121,7 +130,6 @@
                                 >Aporte empleador AFC</label
                             >
                             <input
-                        
                                 type="file"
                                 @change="
                                     handleFileChange(
@@ -140,7 +148,6 @@
                                 >CERTIFICADO DE DEFUNCIÓN</label
                             >
                             <input
-                       
                                 type="file"
                                 @change="
                                     handleFileChange(
@@ -159,7 +166,6 @@
                                 >Boleta o comprobante de gastos funebres</label
                             >
                             <input
-                      
                                 type="file"
                                 @change="
                                     handleFileChange(
@@ -184,6 +190,24 @@
                                         $event,
                                         index,
                                         'info_bancaria'
+                                    )
+                                "
+                            />
+                        </div>
+                        <div
+                            class="mb-3 flex flex-column border p-2 d-none"
+                            :id="'convenio_practica' + index"
+                        >
+                            <label for="input1" class="form-label"
+                                >Convenio de práctica</label
+                            >
+                            <input
+                                type="file"
+                                @change="
+                                    handleFileChange(
+                                        $event,
+                                        index,
+                                        'convenio_practica'
                                     )
                                 "
                             />
@@ -315,22 +339,80 @@ export default {
             let external_code = this.formData["motivo" + index].externalcode;
             if (external_code == "03") {
                 $("#cert_defuncion" + index).removeClass("d-none");
+                $("#cert_defuncion" + index + " input[type='file']").attr(
+                    "required",
+                    true
+                );
                 $("#boleta_funebre" + index).removeClass("d-none");
+                $("#boleta_funebre" + index + " input[type='file']").attr(
+                    "required",
+                    true
+                );
                 $("#info_bancaria" + index).removeClass("d-none");
+                $("#info_bancaria" + index + " input[type='file']").attr(
+                    "required",
+                    true
+                );
             } else {
                 $("#cert_defuncion" + index).addClass("d-none");
+                $("#cert_defuncion" + index + " input[type='file']").attr(
+                    "required",
+                    false
+                );
                 $("#boleta_funebre" + index).addClass("d-none");
+                $("#boleta_funebre" + index + " input[type='file']").attr(
+                    "required",
+                    false
+                );
                 $("#info_bancaria" + index).addClass("d-none");
+                $("#info_bancaria" + index + " input[type='file']").attr(
+                    "required",
+                    false
+                );
+            }
+
+            if (external_code == "24") {
+                $("#carta_firmada" + index).addClass("d-none");
+                $("#carta_firmada" + index +  " input[type='file']").attr("required", false);
+                
+                $("#cese_dt" + index ).addClass("d-none");
+                $("#cese_dt" + index + " input[type='file']").attr("required", false);
+                
+                $("#cese_afc" + index).addClass("d-none");
+                $("#cese_afc" + index + " input[type='file']").attr("required", false);
+               
+                $("#convenio_practica" + index).removeClass("d-none");
+                $("#convenio_practica" + index + " input[type='file']").attr("required", true);
+            } else {
+                $("#carta_firmada" + index).removeClass("d-none");
+                $("#carta_firmada" + index +  " input[type='file']").attr("required", true);
+                
+                $("#cese_dt" + index ).removeClass("d-none");
+                $("#cese_dt" + index + " input[type='file']").attr("required", true);
+                
+                $("#cese_afc" + index).removeClass("d-none");
+                $("#cese_afc" + index + " input[type='file']").attr("required", true);
+                
+                $("#convenio_practica" + index).addClass("d-none");
+                $("#convenio_practica" + index + " input[type='file']").attr("required", false);
             }
 
             if (
-                external_code == "03" ||
+                external_code == "05" ||
                 external_code == "18" ||
                 external_code == "19"
             ) {
                 $("#aporte_empleador" + index).removeClass("d-none");
+                $("#aporte_empleador" + index + " input[type='file']").attr(
+                    "required",
+                    true
+                );
             } else {
                 $("#aporte_empleador" + index).addClass("d-none");
+                $("#aporte_empleador" + index + " input[type='file']").attr(
+                    "required",
+                    false
+                );
             }
         },
         handleFileChange(event, index, column) {

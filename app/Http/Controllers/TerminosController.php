@@ -16,6 +16,6 @@ class TerminosController extends Controller
 
     public function listAll()
     {
-        return $this->repository->all(["externalcode", "name"], [], ["status" => "A"]);
+        return $this->repository->all(["externalcode", "name"], [], ["status" => "A","enable"=>1]);
     }
 }

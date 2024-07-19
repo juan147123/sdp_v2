@@ -172,6 +172,7 @@ class SolicitudController extends Controller
             $archivos5 = $request->file("cert_defuncion$index");
             $archivos6 = $request->file("boleta_funebre$index");
             $archivos7 = $request->file("info_bancaria$index");
+            $archivos8 = $request->file("convenio_practica$index");
 
             $newSolicitudDetail =  $this->repositorySolicitudDetalle->create($data);
 
@@ -182,6 +183,7 @@ class SolicitudController extends Controller
             $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos5);
             $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos6);
             $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos7);
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos8);
         }
 
         return redirect($request->pathname0);

@@ -493,7 +493,7 @@ export default {
                 acc[descripcion] = (acc[descripcion] || 0) + 1;
                 return acc;
             }, {});
-
+            console.log(estadoCount);
             // Asegurar que todos los estados deseados estén presentes
             const estadosDeseados = [
                 "CREADO",
@@ -501,8 +501,27 @@ export default {
                 "APROBADO",
                 "RECHAZADO",
             ];
+            this.conteoSolicitudes = {};
+
             estadosDeseados.forEach((estado) => {
-                this.conteoSolicitudes[estado] = estadoCount[estado] || 0;
+                if (estado === "APROBADO") {
+                    // Sumar todas las variantes de "APROBADO"
+                    this.conteoSolicitudes["APROBADO"] =
+                        (estadoCount["APROBADO"] || 0) +
+                        (estadoCount["APROBADO RRHH"] || 0) +
+                        (estadoCount["APROBADO ADMINISTRADOR"] || 0) +
+                        (estadoCount["APROBADO VISITANTE"] || 0);
+                } else if (estado === "RECHAZADO") {
+                    // Sumar todas las variantes de "RECHAZADO"
+                    this.conteoSolicitudes["RECHAZADO"] =
+                        (estadoCount["RECHAZADO"] || 0) +
+                        (estadoCount["RECHAZADO RRHH"] || 0) +
+                        (estadoCount["RECHAZADO ADMINISTRADOR"] || 0) +
+                        (estadoCount["RECHAZADO VISITANTE"] || 0);
+                } else {
+                    // Para otros estados, asignar el valor directamente
+                    this.conteoSolicitudes[estado] = estadoCount[estado] || 0;
+                }
             });
         },
         dateFormatChangeApi(data) {
