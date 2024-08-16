@@ -274,6 +274,7 @@ export default {
             await new Promise((resolve) => {
                 setSwal({
                     value: "updateStatusInput",
+                    data:status,
                     callback: async (comentario) => {
                         resolve();
                         this.update(comentario);
@@ -342,11 +343,14 @@ export default {
                     if (response.status == 200) {
                         this.dataTable.data = response.data;
                         if (this.details == true) {
-                            let oldId = self.solicitud_selected.id;
-                            let newselected = self.dataTable.data.find(
+                            let oldId = this.solicitud_selected.id;
+                            let newselected = this.dataTable.data.find(
                                 (item) => item.id === oldId
                             );
                             this.solicitud_selected = newselected;
+                            console.log(oldId)
+                            console.log(newselected)
+                            console.log(this.details)
                         }
                     }
 

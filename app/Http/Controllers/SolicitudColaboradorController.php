@@ -32,7 +32,7 @@ class SolicitudColaboradorController extends Controller
             $request->except(['id_solicitud'])
         );
 
-        $this->updateStatusSolicitud($request,7);
+        $this->updateStatusSolicitud($request, 7);
 
         return redirect()->route('redirect.solicitud');
     }
@@ -57,14 +57,13 @@ class SolicitudColaboradorController extends Controller
     //update aprobar solicitudes administrador de obra
     public function updateStatusAprobadorCC(Request $request)
     {
+
         $update = $this->repository->update(
             $request->id,
             $request->except(['id_solicitud'])
         );
 
-        if (env('STATUS_APROBADO') == $request->status) {
-            $this->updateStatusSolicitud($request, 7);
-        }
+        $this->updateStatusSolicitud($request, 7);
 
         //enviar correos de estado
         return $update;

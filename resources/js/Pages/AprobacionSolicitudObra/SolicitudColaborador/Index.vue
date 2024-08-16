@@ -41,7 +41,7 @@
                                         Solicitud:
                                         {{ this.solicitud_selected.codigo }}
                                     </h5>
-                                    <div>
+                                    <div class="flex">
                                         <InputText
                                             placeholder="Buscador general"
                                             v-model="
@@ -56,20 +56,36 @@
                                         <SplitButton
                                             menuButtonIcon="pi pi-cog"
                                             :model="getItemsAll()"
-                                            style="
-                                                font-size: 0.9rem;
-                                                height: 30px;
-                                                margin-left: 5px;
-                                            "
+                                            label="Aprobar | Rechazar multiple"
+                                            id="multiButtonAccion"
                                             :disabled="
                                                 this.solicitud_selected
                                                     .status == 5 ||
                                                 this.solicitud_selected
-                                                    .status == 6
+                                                    .status == 6 ||
+                                                this.colaboradoresSeleccionados
+                                                    .length == 0
                                             "
                                         >
-                                            {{}}
                                         </SplitButton>
+                                        <Button
+                                            label="Limpiar"
+                                            icon="pi pi-check-circle"
+                                            class="ml-2"
+                                            style="
+                                                font-size: 0.9rem;
+                                                height: 30px;
+                                            "
+                                            severity="danger"
+                                            @click="onClickClean"
+                                            v-tooltip.top="
+                                                'Limpiar seleccionados'
+                                            "
+                                            :disabled="
+                                                this.colaboradoresSeleccionados
+                                                    .length == 0
+                                            "
+                                        />
                                     </div>
                                 </div>
                             </template>
@@ -78,6 +94,20 @@
                                     <span>No hay datos que mostrar</span>
                                 </div>
                             </template>
+                            <Column
+                                headerStyle="width: 3rem;background-color:black;"
+                            >
+                                <template #body="{ data }">
+                                    <Checkbox
+                                        v-model="colaboradoresSeleccionados"
+                                        :value="data"
+                                        :disabled="
+                                            data.estado.id == 5 ||
+                                            data.estado.id == 6
+                                        "
+                                    />
+                                </template>
+                            </Column>
                             <Column
                                 filterField="user_id"
                                 field="user_id"
@@ -216,10 +246,8 @@
                                         <SplitButton
                                             menuButtonIcon="pi pi-cog"
                                             :model="getItems(data)"
-                                            style="
-                                                width: 2rem !important;
-                                                height: 2rem !important;
-                                            "
+                                            label="accion"
+                                            style="height: 2rem !important"
                                         >
                                             {{}}
                                         </SplitButton>
@@ -275,7 +303,6 @@ export default {
             checkView: false,
             mensaje: "",
             isLoadingForm: false,
-            ids: [],
             visible: false,
             optionDropdown: null,
             archivosList: [],
@@ -342,6 +369,7 @@ export default {
                 centro_costo: [],
                 estado: [],
             },
+            colaboradoresSeleccionados: [],
         };
     },
     watch: {
@@ -361,7 +389,9 @@ export default {
         ChangeView() {
             this.$emit("ChangeView");
         },
-
+        onClickClean() {
+            this.colaboradoresSeleccionados = [];
+        },
         getData() {
             this.$emit("getData");
         },
@@ -437,14 +467,14 @@ export default {
                     label: "Aprobar solicitudes",
                     icon: "pi pi-check",
                     command: () => {
-                        this.updateAllStatus(5);
+                        this.updateAllStatus(5, "aprobar");
                     },
                 },
                 {
-                    label: "Desaprobar solicitudes",
+                    label: "Rechazar solicitudes",
                     icon: "pi pi-times",
                     command: () => {
-                        this.updateAllStatus(6);
+                        this.updateAllStatus(6, "rechazar");
                     },
                 },
             ];
@@ -482,7 +512,7 @@ export default {
                     return false;
                 }
                 if (
-                    item.label === "Desaprobar" &&
+                    item.label === "Rechazar" &&
                     (data.status == 5 || data.status == 6)
                 ) {
                     return false;
@@ -499,6 +529,7 @@ export default {
             await new Promise((resolve) => {
                 setSwal({
                     value: "updateStatusInput",
+                    data: status,
                     callback: async (comentario_admin_obra) => {
                         resolve();
                         this.update(comentario_admin_obra);
@@ -518,10 +549,11 @@ export default {
                 });
         },
 
-        async updateAllStatus(status) {
+        async updateAllStatus(status, mensaje) {
             await new Promise((resolve) => {
                 setSwal({
-                    value: "updateStatus",
+                    value: "aprobar_rechazo",
+                    mensaje: mensaje,
                     callback: async () => {
                         resolve();
                         this.updateAll(status);
@@ -530,37 +562,20 @@ export default {
             });
         },
         async updateAll(status) {
-            this.solicitud_selected.solicitud_colaborador.forEach(
-                (solicitudColacorador) => {
-                    if (solicitudColacorador.status == 7) {
-                        this.ids.push(solicitudColacorador.id);
-                    }
-                }
+            const ids = this.colaboradoresSeleccionados.map(
+                (colaborador) => colaborador.id
             );
 
             await axios
                 .put(this.route("solicitud.colaborador.update.masive.cc"), {
-                    ids: this.ids,
+                    ids: ids,
                     status: status,
                     id_solicitud: this.solicitud_selected.id,
                 })
                 .then(async (response) => {
                     this.getData();
+                    this.onClickClean();
                 });
-
-            /*  this.$inertia.put(
-                this.route("solicitud.colaborador.update.masive.cc"),
-                {
-                    ids: this.ids,
-                    status: status,
-                    id_solicitud: this.solicitudesColaborador.id,
-                },
-                {
-                    onFinish: () => {
-                        this.onFinish();
-                    },
-                }
-            ); */
         },
     },
 };

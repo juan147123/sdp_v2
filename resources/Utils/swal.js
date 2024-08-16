@@ -6,6 +6,7 @@ export function setSwal(options) {
     const cantidad = options.cantidad;
     var url = options.url;
     var data = options.data;
+    var mensaje = options.mensaje;
 
     switch (value) {
         case "unauthorized":
@@ -96,7 +97,10 @@ export function setSwal(options) {
             break;
         case "submitMultiFormAll":
             Swal.fire({
-                text: "¿Desea generar las solicitudes para los " + cantidad + " colaboradores?",
+                text:
+                    "¿Desea generar las solicitudes para los " +
+                    cantidad +
+                    " colaboradores?",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonText: "Sí, generar",
@@ -233,16 +237,38 @@ export function setSwal(options) {
                 cancelButtonText: "Cancelar",
                 showLoaderOnConfirm: true,
                 preConfirm: (comentario) => {
-                  /*   if (!comentario) {
+                    if ((data == 6 || data == 9) && !comentario) {
                         Swal.showValidationMessage("El campo es obligatorio");
                         return false;
-                    } */
+                    }
                     return options.callback(comentario);
                 },
                 allowOutsideClick: () => !Swal.isLoading(),
             });
             break;
-
+        case "aprobar_rechazo":
+            Swal.fire({
+                text: "¿Desea " + mensaje + " la solicitud?",
+                text: "Ingrese un comentario si es necesario",
+                icon: "warning",
+                input: "textarea",
+                inputAttributes: {
+                    autocapitalize: "off",
+                },
+                showCancelButton: true,
+                confirmButtonText: "Sí, ejecutar",
+                cancelButtonText: "Cancelar",
+                showLoaderOnConfirm: true,
+                preConfirm: (comentario) => {
+                    if ((data == 6 || data == 9) && !comentario) {
+                        Swal.showValidationMessage("El campo es obligatorio");
+                        return false;
+                    }
+                    return options.callback(comentario);
+                },
+                allowOutsideClick: () => !Swal.isLoading(),
+            });
+            break;
         default:
             console.log("no message");
             break;
