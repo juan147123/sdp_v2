@@ -11,6 +11,8 @@ interface PersonalChileRepositoryInterface extends EloquentRepositoryInterface
     public function getLideresObraCl();
     public function getLiderObraCl($correo);
     public function getColaboradoresObra($correo);
-    public function getAprobadorObraCL($correo);
     public function getAdministradorDepartamento($correo);
+    public function getVisitadorDepartamento($correo);
+    public function getAprobadorObraCL($correo);
+    public function getVisitadorObraCL($correo);
 }

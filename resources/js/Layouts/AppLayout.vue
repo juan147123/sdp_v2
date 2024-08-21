@@ -4,7 +4,7 @@
         <Sidebar />
         <div>
             <!-- <Navbar /> -->
-            <main class="ml-5 mr-5">
+            <main class="ml-2 mr-2">
                 <slot></slot>
             </main>
         </div>

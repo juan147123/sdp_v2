@@ -70,7 +70,8 @@ class AuthController extends Controller
 
 
             // $email = 'frida.morales@flesan.cl'; //solicitante DMMTRM0070
-            $email = 'carolina.rojas@flesan.cl'; //aprobador de obra
+            // $email = 'carolina.rojas@flesan.cl'; //admin de obra
+            $email = 'sebastian.valck@flesan.cl'; //visitador de obra
             // $email = 'carolina.zavala@flesan.cl'; // aprobador rrhh
             // $email = 'miguel.opazo@flesan.cl';
         }
@@ -116,9 +117,9 @@ class AuthController extends Controller
             $email = 'frida.morales@flesan.cl';
         }
 
-        if ($email == 'carolina.zavala@flesan.cl') { //aprobador de obra
-            $email = 'carolina.rojas@flesan.cl';
-        }
+        // if ($email == 'carolina.zavala@flesan.cl') { //aprobador de obra
+        //     $email = 'carolina.rojas@flesan.cl';
+        // }
 
         if ($email == 'cesar.munoz@flesan.cl') { // aprobador rrhh
             $email = 'cesar.munoz@flesan.cl';
@@ -169,17 +170,19 @@ class AuthController extends Controller
 
             $personalCl = $this->repositoryPersonalCL->getNpLiderByEmail($usuario_mail);
             $personalPe = $this->repositoryPersonalPE->UserFindByEmail($usuario_mail);
-
-
+            
             if ($personalCl) array_push($permisos, 'LIDERCL');
             if ($personalPe) array_push($permisos, 'LIDERPE');
-
+            
             $liderObracl = $this->repositoryPersonalCL->getLiderObraCl($usuario_mail);
             if ($liderObracl) array_push($permisos, 'LIDEROBRACL');
-
+            
             $aprobadorObra = $this->repositoryPersonalCL->getAdministradorDepartamento($usuario_mail);
             if ($aprobadorObra) array_push($permisos, 'APROBOBRA');
-
+            
+            $aprobadorVisitador = $this->repositoryPersonalCL->getVisitadorDepartamento($usuario_mail);
+            if ($aprobadorVisitador) array_push($permisos, 'APROBVISITADOR');
+            
             if ($permisos) {
                 $appUser = $this->createAppUser($usuario);
 

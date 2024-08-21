@@ -235,6 +235,23 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
     {
 
         $query_obra = "
+            SELECT distinct ARRAY_AGG(external_code_cc) AS cc, sap_maestro_empresa_dep_un_cc.lider_departamento AS np_adm_obra,lower(sap_maestro_colaborador.correo_flesan) as correo,sap_maestro_colaborador.first_name AS nombres_adm_obra,sap_maestro_colaborador.last_name AS apellidos__adm_obra FROM flesan_rrhh.sap_maestro_empresa_dep_un_cc
+            LEFT JOIN flesan_rrhh.sap_maestro_colaborador ON (sap_maestro_empresa_dep_un_cc.lider_departamento=sap_maestro_colaborador.user_id::TEXT)
+            LEFT JOIN flesan_rrhh.sap_maestro_colaborador AS lider ON (lider.user_id::TEXT=sap_maestro_colaborador.np_lider::TEXT)
+            WHERE status_departamento ='A' and lider.user_id is not null and LOWER(sap_maestro_colaborador.correo_flesan) = :correo 
+            group by np_adm_obra,correo,nombres_adm_obra,apellidos__adm_obra;      
+        ";
+
+        $colaborador = DB::connection('dw_chile')->select(DB::raw($query_obra), [
+            'correo' => $correo,
+        ]);
+        return  $colaborador[0];
+    }
+
+    public function getVisitadorObraCL($correo)
+    {
+
+        $query_obra = "
         WITH nplider AS (
             SELECT
             DISTINCT l.lider_departamento::INT,
@@ -309,12 +326,28 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
     public function getAdministradorDepartamento($correo)
     {
         $query = "
-        select LOWER(smc.correo_flesan)  as correo from flesan_rrhh.sap_maestro_colaborador smc where smc.user_id  in (
-            select distinct  l.lider_departamento::INT from flesan_rrhh.sap_maestro_empresa_dep_un_cc l
-            where l.status_cc = 'A' and l.status_departamento = 'A'
-            and l.lider_departamento <> ''
-            )
-            and smc.empl_status = '41111' and LOWER(smc.correo_flesan) = :correo;";
+        SELECT distinct  sap_maestro_empresa_dep_un_cc.lider_departamento AS np_adm_obra,lower(sap_maestro_colaborador.correo_flesan) as correo,sap_maestro_colaborador.first_name AS nombres_adm_obra,sap_maestro_colaborador.last_name AS apellidos__adm_obra FROM flesan_rrhh.sap_maestro_empresa_dep_un_cc
+        LEFT JOIN flesan_rrhh.sap_maestro_colaborador ON (sap_maestro_empresa_dep_un_cc.lider_departamento=sap_maestro_colaborador.user_id::TEXT)
+        LEFT JOIN flesan_rrhh.sap_maestro_colaborador AS lider ON (lider.user_id::TEXT=sap_maestro_colaborador.np_lider::TEXT)
+        WHERE status_departamento ='A' and lider.user_id is not null and LOWER(sap_maestro_colaborador.correo_flesan) = :correo;";
+
+        $resultados = DB::connection('dw_chile')
+            ->select(DB::raw($query), [
+                'correo' => $correo,
+            ]);
+
+        $correoAdminDep = collect($resultados)->pluck('correo')->toArray();
+
+        return $correoAdminDep;
+    }
+
+    public function getVisitadorDepartamento($correo)
+    {
+        $query = "
+        select distinct lider.user_id AS np_visitador,lower(lider.correo_flesan),lider.first_name AS nombre_visitador, lider.last_name AS apellido_visitador FROM flesan_rrhh.sap_maestro_empresa_dep_un_cc
+        LEFT JOIN flesan_rrhh.sap_maestro_colaborador ON (sap_maestro_empresa_dep_un_cc.lider_departamento=sap_maestro_colaborador.user_id::TEXT)
+        LEFT JOIN flesan_rrhh.sap_maestro_colaborador AS lider ON (lider.user_id::TEXT=sap_maestro_colaborador.np_lider::TEXT)
+        WHERE status_departamento ='A' and lider.first_name is not null and LOWER(lider.correo_flesan) = :correo;";
 
         $resultados = DB::connection('dw_chile')
             ->select(DB::raw($query), [

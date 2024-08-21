@@ -41,7 +41,7 @@
                                         Solicitud:
                                         {{ this.solicitud_selected.codigo }}
                                     </h5>
-                                    <div class="flex">
+                                    <div>
                                         <InputText
                                             placeholder="Buscador general"
                                             v-model="
@@ -56,36 +56,20 @@
                                         <SplitButton
                                             menuButtonIcon="pi pi-cog"
                                             :model="getItemsAll()"
-                                            label="Aprobar | Rechazar multiple"
-                                            id="multiButtonAccion"
-                                            :disabled="
-                                                this.solicitud_selected
-                                                    .status == 5 ||
-                                                this.solicitud_selected
-                                                    .status == 6 ||
-                                                this.colaboradoresSeleccionados
-                                                    .length == 0
-                                            "
-                                        >
-                                        </SplitButton>
-                                        <Button
-                                            label="Limpiar"
-                                            icon="pi pi-check-circle"
-                                            class="ml-2"
                                             style="
                                                 font-size: 0.9rem;
                                                 height: 30px;
-                                            "
-                                            severity="danger"
-                                            @click="onClickClean"
-                                            v-tooltip.top="
-                                                'Limpiar seleccionados'
+                                                margin-left: 5px;
                                             "
                                             :disabled="
-                                                this.colaboradoresSeleccionados
-                                                    .length == 0
+                                                this.solicitud_selected
+                                                    .status == 8 ||
+                                                this.solicitud_selected
+                                                    .status == 9
                                             "
-                                        />
+                                        >
+                                            {{}}
+                                        </SplitButton>
                                     </div>
                                 </div>
                             </template>
@@ -94,20 +78,6 @@
                                     <span>No hay datos que mostrar</span>
                                 </div>
                             </template>
-                            <Column
-                                headerStyle="width: 3rem;background-color:black;"
-                            >
-                                <template #body="{ data }">
-                                    <Checkbox
-                                        v-model="colaboradoresSeleccionados"
-                                        :value="data"
-                                        :disabled="
-                                            data.estado.id == 2 ||
-                                            data.estado.id == 6
-                                        "
-                                    />
-                                </template>
-                            </Column>
                             <Column
                                 filterField="user_id"
                                 field="user_id"
@@ -211,15 +181,23 @@
                                 filterField="status"
                                 field="status"
                                 header="Estado"
-                                headerStyle="background-color:black; color:white"
+                                headerStyle="background-color:black; color:white;"
                                 style="text-align: center"
                                 sortable
                                 :showFilterMatchModes="false"
                             >
                                 <template #body="{ data }">
                                     <Tag
-                                        :value="data.estado.descripcion"
-                                        :severity="data.estado.color"
+                                        :value="
+                                            data.estado.id == 5
+                                                ? 'PENDIENTE'
+                                                : data.estado.descripcion
+                                        "
+                                        :severity="
+                                            data.estado.id == 5
+                                                ? 'warning'
+                                                : data.estado.color
+                                        "
                                     />
                                 </template>
                                 <template #filter="{ filterModel }">
@@ -246,8 +224,10 @@
                                         <SplitButton
                                             menuButtonIcon="pi pi-cog"
                                             :model="getItems(data)"
-                                            label="accion"
-                                            style="height: 2rem !important"
+                                            style="
+                                                width: 2rem !important;
+                                                height: 2rem !important;
+                                            "
                                         >
                                             {{}}
                                         </SplitButton>
@@ -303,6 +283,7 @@ export default {
             checkView: false,
             mensaje: "",
             isLoadingForm: false,
+            ids: [],
             visible: false,
             optionDropdown: null,
             archivosList: [],
@@ -310,7 +291,7 @@ export default {
                 id: 0,
                 status: 0,
                 id_solicitud: 0,
-                comentario_admin_obra: "",
+                comentario_rrhh: "",
             }),
             breadcrumbs: [
                 {
@@ -355,21 +336,20 @@ export default {
                     },
                 },
                 globalFilterFields: [
-                    "user_id",
-                    "nombre_completo",
-                    "sap_maestro_causales_terminos",
+                    "codigo",
+                    "user_created",
                     "centro_costo",
+                    "created_at",
                     "estado",
                 ],
             },
             filtersDropdownData: {
-                user_id: [],
-                nombre_completo: [],
-                sap_maestro_causales_terminos: [],
+                codigo: [],
+                user_created: [],
                 centro_costo: [],
+                created_at: [],
                 estado: [],
             },
-            colaboradoresSeleccionados: [],
         };
     },
     watch: {
@@ -381,7 +361,7 @@ export default {
         solicitud_selected: function (newValue, oldValue) {
             if (newValue) {
                 this.dataTable.data =
-                    this.solicitud_selected.solicitud_colaborador;
+                    this.solicitud_selected.solicitud_colaborador2;
             }
         },
     },
@@ -389,9 +369,7 @@ export default {
         ChangeView() {
             this.$emit("ChangeView");
         },
-        onClickClean() {
-            this.colaboradoresSeleccionados = [];
-        },
+
         getData() {
             this.$emit("getData");
         },
@@ -406,7 +384,7 @@ export default {
             ].map((o) => {
                 return { user_id: o };
             });
-
+           
             this.filtersDropdownData.nombre_completo = [
                 ...new Set(
                     this.dataTable.data
@@ -416,19 +394,15 @@ export default {
             ].map((o) => {
                 return { nombre_completo: o };
             });
-
+        
             this.filtersDropdownData.sap_maestro_causales_terminos = [
                 ...new Map(
                     this.dataTable.data
                         .filter(
                             (s) =>
-                                s.sap_maestro_causales_terminos != "" &&
-                                s.sap_maestro_causales_terminos.name != null
+                                s.sap_maestro_causales_terminos != "" && s.sap_maestro_causales_terminos.name != null
                         )
-                        .map((s) => [
-                            s.sap_maestro_causales_terminos.name,
-                            s.sap_maestro_causales_terminos,
-                        ])
+                        .map((s) => [s.sap_maestro_causales_terminos.name, s.sap_maestro_causales_terminos])
                 ).values(),
             ].map((o) => {
                 return { sap_maestro_causales_terminos: o };
@@ -455,7 +429,8 @@ export default {
             ].map((o) => {
                 return { estado: o };
             });
-            console.log(this.filtersDropdownData.estado);
+            console.log(this.filtersDropdownData.estado)
+
         },
         setImagenes(data) {
             this.visible = !this.visible;
@@ -467,14 +442,14 @@ export default {
                     label: "Aprobar solicitudes",
                     icon: "pi pi-check",
                     command: () => {
-                        this.updateAllStatus(2, "aprobar");
+                        this.updateAllStatus(8);
                     },
                 },
                 {
-                    label: "Rechazar solicitudes",
+                    label: "Desaprobar solicitudes",
                     icon: "pi pi-times",
                     command: () => {
-                        this.updateAllStatus(6, "rechazar");
+                        this.updateAllStatus(9);
                     },
                 },
             ];
@@ -492,14 +467,14 @@ export default {
                     label: "Aprobar",
                     icon: "pi pi-check",
                     command: () => {
-                        this.updateStatus(data.id, 5, data.id_solicitud);
+                        this.updateStatus(data.id, 8, data.id_solicitud);
                     },
                 },
                 {
-                    label: "Rechazar",
+                    label: "Desaprobar",
                     icon: "pi pi-times",
                     command: () => {
-                        this.updateStatus(data.id, 6, data.id_solicitud);
+                        this.updateStatus(data.id, 9, data.id_solicitud);
                     },
                 },
             ];
@@ -507,13 +482,13 @@ export default {
             return items.filter((item) => {
                 if (
                     item.label === "Aprobar" &&
-                    (data.status == 2 || data.status == 6)
+                    (data.status == 8 || data.status == 9)
                 ) {
                     return false;
                 }
                 if (
-                    item.label === "Rechazar" &&
-                    (data.status == 2 || data.status == 6)
+                    item.label === "Desaprobar" &&
+                    (data.status == 8 || data.status == 9)
                 ) {
                     return false;
                 }
@@ -529,19 +504,18 @@ export default {
             await new Promise((resolve) => {
                 setSwal({
                     value: "updateStatusInput",
-                    data: status,
-                    callback: async (comentario_admin_obra) => {
+                    callback: async (comentario_rrhh) => {
                         resolve();
-                        this.update(comentario_admin_obra);
+                        this.update(comentario_rrhh);
                     },
                 });
             });
         },
-        async update(comentario_admin_obra) {
-            this.form.comentario_admin_obra = comentario_admin_obra;
+        async update(comentario_rrhh) {
+            this.form.comentario_rrhh = comentario_rrhh;
             await axios
                 .put(
-                    this.route("solicitud.colaborador.update.status.cc"),
+                    this.route("solicitud.colaborador.update.status.rrhh"),
                     this.form
                 )
                 .then(async (response) => {
@@ -549,11 +523,10 @@ export default {
                 });
         },
 
-        async updateAllStatus(status, mensaje) {
+        async updateAllStatus(status) {
             await new Promise((resolve) => {
                 setSwal({
-                    value: "aprobar_rechazo",
-                    mensaje: mensaje,
+                    value: "updateStatus",
                     callback: async () => {
                         resolve();
                         this.updateAll(status);
@@ -562,19 +535,22 @@ export default {
             });
         },
         async updateAll(status) {
-            const ids = this.colaboradoresSeleccionados.map(
-                (colaborador) => colaborador.id
+            this.solicitud_selected.solicitud_colaborador2.forEach(
+                (solicitudColacorador) => {
+                    if (solicitudColacorador.status == 7) {
+                        this.ids.push(solicitudColacorador.id);
+                    }
+                }
             );
 
             await axios
-                .put(this.route("solicitud.colaborador.update.masive.cc"), {
-                    ids: ids,
+                .put(this.route("solicitud.colaborador.update.masive.rrhh"), {
+                    ids: this.ids,
                     status: status,
                     id_solicitud: this.solicitud_selected.id,
                 })
                 .then(async (response) => {
                     this.getData();
-                    this.onClickClean();
                 });
         },
     },

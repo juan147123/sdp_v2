@@ -203,13 +203,13 @@
                             </template>
                         </Column>
 
-                        <Column
+                       <!--  <Column
                             field="planta_noplanta"
                             header="Ubicación"
                             headerStyle="background-color:black; color:white"
                             style="text-align: center"
                             sortable
-                        ></Column>
+                        ></Column> -->
                         <Column
                             field="solicitudes"
                             header="Tiene solicitud"

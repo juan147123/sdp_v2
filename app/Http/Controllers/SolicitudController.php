@@ -69,8 +69,37 @@ class SolicitudController extends Controller
 
     public function listAllCCAprobar()
     {
+        $centros_permitidos = [];
         if (!in_array('SUPERAD', session('objeto_permitido'))) {
             $aprobador = $this->personalChileRepository->getAprobadorObraCL(Auth::user()->username);
+            $centros_permitidos = array("centro_costo"=>explode(',', trim($aprobador->cc, '{}')));
+            if (Auth::user()->username == 'miguel.opazo@flesan.cl') {
+                array_push($centros_permitidos, 'CFMR10005CFM');
+            }
+        }
+        //CFMR10005CFM
+        $result = $this->repository->all(['*'], [
+            'estado',
+            'solicitudColaborador',
+            'solicitudColaborador.archivos',
+            'solicitudColaborador.estado',
+            'solicitudColaborador.SapMaestroCausalesTerminos',
+            'solicitudColaborador.checkAreaColaboradores'
+        ],[],$centros_permitidos);
+
+        return $result->values();
+    }
+
+    // MÓDULO DE APROBACION ADMINISTRADOR OBRA
+    public function redirectPageSolicitudVisitadorAprobar()
+    {
+        return Inertia::render('AprobacionSolicitudObra/Index');
+    }
+
+    public function listAllVisitadorAprobar()
+    {
+        if (!in_array('SUPERAD', session('objeto_permitido'))) {
+            $aprobador = $this->personalChileRepository->getVisitadorObraCL(Auth::user()->username);
             $centros_permitidos = explode(',', trim($aprobador->cc, '{}'));
             if (Auth::user()->username == 'miguel.opazo@flesan.cl') {
                 array_push($centros_permitidos, 'CFMR10005CFM');

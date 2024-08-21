@@ -3,78 +3,6 @@
     <AppLayout>
         <div v-if="this.details != true">
             <breadcrumbs :modules="breadcrumbs" />
-            <div class="col-md-12 mt-2">
-                <div class="row">
-                    <div class="col-lg-3 col-6">
-                        <div class="info-box">
-                            <span
-                                class="info-box-icon bg-color-custom-creado elevation-1"
-                                ><i class="fas fa-list-ol"></i
-                            ></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text color-custom-creado"
-                                    >CREADOS</span
-                                >
-                                <span class="info-box-number">{{
-                                    conteoSolicitudes.CREADO
-                                }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-6">
-                        <div class="info-box">
-                            <span
-                                class="info-box-icon bg-color-custom-pendiente elevation-1"
-                                ><i class="fas fa-bookmark"></i
-                            ></span>
-                            <div class="info-box-content">
-                                <span
-                                    class="info-box-text color-custom-pendiente"
-                                    >PENDIENTES</span
-                                >
-                                <span class="info-box-number">{{
-                                    conteoSolicitudes.PENDIENTE
-                                }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-6">
-                        <div class="info-box">
-                            <span
-                                class="info-box-icon bg-color-custom-aprobado elevation-1"
-                                ><i class="fas fa-check-circle"></i
-                            ></span>
-                            <div class="info-box-content">
-                                <span
-                                    class="info-box-text color-custom-aprobado"
-                                    >APROBADOS</span
-                                >
-                                <span class="info-box-number">{{
-                                    conteoSolicitudes.APROBADO
-                                }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-6">
-                        <div class="info-box">
-                            <span
-                                class="info-box-icon bg-color-custom-rechazado elevation-1"
-                                ><i class="fas fa-times-circle"></i
-                            ></span>
-                            <div class="info-box-content">
-                                <span
-                                    class="info-box-text color-custom-rechazado"
-                                    >RECHAZADOS</span
-                                >
-                                <span class="info-box-number">{{
-                                    conteoSolicitudes.RECHAZADO
-                                }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <div class="box m-1 mt-5 bg-white p-3 border-round">
                 <div class="container-fluid">
                     <div class="box-body">
@@ -191,9 +119,16 @@
                             >
                                 <template #body="{ data }">
                                     <Tag
-                                        style="font-size: 11px"
-                                        :value="data.estado.descripcion"
-                                        :severity="data.estado.color"
+                                        :value="
+                                            data.estado.id == 5
+                                                ? 'PENDIENTE'
+                                                : data.estado.descripcion
+                                        "
+                                        :severity="
+                                            data.estado.id == 5
+                                                ? 'warning'
+                                                : data.estado.color
+                                        "
                                     />
                                 </template>
                                 <template #filter="{ filterModel }">
@@ -221,31 +156,10 @@
                                     <Button
                                         icon="pi pi-users"
                                         class="ml-2"
-                                        style="
-                                            font-size: 0.9rem;
-                                            height: 30px;
-                                            width: 2rem !important;
-                                            height: 2rem !important;
-                                        "
+                                        style="font-size: 0.9rem; height: 30px"
                                         severity="info"
                                         @click="ChangeView(data)"
                                         v-tooltip.top="'colaboradores'"
-                                    />
-
-                                    <Button
-                                        v-if="
-                                            setAlertButton(
-                                                data.solicitud_colaborador
-                                            ) == true
-                                        "
-                                        icon="pi pi-exclamation-triangle "
-                                        class="ml-2"
-                                        style="
-                                            width: 2rem !important;
-                                            height: 2rem !important;
-                                        "
-                                        severity="warning"
-                                        @click="ChangeView(data)"
                                     />
                                 </template>
                             </Column>
@@ -254,7 +168,6 @@
                 </div>
             </div>
         </div>
-
         <SolicitudesColaborador
             @ChangeView="this.ChangeView"
             @getData="this.getData"
@@ -291,7 +204,7 @@ export default {
             breadcrumbs: [
                 {
                     label: "Solicitudes",
-                    url: "/redirectpage/solicitud",
+                    url: "/redirectpage/solicitud/aprobar",
                     icon: "fa fa-book",
                 },
             ],
@@ -307,12 +220,6 @@ export default {
                 id_solicitud: 0,
                 comentario: "",
             }),
-            conteoSolicitudes: {
-                CREADO: 0,
-                PEDIENTE: 0,
-                APROBADO: 0,
-                RECHAZADO: 0,
-            },
             dataTable: {
                 rows: 10,
                 data: [],
@@ -408,7 +315,7 @@ export default {
             this.mensaje = "espere mientras se efectuan los cambios....";
             this.isLoadingForm = true;
 
-            this.solicitudesColaborador.solicitud_colaborador.forEach(
+            this.solicitudesColaborador.solicitud_colaborador2.forEach(
                 (solicitudColacorador) => {
                     if (solicitudColacorador.status == 1) {
                         this.ids.push(solicitudColacorador.id);
@@ -431,12 +338,14 @@ export default {
             );
         },
 
+        /* NUEVO CODIGO */
         async getData() {
+            self = this;
+
             this.mensaje = "Cargando datos espere ...";
             this.isLoadingForm = true;
-            self = this;
             await axios
-                .get(rutaBase + "/list/solicitud")
+                .get(rutaBase + "/list/solicitud/visitador/aprobar")
                 .then(async (response) => {
                     if (response.status == 200) {
                         this.dataTable.data = response.data;
@@ -448,6 +357,7 @@ export default {
                             this.solicitud_selected = newselected;
                         }
                     }
+
                     this.mensaje = "";
                     this.isLoadingForm = false;
                 });
@@ -485,45 +395,6 @@ export default {
             ].map((o) => {
                 return { estado: o };
             });
-
-            const estadoCount = this.dataTable.data.reduce((acc, s) => {
-                const descripcion =
-                    s.estado && s.estado.descripcion
-                        ? s.estado.descripcion
-                        : "desconocido";
-                acc[descripcion] = (acc[descripcion] || 0) + 1;
-                return acc;
-            }, {});
-            console.log(estadoCount);
-            // Asegurar que todos los estados deseados estén presentes
-            const estadosDeseados = [
-                "CREADO",
-                "PENDIENTE",
-                "APROBADO",
-                "RECHAZADO",
-            ];
-            this.conteoSolicitudes = {};
-
-            estadosDeseados.forEach((estado) => {
-                if (estado === "APROBADO") {
-                    // Sumar todas las variantes de "APROBADO"
-                    this.conteoSolicitudes["APROBADO"] =
-                        (estadoCount["APROBADO"] || 0) +
-                        (estadoCount["APROBADO RRHH"] || 0) +
-                        (estadoCount["APROBADO ADMINISTRADOR"] || 0) +
-                        (estadoCount["APROBADO VISITANTE"] || 0);
-                } else if (estado === "RECHAZADO") {
-                    // Sumar todas las variantes de "RECHAZADO"
-                    this.conteoSolicitudes["RECHAZADO"] =
-                        (estadoCount["RECHAZADO"] || 0) +
-                        (estadoCount["RECHAZADO RRHH"] || 0) +
-                        (estadoCount["RECHAZADO ADMINISTRADOR"] || 0) +
-                        (estadoCount["RECHAZADO VISITANTE"] || 0);
-                } else {
-                    // Para otros estados, asignar el valor directamente
-                    this.conteoSolicitudes[estado] = estadoCount[estado] || 0;
-                }
-            });
         },
         dateFormatChangeApi(data) {
             return dateFormatChange(data);
@@ -531,18 +402,6 @@ export default {
         ChangeView(data) {
             this.details = !this.details;
             this.solicitud_selected = data ? data : [];
-        },
-        setAlertButton(data) {
-            let existencia = false;
-            data.forEach((colaborador) => {
-                const existen =
-                    (colaborador.status === 6 || colaborador.status === 9) &&
-                    colaborador.enable === 1;
-                if (existen) {
-                    existencia = true;
-                }
-            });
-            return existencia;
         },
     },
 };

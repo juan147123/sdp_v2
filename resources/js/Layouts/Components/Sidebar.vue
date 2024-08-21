@@ -65,11 +65,11 @@
                             <a
                                 :href="this.route('redirect.colaboradores.pe')"
                                 :class="
-                                    this.route().current(
+                                    (this.route().current(
                                         'redirect.colaboradores.pe'
                                     )
                                         ? 'active'
-                                        : ''
+                                        : '') + ' d-flex align-items-center'
                                 "
                                 @click="setPreloader()"
                             >
@@ -84,11 +84,11 @@
                             <a
                                 :href="this.route('redirect.colaboradores.cl')"
                                 :class="
-                                    this.route().current(
+                                    (this.route().current(
                                         'redirect.colaboradores.cl'
                                     )
                                         ? 'active'
-                                        : ''
+                                        : '')+ ' d-flex align-items-center'
                                 "
                                 @click="setPreloader()"
                             >
@@ -100,9 +100,9 @@
                             <a
                                 :href="this.route('redirect.solicitud')"
                                 :class="
-                                    this.route().current('redirect.solicitud')
+                                    (this.route().current('redirect.solicitud')
                                         ? 'active'
-                                        : ''
+                                        : '')+ ' d-flex align-items-center'
                                 "
                                 @click="setPreloader()"
                             >
@@ -126,11 +126,11 @@
                                     this.route('redirect.colaboradores.obra.cl')
                                 "
                                 :class="
-                                    this.route().current(
+                                    (this.route().current(
                                         'redirect.colaboradores.obra.cl'
                                     )
                                         ? 'active'
-                                        : ''
+                                        : '') + ' d-flex align-items-center'
                                 "
                                 @click="setPreloader()"
                             >
@@ -142,11 +142,11 @@
                             <a
                                 :href="this.route('redirect.solicitud.obra')"
                                 :class="
-                                    this.route().current(
+                                    (this.route().current(
                                         'redirect.solicitud.obra'
                                     )
                                         ? 'active'
-                                        : ''
+                                        : '') + ' d-flex align-items-center'
                                 "
                                 @click="setPreloader()"
                             >
@@ -170,16 +170,48 @@
                             <a
                                 :href="this.route('redirect.solicitud.aprobar')"
                                 :class="
-                                    this.route().current(
+                                    (this.route().current(
                                         'redirect.solicitud.aprobar'
                                     )
                                         ? 'active'
-                                        : ''
+                                        : '') + ' d-flex align-items-center'
                                 "
                                 @click="setPreloader()"
                             >
                                 <i class="fas fa-file icon-menu"></i>
-                                <strong>Aprobar S. Obra</strong>
+                                <strong>Aprobar solicitudes <p style="text-transform:lowercase !important;">( administrador obra )</p></strong>
+                            </a>
+                        </li>
+                    </div>
+                    <div
+                        class="solicitudes-obra"
+                        v-if="
+                            this.$page.props.permisos.includes(
+                                this.$env.APROBVISITADOR
+                            ) ||
+                            this.$page.props.permisos.includes(
+                                this.$env.SUPERAD
+                            )
+                        "
+                    >
+                        <li class="toogle-li">
+                            <a
+                                :href="
+                                    this.route(
+                                        'redirect.solicitud.visitador.aprobar'
+                                    )
+                                "
+                                :class="
+                                    (this.route().current(
+                                        'redirect.solicitud.visitador.aprobar'
+                                    )
+                                        ? 'active'
+                                        : '') + ' d-flex align-items-center'
+                                "
+                                @click="setPreloader()"
+                            >
+                                <i class="fas fa-file icon-menu"></i>
+                                <strong>Aprobar solicitudes <p style="text-transform:lowercase !important;">( visitador obra )</p></strong>
                             </a>
                         </li>
                     </div>
@@ -198,16 +230,16 @@
                             <a
                                 :href="this.route('redirect.solicitud.rrhh')"
                                 :class="
-                                    this.route().current(
+                                    (this.route().current(
                                         'redirect.solicitud.rrhh'
                                     )
                                         ? 'active'
-                                        : ''
+                                        : '') + ' d-flex align-items-center'
                                 "
                                 @click="setPreloader()"
                             >
                                 <i class="fas fa-file icon-menu"></i>
-                                <strong>Aprobar rrhh</strong>
+                                <strong>Aprobar solicitudes <p style="text-transform:lowercase !important;">( administrador rrhh )</p></strong>
                             </a>
                         </li>
                     </div>
@@ -222,10 +254,9 @@
                         <a
                             class="no-href"
                             :class="
-                                this.route().current('redirect.configuraciones')||
-                                        this.route().current(
-                                            'redirect.usuarios'
-                                        )
+                                this.route().current(
+                                    'redirect.configuraciones'
+                                ) || this.route().current('redirect.usuarios')
                                     ? 'active'
                                     : ''
                             "
@@ -254,9 +285,7 @@
                             </li>
                             <li>
                                 <a
-                                    :href="
-                                        this.route('redirect.usuarios')
-                                    "
+                                    :href="this.route('redirect.usuarios')"
                                     :class="
                                         this.route().current(
                                             'redirect.usuarios'
