@@ -38,7 +38,28 @@ class SolicitudColaborador extends Model
     /**
      * @var array
      */
-    protected $fillable = ['motivo', 'id_solicitud', 'user_id', 'status', 'created_at', 'updated_at', 'fecha_desvinculacion', 'user_created', 'np_lider', 'nombre_completo', 'enable', 'redireccion', 'comentario_admin_obra','comentario_rrhh','rut_empresa','centro_costo'];
+    protected $fillable = [
+        'motivo',
+        'id_solicitud',
+        'user_id',
+        'status',
+        'created_at',
+        'updated_at',
+        'fecha_desvinculacion',
+        'user_created',
+        'np_lider',
+        'nombre_completo',
+        'enable',
+        'redireccion',
+        'comentario_admin_obra',
+        'comentario_rrhh',
+        'rut_empresa',
+        'centro_costo',
+        'aprobado_administrador_obra',
+        'aprobado_visitador_obra',
+        'aprobado_rrhh',
+        'comentario_visitador'
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -71,7 +92,7 @@ class SolicitudColaborador extends Model
         return $this->belongsTo('App\Models\SapMaestroCausalesTerminos', 'motivo', 'externalcode');
     }
 
-            /**
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function estado()
@@ -79,6 +100,18 @@ class SolicitudColaborador extends Model
         return $this->belongsTo('App\Models\Estados', 'status', 'id');
     }
 
+    public function estadoadmin()
+    {
+        return $this->belongsTo('App\Models\Estados', 'status', 'aprobado_administrador_obra');
+    }
+    public function estadovisitador()
+    {
+        return $this->belongsTo('App\Models\Estados', 'status', 'aprobado_visitador_obra');
+    }
+    public function estadorrhh()
+    {
+        return $this->belongsTo('App\Models\Estados', 'status', 'aprobado_rrhh');
+    }
     protected static function boot()
     {
         parent::boot();

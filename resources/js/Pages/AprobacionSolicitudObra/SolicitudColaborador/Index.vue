@@ -60,9 +60,9 @@
                                             id="multiButtonAccion"
                                             :disabled="
                                                 this.solicitud_selected
-                                                    .status == 5 ||
+                                                    .status == 3 ||
                                                 this.solicitud_selected
-                                                    .status == 6 ||
+                                                    .status == 5 ||
                                                 this.colaboradoresSeleccionados
                                                     .length == 0
                                             "
@@ -474,7 +474,7 @@ export default {
                     label: "Rechazar solicitudes",
                     icon: "pi pi-times",
                     command: () => {
-                        this.updateAllStatus(6, "rechazar");
+                        this.updateAllStatus(5, "rechazar");
                     },
                 },
             ];
@@ -507,13 +507,13 @@ export default {
             return items.filter((item) => {
                 if (
                     item.label === "Aprobar" &&
-                    (data.status == 2 || data.status == 6)
+                    (data.status == 2 || data.status == 5)
                 ) {
                     return false;
                 }
                 if (
                     item.label === "Rechazar" &&
-                    (data.status == 2 || data.status == 6)
+                    (data.status == 2 || data.status == 5)
                 ) {
                     return false;
                 }
