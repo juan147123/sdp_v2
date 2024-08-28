@@ -252,27 +252,15 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
     {
 
         $query_obra = "
-        WITH nplider AS (
-            SELECT
-            DISTINCT l.lider_departamento::INT,
-            ARRAY_AGG(l.external_code_cc) AS cc
-            FROM flesan_rrhh.sap_maestro_empresa_dep_un_cc l
-            WHERE l.status_cc = 'A' AND l.status_departamento = 'A'
-            AND l.lider_departamento <>''
-            GROUP BY l.lider_departamento
-            )
-            SELECT DISTINCT 
-            lider_departamento,
-            lower(smc.correo_flesan) AS correo_aprobador,
-            np.cc
-            FROM flesan_rrhh.sap_maestro_colaborador smc
-            INNER JOIN nplider np ON np.lider_departamento = smc.user_id
-            AND smc.empl_status = '41111' and lower(smc.correo_flesan) = lower(:correo_lider)
-            LIMIT 1;       
+        select distinct ARRAY_AGG(external_code_cc) AS cc, lider.user_id ,lower(lider.correo_flesan)as correo,lider.first_name AS nombre_visitador, lider.last_name AS apellido_visitador FROM flesan_rrhh.sap_maestro_empresa_dep_un_cc
+        LEFT JOIN flesan_rrhh.sap_maestro_colaborador ON (sap_maestro_empresa_dep_un_cc.lider_departamento=sap_maestro_colaborador.user_id::TEXT)
+        LEFT JOIN flesan_rrhh.sap_maestro_colaborador AS lider ON (lider.user_id::TEXT=sap_maestro_colaborador.np_lider::TEXT)
+        WHERE status_departamento ='A' and lider.first_name is not null and LOWER(lider.correo_flesan) = :correo
+        group by lider.user_id,correo,nombre_visitador,apellido_visitador;      
         ";
 
         $colaborador = DB::connection('dw_chile')->select(DB::raw($query_obra), [
-            'correo_lider' => $correo,
+            'correo' => $correo,
         ]);
         return  $colaborador[0];
     }

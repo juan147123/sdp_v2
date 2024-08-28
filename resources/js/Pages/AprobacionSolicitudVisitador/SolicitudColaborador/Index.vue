@@ -41,7 +41,7 @@
                                         Solicitud:
                                         {{ this.solicitud_selected.codigo }}
                                     </h5>
-                                    <div>
+                                    <div class="flex">
                                         <InputText
                                             placeholder="Buscador general"
                                             v-model="
@@ -56,20 +56,36 @@
                                         <SplitButton
                                             menuButtonIcon="pi pi-cog"
                                             :model="getItemsAll()"
-                                            style="
-                                                font-size: 0.9rem;
-                                                height: 30px;
-                                                margin-left: 5px;
-                                            "
+                                            label="Aprobar | Rechazar multiple"
+                                            id="multiButtonAccion"
                                             :disabled="
                                                 this.solicitud_selected
                                                     .status == 8 ||
                                                 this.solicitud_selected
-                                                    .status == 9
+                                                    .status == 10 ||
+                                                this.colaboradoresSeleccionados
+                                                    .length == 0
                                             "
                                         >
-                                            {{}}
                                         </SplitButton>
+                                        <Button
+                                            label="Limpiar"
+                                            icon="pi pi-check-circle"
+                                            class="ml-2"
+                                            style="
+                                                font-size: 0.9rem;
+                                                height: 30px;
+                                            "
+                                            severity="danger"
+                                            @click="onClickClean"
+                                            v-tooltip.top="
+                                                'Limpiar seleccionados'
+                                            "
+                                            :disabled="
+                                                this.colaboradoresSeleccionados
+                                                    .length == 0
+                                            "
+                                        />
                                     </div>
                                 </div>
                             </template>
@@ -78,6 +94,20 @@
                                     <span>No hay datos que mostrar</span>
                                 </div>
                             </template>
+                            <Column
+                                headerStyle="width: 3rem;background-color:black;"
+                            >
+                                <template #body="{ data }">
+                                    <Checkbox
+                                        v-model="colaboradoresSeleccionados"
+                                        :value="data"
+                                        :disabled="
+                                            data.estado.id == 8 ||
+                                            data.estado.id == 6
+                                        "
+                                    />
+                                </template>
+                            </Column>
                             <Column
                                 filterField="user_id"
                                 field="user_id"
@@ -188,16 +218,9 @@
                             >
                                 <template #body="{ data }">
                                     <Tag
-                                        :value="
-                                            data.estado.id == 5
-                                                ? 'PENDIENTE'
-                                                : data.estado.descripcion
-                                        "
-                                        :severity="
-                                            data.estado.id == 5
-                                                ? 'warning'
-                                                : data.estado.color
-                                        "
+                                        :value="data.estado.descripcion"
+                                        :severity="data.estado.color"
+                                        style="font-size:10px;"
                                     />
                                 </template>
                                 <template #filter="{ filterModel }">
@@ -322,6 +345,10 @@ export default {
                         value: null,
                         matchMode: FilterMatchMode.CONTAINS,
                     },
+                    user_id: {
+                        value: null,
+                        matchMode: FilterMatchMode.CONTAINS,
+                    },
                     user_created: {
                         value: null,
                         matchMode: FilterMatchMode.CONTAINS,
@@ -336,6 +363,7 @@ export default {
                     },
                 },
                 globalFilterFields: [
+                    "user_id",
                     "codigo",
                     "user_created",
                     "centro_costo",
@@ -344,12 +372,14 @@ export default {
                 ],
             },
             filtersDropdownData: {
+                user_id: [],
                 codigo: [],
                 user_created: [],
                 centro_costo: [],
                 created_at: [],
                 estado: [],
             },
+            colaboradoresSeleccionados: [],
         };
     },
     watch: {
@@ -361,7 +391,7 @@ export default {
         solicitud_selected: function (newValue, oldValue) {
             if (newValue) {
                 this.dataTable.data =
-                    this.solicitud_selected.solicitud_colaborador2;
+                    this.solicitud_selected.solicitud_colaborador;
             }
         },
     },
@@ -369,12 +399,15 @@ export default {
         ChangeView() {
             this.$emit("ChangeView");
         },
-
+        onClickClean() {
+            this.colaboradoresSeleccionados = [];
+        },
         getData() {
             this.$emit("getData");
         },
 
         initializeDropdownsData() {
+            console.log(this.dataTable.data);
             this.filtersDropdownData.user_id = [
                 ...new Set(
                     this.dataTable.data
@@ -384,7 +417,7 @@ export default {
             ].map((o) => {
                 return { user_id: o };
             });
-           
+
             this.filtersDropdownData.nombre_completo = [
                 ...new Set(
                     this.dataTable.data
@@ -394,15 +427,19 @@ export default {
             ].map((o) => {
                 return { nombre_completo: o };
             });
-        
+
             this.filtersDropdownData.sap_maestro_causales_terminos = [
                 ...new Map(
                     this.dataTable.data
                         .filter(
                             (s) =>
-                                s.sap_maestro_causales_terminos != "" && s.sap_maestro_causales_terminos.name != null
+                                s.sap_maestro_causales_terminos != "" &&
+                                s.sap_maestro_causales_terminos.name != null
                         )
-                        .map((s) => [s.sap_maestro_causales_terminos.name, s.sap_maestro_causales_terminos])
+                        .map((s) => [
+                            s.sap_maestro_causales_terminos.name,
+                            s.sap_maestro_causales_terminos,
+                        ])
                 ).values(),
             ].map((o) => {
                 return { sap_maestro_causales_terminos: o };
@@ -429,8 +466,6 @@ export default {
             ].map((o) => {
                 return { estado: o };
             });
-            console.log(this.filtersDropdownData.estado)
-
         },
         setImagenes(data) {
             this.visible = !this.visible;
@@ -442,14 +477,14 @@ export default {
                     label: "Aprobar solicitudes",
                     icon: "pi pi-check",
                     command: () => {
-                        this.updateAllStatus(8);
+                        this.updateAllStatus(8, "aprobar");
                     },
                 },
                 {
-                    label: "Desaprobar solicitudes",
+                    label: "Rechazar solicitudes",
                     icon: "pi pi-times",
                     command: () => {
-                        this.updateAllStatus(9);
+                        this.updateAllStatus(9, "rechazar");
                     },
                 },
             ];
@@ -471,10 +506,10 @@ export default {
                     },
                 },
                 {
-                    label: "Desaprobar",
+                    label: "Rechazar",
                     icon: "pi pi-times",
                     command: () => {
-                        this.updateStatus(data.id, 9, data.id_solicitud);
+                        this.updateStatus(data.id, 10, data.id_solicitud);
                     },
                 },
             ];
@@ -487,7 +522,7 @@ export default {
                     return false;
                 }
                 if (
-                    item.label === "Desaprobar" &&
+                    item.label === "Rechazar" &&
                     (data.status == 8 || data.status == 9)
                 ) {
                     return false;
@@ -523,10 +558,11 @@ export default {
                 });
         },
 
-        async updateAllStatus(status) {
+        async updateAllStatus(status, mensaje) {
             await new Promise((resolve) => {
                 setSwal({
-                    value: "updateStatus",
+                    value: "aprobar_rechazo",
+                    mensaje: mensaje,
                     callback: async () => {
                         resolve();
                         this.updateAll(status);
@@ -535,22 +571,19 @@ export default {
             });
         },
         async updateAll(status) {
-            this.solicitud_selected.solicitud_colaborador2.forEach(
-                (solicitudColacorador) => {
-                    if (solicitudColacorador.status == 7) {
-                        this.ids.push(solicitudColacorador.id);
-                    }
-                }
+            const ids = this.colaboradoresSeleccionados.map(
+                (colaborador) => colaborador.id
             );
 
             await axios
-                .put(this.route("solicitud.colaborador.update.masive.rrhh"), {
-                    ids: this.ids,
+                .put(this.route("solicitud.colaborador.update.masive.cc"), {
+                    ids: ids,
                     status: status,
                     id_solicitud: this.solicitud_selected.id,
                 })
                 .then(async (response) => {
                     this.getData();
+                    this.onClickClean();
                 });
         },
     },

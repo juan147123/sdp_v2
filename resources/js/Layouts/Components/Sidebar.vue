@@ -88,7 +88,7 @@
                                         'redirect.colaboradores.cl'
                                     )
                                         ? 'active'
-                                        : '')+ ' d-flex align-items-center'
+                                        : '') + ' d-flex align-items-center'
                                 "
                                 @click="setPreloader()"
                             >
@@ -102,7 +102,7 @@
                                 :class="
                                     (this.route().current('redirect.solicitud')
                                         ? 'active'
-                                        : '')+ ' d-flex align-items-center'
+                                        : '') + ' d-flex align-items-center'
                                 "
                                 @click="setPreloader()"
                             >
@@ -179,7 +179,16 @@
                                 @click="setPreloader()"
                             >
                                 <i class="fas fa-file icon-menu"></i>
-                                <strong>Aprobar solicitudes <p style="text-transform:lowercase !important;">( administrador obra )</p></strong>
+                                <strong
+                                    >Aprobar solicitudes
+                                    <p
+                                        style="
+                                            text-transform: lowercase !important;
+                                        "
+                                    >
+                                        ( administrador obra )
+                                    </p></strong
+                                >
                             </a>
                         </li>
                     </div>
@@ -211,10 +220,20 @@
                                 @click="setPreloader()"
                             >
                                 <i class="fas fa-file icon-menu"></i>
-                                <strong>Aprobar solicitudes <p style="text-transform:lowercase !important;">( visitador obra )</p></strong>
+                                <strong
+                                    >Aprobar solicitudes
+                                    <p
+                                        style="
+                                            text-transform: lowercase !important;
+                                        "
+                                    >
+                                        ( visitador obra )
+                                    </p></strong
+                                >
                             </a>
                         </li>
                     </div>
+
                     <div
                         class="solicitudes-obra"
                         v-if="
@@ -239,7 +258,16 @@
                                 @click="setPreloader()"
                             >
                                 <i class="fas fa-file icon-menu"></i>
-                                <strong>Aprobar solicitudes <p style="text-transform:lowercase !important;">( administrador rrhh )</p></strong>
+                                <strong
+                                    >Aprobar solicitudes
+                                    <p
+                                        style="
+                                            text-transform: lowercase !important;
+                                        "
+                                    >
+                                        ( administrador rrhh )
+                                    </p></strong
+                                >
                             </a>
                         </li>
                     </div>

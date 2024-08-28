@@ -72,7 +72,7 @@ class SolicitudController extends Controller
         $centros_permitidos = [];
         if (!in_array('SUPERAD', session('objeto_permitido'))) {
             $aprobador = $this->personalChileRepository->getAprobadorObraCL(Auth::user()->username);
-            $centros_permitidos = array("centro_costo"=>explode(',', trim($aprobador->cc, '{}')));
+            $centros_permitidos = array("centro_costo" => explode(',', trim($aprobador->cc, '{}')));
             if (Auth::user()->username == 'miguel.opazo@flesan.cl') {
                 array_push($centros_permitidos, 'CFMR10005CFM');
             }
@@ -85,7 +85,7 @@ class SolicitudController extends Controller
             'solicitudColaborador.estado',
             'solicitudColaborador.SapMaestroCausalesTerminos',
             'solicitudColaborador.checkAreaColaboradores'
-        ],[],$centros_permitidos);
+        ], [], $centros_permitidos);
 
         return $result->values();
     }
@@ -93,20 +93,19 @@ class SolicitudController extends Controller
     // MÓDULO DE APROBACION ADMINISTRADOR OBRA
     public function redirectPageSolicitudVisitadorAprobar()
     {
-        return Inertia::render('AprobacionSolicitudObra/Index');
+        return Inertia::render('AprobacionSolicitudVisitador/Index');
     }
 
     public function listAllVisitadorAprobar()
     {
+        $centros_permitidos = [];
         if (!in_array('SUPERAD', session('objeto_permitido'))) {
             $aprobador = $this->personalChileRepository->getVisitadorObraCL(Auth::user()->username);
-            $centros_permitidos = explode(',', trim($aprobador->cc, '{}'));
+            $centros_permitidos = array("centro_costo" => explode(',', trim($aprobador->cc, '{}')));
             if (Auth::user()->username == 'miguel.opazo@flesan.cl') {
                 array_push($centros_permitidos, 'CFMR10005CFM');
             }
         }
-
-        //CFMR10005CFM
         $result = $this->repository->all(['*'], [
             'estado',
             'solicitudColaborador',
@@ -114,10 +113,7 @@ class SolicitudController extends Controller
             'solicitudColaborador.estado',
             'solicitudColaborador.SapMaestroCausalesTerminos',
             'solicitudColaborador.checkAreaColaboradores'
-        ]);
-        if (!in_array('SUPERAD', session('objeto_permitido'))) {
-            $result->whereIn('centro_costo', $centros_permitidos);
-        }
+        ], [], $centros_permitidos);
 
         return $result->values();
     }
