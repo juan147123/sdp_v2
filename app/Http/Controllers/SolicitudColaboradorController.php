@@ -32,47 +32,35 @@ class SolicitudColaboradorController extends Controller
             $request->except(['id_solicitud'])
         );
 
-        $this->updateStatusSolicitud($request, 7);
+        $this->updateStatusSolicitud($request, null);
 
         return redirect()->route('redirect.solicitud');
     }
-    public function updateStatusSolicitud($request, $status)
-    {
-        $solicitudes = $this->repository->getSolicitudColaboradorPendinte(
-            $request->id_solicitud,
-            $status
-        );
 
-        if ($solicitudes == 0) {
-            $this->repositorySolicitud->update($request->id_solicitud, ["status" => $request->status]);
-        }
-    }
 
+
+    /* OBSERBADO */
     public function updateAllStatus(Request $request)
     {
-        $this->repository->updateStatusMasive($request->status, $request->ids);
+        // $this->repository->updateStatusMasive($request->status, $request->ids);
         $this->updateStatusSolicitud($request, 7);
     }
 
     //update aprobar solicitudes administrador de obra
     public function updateStatusAprobadorCC(Request $request)
     {
-
         $update = $this->repository->update(
             $request->id,
-            $request->except(['id_solicitud'])
+            [
+                "aprobado_administrador_obra" => $request->status,
+                "comentario_admin_obra" => $request->comentario_admin_obra,
+            ]
         );
 
-        $this->updateStatusSolicitud($request, 7);
+        $this->updateStatusSolicitud($request, 2);
 
         //enviar correos de estado
         return $update;
-    }
-
-    public function updateAllStatusAprobadorCC(Request $request)
-    {
-        $this->repository->updateStatusMasive($request->status, $request->ids);
-        $this->updateStatusSolicitud($request, 7);
     }
 
     //update aprobar solicitudes RRHH
@@ -88,15 +76,45 @@ class SolicitudColaboradorController extends Controller
         return $update;
     }
 
+
+
+    /* APROBACION MASIVA */
+
+    public function updateAllStatusAprobadorCC(Request $request)
+    {
+        $this->repository->updateStatusMasiveAdmObr($request);
+        $this->updateStatusSolicitud($request, null);
+    }
+
     public function updateAllStatusAprobadorRrhh(Request $request)
     {
-        $this->repository->updateStatusMasive($request->status, $request->ids);
+        $this->repository->updateStatusMasiveRrhh($request->status, $request->ids);
         $this->updateStatusSolicitudRrhh($request);
+    }
+
+
+
+    public function updateStatusSolicitud($request, $status)
+    {
+        $solicitudes = $this->repository->getSolicitudColaboradorPendinteAdmObr(
+            $request->id_solicitud,
+            $status
+        );
+
+        $solicitudes_aprobadas = $this->repository->getSolicitudColaboradorPendinteAdmObr(
+            $request->id_solicitud,
+            6
+        );
+
+        if ($solicitudes == 0) {
+            $nuevoStatus = ($solicitudes_aprobadas != 0) ? 2 : 5;
+            $this->repositorySolicitud->update($request->id_solicitud, ["status" => $nuevoStatus]);
+        }
     }
 
     public function updateStatusSolicitudRrhh($request)
     {
-        $solicitudes = $this->repository->getSolicitudColaboradorPendinte(
+        $solicitudes = $this->repository->getSolicitudColaboradorPendinteRrhh(
             $request->id_solicitud,
             5
         );

@@ -102,8 +102,8 @@
                                         v-model="colaboradoresSeleccionados"
                                         :value="data"
                                         :disabled="
-                                            data.estado.id == 2 ||
-                                            data.estado.id == 6
+                                            data.estadoadmin?.id == 6 ||
+                                            data.estadoadmin?.id == 7
                                         "
                                     />
                                 </template>
@@ -218,8 +218,16 @@
                             >
                                 <template #body="{ data }">
                                     <Tag
-                                        :value="data.estado.descripcion"
-                                        :severity="data.estado.color"
+                                        :value="
+                                            data.estadoadmin == null
+                                                ? 'PENDIENTE'
+                                                : data.estadoadmin.descripcion
+                                        "
+                                        :severity="
+                                            data.estadoadmin == null
+                                                ? 'warning'
+                                                : data.estadoadmin?.color
+                                        "
                                     />
                                 </template>
                                 <template #filter="{ filterModel }">
@@ -467,14 +475,14 @@ export default {
                     label: "Aprobar solicitudes",
                     icon: "pi pi-check",
                     command: () => {
-                        this.updateAllStatus(2, "aprobar");
+                        this.updateAllStatus(6, "aprobar");
                     },
                 },
                 {
                     label: "Rechazar solicitudes",
                     icon: "pi pi-times",
                     command: () => {
-                        this.updateAllStatus(5, "rechazar");
+                        this.updateAllStatus(7, "rechazar");
                     },
                 },
             ];
@@ -492,36 +500,41 @@ export default {
                     label: "Aprobar",
                     icon: "pi pi-check",
                     command: () => {
-                        this.updateStatus(data.id, 5, data.id_solicitud);
+                        this.updateStatus(
+                            data.id,
+                            6,
+                            data.id_solicitud,
+                            "aprobar"
+                        );
                     },
                 },
                 {
                     label: "Rechazar",
                     icon: "pi pi-times",
                     command: () => {
-                        this.updateStatus(data.id, 6, data.id_solicitud);
+                        this.updateStatus(
+                            data.id,
+                            7,
+                            data.id_solicitud,
+                            "rechazar"
+                        );
                     },
                 },
             ];
 
             return items.filter((item) => {
                 if (
-                    item.label === "Aprobar" &&
-                    (data.status == 2 || data.status == 5)
+                    (item.label === "Aprobar" || item.label === "Rechazar") &&
+                    data.estadoadmin != null
                 ) {
                     return false;
                 }
-                if (
-                    item.label === "Rechazar" &&
-                    (data.status == 2 || data.status == 5)
-                ) {
-                    return false;
-                }
+
                 return true;
             });
         },
 
-        async updateStatus(id, status, id_solicitud) {
+        async updateStatus(id, status, id_solicitud, mensaje) {
             this.form.id = id;
             this.form.status = status;
             this.form.id_solicitud = id_solicitud;
@@ -530,6 +543,7 @@ export default {
                 setSwal({
                     value: "updateStatusInput",
                     data: status,
+                    mensaje: mensaje,
                     callback: async (comentario_admin_obra) => {
                         resolve();
                         this.update(comentario_admin_obra);
@@ -554,14 +568,14 @@ export default {
                 setSwal({
                     value: "aprobar_rechazo",
                     mensaje: mensaje,
-                    callback: async () => {
+                    callback: async (comentario_admin_obra) => {
                         resolve();
-                        this.updateAll(status);
+                        this.updateAll(status, comentario_admin_obra);
                     },
                 });
             });
         },
-        async updateAll(status) {
+        async updateAll(status, comentario_admin_obra) {
             const ids = this.colaboradoresSeleccionados.map(
                 (colaborador) => colaborador.id
             );
@@ -571,6 +585,7 @@ export default {
                     ids: ids,
                     status: status,
                     id_solicitud: this.solicitud_selected.id,
+                    comentario_admin_obra: comentario_admin_obra,
                 })
                 .then(async (response) => {
                     this.getData();

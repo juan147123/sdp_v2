@@ -102,16 +102,19 @@ class SolicitudColaborador extends Model
 
     public function estadoadmin()
     {
-        return $this->belongsTo('App\Models\Estados', 'status', 'aprobado_administrador_obra');
+        return $this->belongsTo('App\Models\Estados', 'aprobado_administrador_obra', 'id');
     }
+
     public function estadovisitador()
     {
-        return $this->belongsTo('App\Models\Estados', 'status', 'aprobado_visitador_obra');
+        return $this->belongsTo('App\Models\Estados', 'aprobado_visitador_obra', 'id');
     }
+    
     public function estadorrhh()
     {
-        return $this->belongsTo('App\Models\Estados', 'status', 'aprobado_rrhh');
+        return $this->belongsTo('App\Models\Estados', 'aprobado_rrhh', 'id');
     }
+
     protected static function boot()
     {
         parent::boot();

@@ -25,11 +25,35 @@ class SolicitudColaboradorRepository extends BaseRepository implements
         $this->model = $model;
     }
 
-    public function updateStatusMasive($status, $ids)
+    public function updateStatusMasiveAdmObr($request)
     {
-        return $this->model->whereIn('id', $ids)->update(['status' => $status]);
+        return $this->model->whereIn('id', $request->ids)->update([
+            'aprobado_administrador_obra' => $request->status,
+            "comentario_admin_obra" => $request->comentario_admin_obra
+        ]);
     }
-    public function getSolicitudColaboradorPendinte($idSolicitud,$status)
+
+    public function updateStatusMasiveVisiObr($status, $ids)
+    {
+        return $this->model->whereIn('id', $ids)->update(['aprobado_visitador_obra' => $status]);
+    }
+
+    public function updateStatusMasiveRrhh($status, $ids)
+    {
+        return $this->model->whereIn('id', $ids)->update(['aprobado_rrhh' => $status]);
+    }
+
+    public function getSolicitudColaboradorPendinteAdmObr($idSolicitud, $status)
+    {
+        $data = $this->model
+            ->where('aprobado_administrador_obra', $status)
+            ->where('id_solicitud', $idSolicitud)
+            ->get()
+            ->count();
+        return $data;
+    }
+
+    public function getSolicitudColaboradorPendinteVisiObr($idSolicitud, $status)
     {
         $data = $this->model
             ->where('status', $status)
@@ -38,10 +62,18 @@ class SolicitudColaboradorRepository extends BaseRepository implements
             ->count();
         return $data;
     }
-    
+    public function getSolicitudColaboradorPendinteRrhh($idSolicitud, $status)
+    {
+        $data = $this->model
+            ->where('status', $status)
+            ->where('id_solicitud', $idSolicitud)
+            ->get()
+            ->count();
+        return $data;
+    }
+
     public function CountSolicitudByUserId($user_id)
     {
         return $this->model->where('user_id', $user_id)->count();
     }
-    
 }

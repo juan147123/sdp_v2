@@ -238,6 +238,22 @@
                                                 data.solicitud_colaborador
                                             ) == true
                                         "
+                                        icon="pi pi-pencil "
+                                        class="ml-2"
+                                        style="
+                                            width: 2rem !important;
+                                            height: 2rem !important;
+                                        "
+                                        severity="secondary"
+                                        @click="setDataModalMultiple(data)"
+                                    />
+
+                                    <Button
+                                        v-if="
+                                            setAlertButton(
+                                                data.solicitud_colaborador
+                                            ) == true
+                                        "
                                         icon="pi pi-exclamation-triangle "
                                         class="ml-2"
                                         style="
@@ -261,6 +277,14 @@
             :solicitud_selected="solicitud_selected"
             :details="this.details"
         />
+          <FormularioMultiple
+            :terminos="this.terminos"
+            :visiblemultiple="this.visiblemultiple"
+            :colaboradoresDetalle="colaboradoresDetalle"
+            @showModal="showModal"
+            @getData="getData"
+        />
+        <!-- <ModalEdit :visiblemultiple="this.visiblemultiple" /> -->
     </AppLayout>
 </template>
 <script>
@@ -274,6 +298,8 @@ import setLocaleES from "../../primevue.config.js";
 import dayjs from "dayjs";
 import { FilterMatchMode } from "primevue/api";
 import PrimeVueComponents from "../../../js/primevue.js";
+import FormularioMultiple from "./SolicitudColaborador/Components/FormularioMultipleEdit.vue";
+import ModalEdit from "./SolicitudColaborador/Components/ModalEdit.vue";
 
 export default {
     components: {
@@ -281,6 +307,7 @@ export default {
         breadcrumbs,
         SolicitudesColaborador,
         Preloader,
+        FormularioMultiple,
         ...PrimeVueComponents,
     },
     setup() {
@@ -360,6 +387,9 @@ export default {
                 comentario: [],
             },
             details: false,
+            terminos: [],
+            colaboradoresDetalle: [],
+            visiblemultiple: false,
         };
     },
     async mounted() {
@@ -518,7 +548,7 @@ export default {
                         (estadoCount["RECHAZADO"] || 0) +
                         (estadoCount["RECHAZADO RRHH"] || 0) +
                         (estadoCount["RECHAZADO ADMINISTRADOR"] || 0) +
-                        (estadoCount["RECHAZADO VISITANTE"] || 0);
+                        (estadoCount["SOLICITUD RECHAZADA TOTAL"] || 0);
                 } else {
                     // Para otros estados, asignar el valor directamente
                     this.conteoSolicitudes[estado] = estadoCount[estado] || 0;
@@ -536,13 +566,42 @@ export default {
             let existencia = false;
             data.forEach((colaborador) => {
                 const existen =
-                    (colaborador.status === 6 || colaborador.status === 9) &&
+                    colaborador.estadoadmin.id === 7 &&
                     colaborador.enable === 1;
                 if (existen) {
                     existencia = true;
                 }
             });
             return existencia;
+        },
+        async getMotivos() {
+            this.terminos = [];
+            this.mensaje = "Espere mientras cargamos el formulario";
+            this.isLoadingForm = true;
+            await axios
+                .get(rutaBase + "/terminos/list")
+                .then(async (response) => {
+                    this.mensaje = "";
+                    this.isLoadingForm = false;
+                    this.terminos = response.data;
+                    $(".form-select-modal-multiple").select2({
+                        dropdownParent: $("#modalSolicitudMultiple"),
+                        tags: true,
+                    });
+                });
+        },
+        setDataModalMultiple(data) {
+            this.getMotivos();
+            this.colaboradoresDetalle = data.solicitud_colaborador;
+            this.visiblemultiple = true;
+        },
+        showModal() {
+            this.visiblemultiple = !this.visiblemultiple;
+            if (this.visible == true) {
+                this.getMotivos();
+            } else {
+                this.colaboradoresDetalle = [];
+            }
         },
     },
 };

@@ -84,7 +84,8 @@ class SolicitudController extends Controller
             'solicitudColaborador.archivos',
             'solicitudColaborador.estado',
             'solicitudColaborador.SapMaestroCausalesTerminos',
-            'solicitudColaborador.checkAreaColaboradores'
+            'solicitudColaborador.checkAreaColaboradores',
+            'solicitudColaborador.estadoadmin'
         ], [], $centros_permitidos);
 
         return $result->values();
@@ -122,7 +123,15 @@ class SolicitudController extends Controller
     // LISTADO DE SOLICITUDES POR LIDER
     public function listSolicitudesLider($conditionals)
     {
-        return $this->repository->all(['*'], ['estado', 'solicitudColaborador', 'solicitudColaborador.estado', 'solicitudColaborador.archivos', 'solicitudColaborador.SapMaestroCausalesTerminos', 'solicitudColaborador.checkAreaColaboradores'], $conditionals);
+        return $this->repository->all(['*'], [
+            'estado',
+            'solicitudColaborador',
+            'solicitudColaborador.estado',
+            'solicitudColaborador.archivos',
+            'solicitudColaborador.SapMaestroCausalesTerminos',
+            'solicitudColaborador.checkAreaColaboradores',
+            'solicitudColaborador.estadoadmin'
+        ], $conditionals);
     }
 
     // CREACIÓN DE SOLICITUD UNITARIA Y/O MULTIPLE 

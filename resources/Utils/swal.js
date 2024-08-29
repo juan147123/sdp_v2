@@ -225,7 +225,7 @@ export function setSwal(options) {
             break;
         case "updateStatusInput":
             Swal.fire({
-                title: "¿Desea ejecutar la acción?",
+                title: "¿Desea " + mensaje + " la solicitud?",
                 text: "Ingrese un comentario si es necesario",
                 icon: "warning",
                 input: "textarea",
@@ -233,7 +233,7 @@ export function setSwal(options) {
                     autocapitalize: "off",
                 },
                 showCancelButton: true,
-                confirmButtonText: "Sí, ejecutar",
+                confirmButtonText: "Sí,"+mensaje,
                 cancelButtonText: "Cancelar",
                 showLoaderOnConfirm: true,
                 preConfirm: (comentario) => {
@@ -248,7 +248,7 @@ export function setSwal(options) {
             break;
         case "aprobar_rechazo":
             Swal.fire({
-                text: "¿Desea " + mensaje + " la solicitud?",
+                title: "¿Desea " + mensaje + " la solicitud?",
                 text: "Ingrese un comentario si es necesario",
                 icon: "warning",
                 input: "textarea",
@@ -256,7 +256,7 @@ export function setSwal(options) {
                     autocapitalize: "off",
                 },
                 showCancelButton: true,
-                confirmButtonText: "Sí, ejecutar",
+                confirmButtonText: "Sí,"+mensaje,
                 cancelButtonText: "Cancelar",
                 showLoaderOnConfirm: true,
                 preConfirm: (comentario) => {

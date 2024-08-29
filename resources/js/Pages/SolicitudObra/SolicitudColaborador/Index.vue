@@ -166,8 +166,8 @@
                             >
                                 <template #body="{ data }">
                                     <Tag
-                                        :value="data.estado.descripcion"
-                                        :severity="data.estado.color"
+                                        :value="data.estadoadmin.descripcion"
+                                        :severity="data.estadoadmin.color"
                                     />
                                 </template>
                                 <template #filter="{ filterModel }">
@@ -189,7 +189,8 @@
                                 sortable
                                 :showFilterMatchModes="false"
                             >
-                                <template #body="{ data }">
+                            <template #body="{ data }">
+                                  
                                     <div class="text-center">
                                         <SplitButton
                                             menuButtonIcon="pi pi-cog"
@@ -202,8 +203,7 @@
                                         </SplitButton>
                                         <Button
                                             v-if="
-                                                (data.status == 6 ||
-                                                    data.status == 9) &&
+                                                data.estadoadmin.id == 7 &&
                                                 data.enable == 1
                                             "
                                             icon="pi pi-exclamation-triangle "
@@ -242,21 +242,21 @@
                         </div>
 
                         <div class="flex flex-column pt-4">
-                            <div
+                            <!-- <div
                                 class="mb-3 p-text-secondary text-center"
                                 style="font-size: 14px"
                             >
                                 ¿Desea retornar al flujo inicial a este
                                 colaborador?
-                            </div>
+                            </div> -->
                             <div class="flex justify-content-end gap-2">
-                                <Button
+                                <!-- <Button
                                     type="button"
                                     label="Retornar"
                                     severity="info"
                                     @click="desactivarSolicitudcolaborador()"
                                     class="h-2rem"
-                                ></Button>
+                                ></Button> -->
                                 <Button
                                     type="button"
                                     label="Cancelar"
@@ -480,7 +480,7 @@ export default {
         },
         alertaAdminObra(data) {
             this.visibleComentarioAdmin = !this.visibleComentarioAdmin;
-            if (data.status == 5) {
+            if (data.estadoadmin.id == 7) {
                 this.title = "Comentario del Administrador de Obra";
                 this.comentario = data.comentario_admin_obra;
             } else {
