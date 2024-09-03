@@ -47,6 +47,7 @@ Route::middleware([
     Route::get('redirectpage/solicitud', [SolicitudController::class, 'redirectPage'])->name('redirect.solicitud');
     Route::get('list/solicitud', [SolicitudController::class, 'listAll'])->name('list.solicitud');
     Route::post('create/solicitud/multiple', [SolicitudController::class, 'createMultiple'])->name('create.solicitud.multiple');
+    Route::post('update/solicitud/multiple/{id}', [SolicitudController::class, 'updateMultiple'])->name('update.solicitud.multiple');
 
     //SOLICITUD APROBAR OBRA
     Route::get('redirectpage/solicitud/aprobar', [SolicitudController::class, 'redirectPageSolicitudObraAprobarCC'])->name('redirect.solicitud.aprobar');
@@ -68,7 +69,7 @@ Route::middleware([
     //SOLICITUD COLABORADOR
     Route::put('solicitudes/status', [SolicitudColaboradorController::class, 'updateStatus'])->name('solicitud.colaborador.update.status');
     Route::put('solicitudes/status/masive', [SolicitudColaboradorController::class, 'updateAllStatus'])->name('solicitud.colaborador.update.masive');
-    Route::delete('solicitud/colaborador/delete/{id}', [SolicitudColaboradorController::class, 'delete'])->name('solicitud.colaborador.delete');
+    Route::delete('solicitud/colaborador/delete/{id}/{id_solicitud}', [SolicitudColaboradorController::class, 'delete'])->name('solicitud.colaborador.delete');
     
     //CONFIGURACION AREA
     Route::get('redirectpage/configuraciones/areas', [ConfiguracionController::class, 'listAllArea'])->name('configuracion.list.area');

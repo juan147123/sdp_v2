@@ -119,16 +119,8 @@
                             >
                                 <template #body="{ data }">
                                     <Tag
-                                        :value="
-                                            data.estado.id == 5
-                                                ? 'PENDIENTE'
-                                                : data.estado.descripcion
-                                        "
-                                        :severity="
-                                            data.estado.id == 5
-                                                ? 'warning'
-                                                : data.estado.color
-                                        "
+                                        :value="data.estado.id == 3 ? 'PENDIENTE': data.estado.descripcion"
+                                        :severity="data.estado.id == 3 ? 'warning':data.estado.color"
                                     />
                                 </template>
                                 <template #filter="{ filterModel }">
@@ -315,7 +307,7 @@ export default {
             this.mensaje = "espere mientras se efectuan los cambios....";
             this.isLoadingForm = true;
 
-            this.solicitudesColaborador.solicitud_colaborador2.forEach(
+            this.solicitudesColaborador.solicitud_colaborador.forEach(
                 (solicitudColacorador) => {
                     if (solicitudColacorador.status == 1) {
                         this.ids.push(solicitudColacorador.id);

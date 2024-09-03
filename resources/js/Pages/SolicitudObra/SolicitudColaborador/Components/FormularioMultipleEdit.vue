@@ -1,7 +1,7 @@
 <template>
     <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
     <Dialog
-        header="Registrar solicitud"
+        header="Editar solicitud"
         :visible="visiblemultiple"
         :closable="false"
         :draggable="false"
@@ -71,6 +71,17 @@
                                 required
                             />
                         </div>
+                        <div class="mb-1" style="font-size: 12px">
+                            <div
+                                class="flex  border gap-1"
+                                v-for="archivo in colaborador.archivos"
+                            >
+                                <i class="pi pi-file-o"></i>
+                                <strong>{{ archivo.origen }}</strong>
+                                <span>{{ archivo.name }}</span>
+                            </div>
+                        </div>
+
                         <div
                             class="mb-3 flex flex-column border p-2"
                             :id="'carta_firmada' + index"
@@ -88,7 +99,6 @@
                                         'carta_firmada'
                                     )
                                 "
-                                required
                             />
                         </div>
                         <div
@@ -103,7 +113,6 @@
                                 @change="
                                     handleFileChange($event, index, 'cese_dt')
                                 "
-                                required
                             />
                         </div>
                         <div
@@ -114,7 +123,6 @@
                                 >CESE AFC</label
                             >
                             <input
-                                required
                                 type="file"
                                 @change="
                                     handleFileChange($event, index, 'cese_afc')
@@ -287,12 +295,11 @@ export default {
                     this.formData["info_bancaria" + index] = null;
                     this.formData["pathname" + index] = pathName;
                 });
-               
+
                 setTimeout(() => {
                     this.handleDropdownChange(index, null);
                 }, 500);
             });
-            this.$inertia.form(this.formData);
         },
         onClickCleanFormUnico() {
             $("#motivoForm").val("").trigger("change");
@@ -307,7 +314,7 @@ export default {
             this.mensaje =
                 "registrando la solicitud, esto demorara según la cantidad y tamaño de los archivos";
             this.$inertia.post(
-                rutaBase + "/create/solicitud/multiple",
+                rutaBase + "/update/solicitud/multiple/1",
                 this.formData,
                 {
                     onFinish: () => {
@@ -341,89 +348,37 @@ export default {
         },
         handleDropdownChange(index, value) {
             let external_code = this.formData["motivo" + index];
-            
+
             if (external_code == "03") {
                 $("#cert_defuncion" + index).removeClass("d-none");
-                $("#cert_defuncion" + index + " input[type='file']").attr(
-                    "required",
-                    true
-                );
+
                 $("#boleta_funebre" + index).removeClass("d-none");
-                $("#boleta_funebre" + index + " input[type='file']").attr(
-                    "required",
-                    true
-                );
+
                 $("#info_bancaria" + index).removeClass("d-none");
-                $("#info_bancaria" + index + " input[type='file']").attr(
-                    "required",
-                    true
-                );
             } else {
                 $("#cert_defuncion" + index).addClass("d-none");
-                $("#cert_defuncion" + index + " input[type='file']").attr(
-                    "required",
-                    false
-                );
+
                 $("#boleta_funebre" + index).addClass("d-none");
-                $("#boleta_funebre" + index + " input[type='file']").attr(
-                    "required",
-                    false
-                );
+
                 $("#info_bancaria" + index).addClass("d-none");
-                $("#info_bancaria" + index + " input[type='file']").attr(
-                    "required",
-                    false
-                );
             }
 
             if (external_code == "24") {
                 $("#carta_firmada" + index).addClass("d-none");
-                $("#carta_firmada" + index + " input[type='file']").attr(
-                    "required",
-                    false
-                );
 
                 $("#cese_dt" + index).addClass("d-none");
-                $("#cese_dt" + index + " input[type='file']").attr(
-                    "required",
-                    false
-                );
 
                 $("#cese_afc" + index).addClass("d-none");
-                $("#cese_afc" + index + " input[type='file']").attr(
-                    "required",
-                    false
-                );
 
                 $("#convenio_practica" + index).removeClass("d-none");
-                $("#convenio_practica" + index + " input[type='file']").attr(
-                    "required",
-                    true
-                );
             } else {
                 $("#carta_firmada" + index).removeClass("d-none");
-                $("#carta_firmada" + index + " input[type='file']").attr(
-                    "required",
-                    true
-                );
 
                 $("#cese_dt" + index).removeClass("d-none");
-                $("#cese_dt" + index + " input[type='file']").attr(
-                    "required",
-                    true
-                );
 
                 $("#cese_afc" + index).removeClass("d-none");
-                $("#cese_afc" + index + " input[type='file']").attr(
-                    "required",
-                    true
-                );
 
                 $("#convenio_practica" + index).addClass("d-none");
-                $("#convenio_practica" + index + " input[type='file']").attr(
-                    "required",
-                    false
-                );
             }
 
             if (
@@ -432,22 +387,18 @@ export default {
                 external_code == "19"
             ) {
                 $("#aporte_empleador" + index).removeClass("d-none");
-                $("#aporte_empleador" + index + " input[type='file']").attr(
-                    "required",
-                    true
-                );
             } else {
                 $("#aporte_empleador" + index).addClass("d-none");
-                $("#aporte_empleador" + index + " input[type='file']").attr(
-                    "required",
-                    false
-                );
             }
         },
         handleFileChange(event, index, column) {
             const file = event.target.files[0];
             if (file) {
-                this.formData[column + index] = [file];
+                // Asigna el archivo directamente en lugar de envolverlo en un arreglo
+                this.formData[column + index] = file;
+            } else {
+                // Asegúrate de limpiar el valor si no hay archivo seleccionado
+                this.formData[column + index] = null;
             }
         },
     },

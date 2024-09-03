@@ -53,9 +53,9 @@ class SolicitudController extends Controller
     public function listAll()
     {
         if (in_array('LIDERCL', session('objeto_permitido')) || in_array('LIDERPE', session('objeto_permitido')) || in_array('LIDEROBRACL', session('objeto_permitido'))) {
-            $list = $this->listSolicitudesLider(['user_created' => strtoupper(Auth::user()->username)]);
+            $list = $this->listSolicitudesLider(['user_created' => strtoupper(Auth::user()->username),"enable"=>1]);
         } else {
-            $list = $this->listSolicitudesLider([]);
+            $list = $this->listSolicitudesLider(["enable"=>1]);
         }
         return $list;
     }
@@ -112,6 +112,7 @@ class SolicitudController extends Controller
             'solicitudColaborador',
             'solicitudColaborador.archivos',
             'solicitudColaborador.estado',
+            'solicitudColaborador.estadoadmin',
             'solicitudColaborador.estadovisitador',
             'solicitudColaborador.SapMaestroCausalesTerminos',
             'solicitudColaborador.checkAreaColaboradores'
@@ -151,7 +152,7 @@ class SolicitudController extends Controller
     {
         $solicitud_detail = $this->buildSolicitudDetail($request->all(), $new_solicitud);
         $newSolicitudDetail =  $this->repositorySolicitudDetalle->create($solicitud_detail);
-        return $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $request->file('filesForm'));
+        return $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $request->file('filesForm'),'');
     }
 
     private function buildSolicitud($npLider, $userCreated, $centro_costo)
@@ -213,24 +214,77 @@ class SolicitudController extends Controller
 
             $newSolicitudDetail =  $this->repositorySolicitudDetalle->create($data);
 
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos1);
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos2);
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos3);
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos4);
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos5);
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos6);
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos7);
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos8);
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos1,"carta_firmada");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos2,"cese_dt");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos3,"cese_afc");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos4,"aporte_empleador");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos5,"cert_defuncion");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos6,"boleta_funebre");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos7,"info_bancaria");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos8,"convenio_practica");
         }
 
         return redirect($request->pathname0);
     }
 
-    public function saveDocumentLocal($id, $new_solicitud, $archivos)
+    public function updateMultiple($id,Request $request)
+    {
+        dd($request->all());
+        
+        $new_solicitud = $this->createSolicitudMultiple($request);
+        $requestData = $request->all();
+        $groupedIds = [];
+        foreach ($requestData as $key => $value) {
+
+            if (strpos($key, 'user_id') !== false) {
+                $groupId = substr($key, -1);
+                if (!in_array($groupId, $groupedIds)) {
+                    $groupedIds[] = $groupId;
+                }
+            }
+        }
+        foreach ($groupedIds as $index => $value) {
+            $data = array(
+                "user_id" => $request->{"user_id$index"},
+                "nombre_completo" => $request->{"nombre_completo$index"},
+                "motivo" => $request->{"motivo$index"}['externalcode'],
+                "fecha_desvinculacion" => $request->{"fecha_desvinculacion$index"},
+                "redireccion" => $request->{"redireccion$index"},
+                "rut_empresa" => $request->{"rut_empresa$index"},
+                "centro_costo" => $request->{"centro_costo$index"},
+                'id_solicitud' => $new_solicitud->id
+            );
+            $archivos1 = $request->file("carta_firmada$index");
+            $archivos2 = $request->file("cese_dt$index");
+            $archivos3 = $request->file("cese_afc$index");
+            $archivos4 = $request->file("aporte_empleador$index");
+            $archivos5 = $request->file("cert_defuncion$index");
+            $archivos6 = $request->file("boleta_funebre$index");
+            $archivos7 = $request->file("info_bancaria$index");
+            $archivos8 = $request->file("convenio_practica$index");
+
+            $newSolicitudDetail =  $this->repositorySolicitudDetalle->create($data);
+
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos1,"carta_firmada");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos2,"cese_dt");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos3,"cese_afc");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos4,"aporte_empleador");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos5,"cert_defuncion");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos6,"boleta_funebre");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos7,"info_bancaria");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos8,"convenio_practica");
+        }
+
+        return redirect($request->pathname0);
+    }
+
+
+
+    public function saveDocumentLocal($id, $new_solicitud, $archivos,$origen)
     {
         try {
             if ($archivos) {
-                $documents =  $this->archivoRepository->uploadFile($archivos, $id, $new_solicitud);
+                $documents =  $this->archivoRepository->uploadFile($archivos, $id, $new_solicitud,$origen);
                 return Archivos::insert($documents);
             }
         } catch (\Throwable $th) {
@@ -264,12 +318,15 @@ class SolicitudController extends Controller
 
         $result = $this->repository->all(['*'], [
             'estado',
-            'solicitudColaborador2',
-            'solicitudColaborador2.archivos',
-            'solicitudColaborador2.estado',
-            'solicitudColaborador2.SapMaestroCausalesTerminos',
-            'solicitudColaborador2.checkAreaColaboradores'
-        ])->whereIn('estado.id', [5, 8, 9]);
+            'solicitudColaborador',
+            'solicitudColaborador.archivos',
+            'solicitudColaborador.estado',
+            'solicitudColaborador.estadoadmin',
+            'solicitudColaborador.estadovisitador',
+            'solicitudColaborador.estadorrhh',
+            'solicitudColaborador.SapMaestroCausalesTerminos',
+            'solicitudColaborador.checkAreaColaboradores'
+        ])->whereIn('estado.id', [3, 4, 5]);
 
         return $result->values();
     }

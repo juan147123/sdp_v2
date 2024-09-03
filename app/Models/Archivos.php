@@ -21,7 +21,19 @@ class Archivos extends Model
     /**
      * @var array
      */
-    protected $fillable = ['id_solicitud_colaborador', 'name', 'extension', 'path', 'created_at', 'updated_at', 'uuid_name', 'enable', 'carpeta', 'uuid'];
+    protected $fillable = [
+        'id_solicitud_colaborador',
+        'name',
+        'extension',
+        'path',
+        'created_at',
+        'updated_at',
+        'uuid_name',
+        'enable',
+        'carpeta',
+        'uuid',
+        'origen'
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

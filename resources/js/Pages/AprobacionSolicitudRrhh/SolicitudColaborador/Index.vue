@@ -9,7 +9,7 @@
                 label="regresar"
                 style="font-size: 0.9rem; height: 30px"
                 severity="danger"
-                @click="ChangeView"
+                @click="ChangeView(null)"
             />
         </div>
         <div class="contenedor-solicitud">
@@ -102,7 +102,7 @@
                                         v-model="colaboradoresSeleccionados"
                                         :value="data"
                                         :disabled="
-                                            data.estado.id == 2 ||
+                                            data.estado.id == 3 ||
                                             data.estado.id == 6
                                         "
                                     />
@@ -219,14 +219,15 @@
                                 <template #body="{ data }">
                                     <Tag
                                         :value="
-                                            data.estado.id == 5
+                                            data.estadorrhh == null
                                                 ? 'PENDIENTE'
-                                                : data.estado.descripcion
+                                                : data.estadorrhh
+                                                      .descripcion
                                         "
                                         :severity="
-                                            data.estado.id == 5
+                                            data.estadorrhh == null
                                                 ? 'warning'
-                                                : data.estado.color
+                                                : data.estadorrhh?.color
                                         "
                                     />
                                 </template>
@@ -343,16 +344,20 @@ export default {
                     "RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink",
                 currentPageReportTemplate:
                     "Página {currentPage} de {totalPages}",
-                filters: {
+                    filters: {
                     global: {
                         value: null,
                         matchMode: FilterMatchMode.CONTAINS,
                     },
-                    codigo: {
+                    user_id: {
                         value: null,
                         matchMode: FilterMatchMode.CONTAINS,
                     },
-                    user_created: {
+                    nombre_completo: {
+                        value: null,
+                        matchMode: FilterMatchMode.CONTAINS,
+                    },
+                    sap_maestro_causales_terminos: {
                         value: null,
                         matchMode: FilterMatchMode.CONTAINS,
                     },
@@ -366,18 +371,18 @@ export default {
                     },
                 },
                 globalFilterFields: [
-                    "codigo",
-                    "user_created",
+                    "user_id",
+                    "nombre_completo",
+                    "sap_maestro_causales_terminos",
                     "centro_costo",
-                    "created_at",
                     "estado",
                 ],
             },
             filtersDropdownData: {
-                codigo: [],
-                user_created: [],
+                user_id: [],
+                nombre_completo: [],
+                sap_maestro_causales_terminos: [],
                 centro_costo: [],
-                created_at: [],
                 estado: [],
             },
             colaboradoresSeleccionados: [],
@@ -392,13 +397,13 @@ export default {
         solicitud_selected: function (newValue, oldValue) {
             if (newValue) {
                 this.dataTable.data =
-                    this.solicitud_selected.solicitud_colaborador2;
+                    this.solicitud_selected.solicitud_colaborador;
             }
         },
     },
     methods: {
-        ChangeView() {
-            this.$emit("ChangeView");
+        ChangeView(data) {
+            this.$emit("ChangeView",data);
         },
 
         getData() {
@@ -476,14 +481,14 @@ export default {
                     label: "Aprobar solicitudes",
                     icon: "pi pi-check",
                     command: () => {
-                        this.updateAllStatus(2, "aprobar");
+                        this.updateAllStatus(6, "aprobar");
                     },
                 },
                 {
                     label: "Rechazar solicitudes",
                     icon: "pi pi-times",
                     command: () => {
-                        this.updateAllStatus(6, "rechazar");
+                        this.updateAllStatus(7, "rechazar");
                     },
                 },
             ];
@@ -501,36 +506,42 @@ export default {
                     label: "Aprobar",
                     icon: "pi pi-check",
                     command: () => {
-                        this.updateStatus(data.id, 8, data.id_solicitud);
+                        this.updateStatus(
+                            data.id,
+                            6,
+                            data.id_solicitud,
+                            "aprobar"
+                        );
                     },
                 },
                 {
-                    label: "Desaprobar",
+                    label: "Rechazar",
                     icon: "pi pi-times",
                     command: () => {
-                        this.updateStatus(data.id, 9, data.id_solicitud);
+                        this.updateStatus(
+                            data.id,
+                            7,
+                            data.id_solicitud,
+                            "rechazar"
+                        );
                     },
                 },
             ];
 
             return items.filter((item) => {
                 if (
-                    item.label === "Aprobar" &&
-                    (data.status == 8 || data.status == 9)
+                    (item.label === "Aprobar" || item.label === "Rechazar") &&
+                    data.estadorrhh != null
                 ) {
                     return false;
                 }
-                if (
-                    item.label === "Desaprobar" &&
-                    (data.status == 8 || data.status == 9)
-                ) {
-                    return false;
-                }
+
                 return true;
             });
         },
 
-        async updateStatus(id, status, id_solicitud) {
+
+        async updateStatus(id, status, id_solicitud, mensaje) {
             this.form.id = id;
             this.form.status = status;
             this.form.id_solicitud = id_solicitud;
@@ -538,9 +549,11 @@ export default {
             await new Promise((resolve) => {
                 setSwal({
                     value: "updateStatusInput",
-                    callback: async (comentario_rrhh) => {
+                    data: status,
+                    mensaje: mensaje,
+                    callback: async (comentario_admin_obra) => {
                         resolve();
-                        this.update(comentario_rrhh);
+                        this.update(comentario_admin_obra);
                     },
                 });
             });
@@ -562,9 +575,9 @@ export default {
                 setSwal({
                     value: "aprobar_rechazo",
                     mensaje: mensaje,
-                    callback: async () => {
+                    callback: async (comentario_visitador) => {
                         resolve();
-                        this.updateAll(status);
+                        this.updateAll(status, comentario_visitador);
                     },
                 });
             });
@@ -572,21 +585,21 @@ export default {
         onClickClean() {
             this.colaboradoresSeleccionados = [];
         },
-        async updateAll(status) {
-            this.solicitud_selected.solicitud_colaborador2.forEach(
-                (solicitudColacorador) => {
-                    if (solicitudColacorador.status == 7) {
-                        this.ids.push(solicitudColacorador.id);
-                    }
-                }
+        async updateAll(status, comentario_visitador) {
+            const ids = this.colaboradoresSeleccionados.map(
+                (colaborador) => colaborador.id
             );
 
             await axios
-                .put(this.route("solicitud.colaborador.update.masive.rrhh"), {
-                    ids: this.ids,
-                    status: status,
-                    id_solicitud: this.solicitud_selected.id,
-                })
+                .put(
+                    this.route("solicitud.colaborador.update.masive.rrhh"),
+                    {
+                        ids: ids,
+                        status: status,
+                        id_solicitud: this.solicitud_selected.id,
+                        comentario_visitador: comentario_visitador,
+                    }
+                )
                 .then(async (response) => {
                     this.getData();
                     this.onClickClean();

@@ -9,11 +9,9 @@ use Illuminate\Support\Facades\Storage;
 class ArchivoRepository extends BaseRepository implements ArchivoRepositoryInterface
 {
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
-    public function uploadFile($archivos, $id ,$new_solicitud)
+    public function uploadFile($archivos, $id, $new_solicitud, $origen)
     {
         $resultados = [];
 
@@ -33,7 +31,8 @@ class ArchivoRepository extends BaseRepository implements ArchivoRepositoryInter
                 "extension" => $extension,
                 "uuid_name" => $fileUuid,
                 "uuid" => $uuid,
-                "carpeta" => $carpeta
+                "carpeta" => $carpeta,
+                "origen" => $origen
             );
         }
 

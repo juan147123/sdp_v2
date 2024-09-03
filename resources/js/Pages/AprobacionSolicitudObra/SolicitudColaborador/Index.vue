@@ -340,16 +340,20 @@ export default {
                     "RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink",
                 currentPageReportTemplate:
                     "Página {currentPage} de {totalPages}",
-                filters: {
+                    filters: {
                     global: {
                         value: null,
                         matchMode: FilterMatchMode.CONTAINS,
                     },
-                    codigo: {
+                    user_id: {
                         value: null,
                         matchMode: FilterMatchMode.CONTAINS,
                     },
-                    user_created: {
+                    nombre_completo: {
+                        value: null,
+                        matchMode: FilterMatchMode.CONTAINS,
+                    },
+                    sap_maestro_causales_terminos: {
                         value: null,
                         matchMode: FilterMatchMode.CONTAINS,
                     },

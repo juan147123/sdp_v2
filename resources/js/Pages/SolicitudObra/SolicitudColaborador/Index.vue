@@ -337,6 +337,7 @@ export default {
             archivosList: [],
             comentario: "",
             id_deactivate: 0,
+            id_data_deactivate: 0,
             form: this.$inertia.form({
                 id: 0,
                 status: 0,
@@ -508,26 +509,32 @@ export default {
             this.comentario = data.comentario_admin_obra;
 
             this.id_deactivate = data.id;
+            this.id_data_deactivate = data.id_solicitud;
         },
-       
+
         alertaAVisitadorObra(data) {
             this.visibleComentarioAdmin = !this.visibleComentarioAdmin;
             this.title = "Comentario del Visitador de Obra";
             this.comentario = data.comentario_visitador;
             this.id_deactivate = data.id;
+            this.id_data_deactivate = data.id_solicitud;
         },
         async desactivarSolicitudcolaborador() {
             try {
                 const response = await axios.delete(
                     rutaBase +
                         "/solicitud/colaborador/delete/" +
-                        this.id_deactivate
+                        this.id_deactivate +
+                        "/" +
+                        this.id_data_deactivate
                 );
 
                 this.getData();
                 this.id_deactivate = 0;
-                this.comentario_admin_obra = "";
+                this.id_data_deactivate = 0;
+                this.comentario = "";
                 this.visibleComentarioAdmin = false;
+                this.ChangeView();
             } catch (error) {
                 console.error("error:", error);
             }
@@ -535,10 +542,21 @@ export default {
         setTagStatusValue(data) {
             var descripcion = "";
             var color = "";
-            if (data.status == 1 || data.status == 2 || data.status == 3) {
+            if (
+                (data.estadoadmin && data.estadoadmin.id == 7) || 
+                (data.estadovisitador && data.estadovisitador.id == 7) ||
+                (data.estadorrhh && data.estadorrhh.id == 7)
+            ) {
+                descripcion = "RECHAZADO";
+                color = "danger";
+            } else if (
+                data.status == 1 ||
+                data.status == 2 ||
+                data.status == 3
+            ) {
                 descripcion = "PENDIENTE";
                 color = "warning";
-            } else if (data.status == 4) {
+            } else if (data.status == 4 || data.status == 6) {
                 descripcion = "APROBADO";
                 color = "success";
             } else {

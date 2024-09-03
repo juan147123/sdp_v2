@@ -307,7 +307,7 @@ export default {
             this.mensaje = "espere mientras se efectuan los cambios....";
             this.isLoadingForm = true;
 
-            this.solicitudesColaborador.solicitud_colaborador2.forEach(
+            this.solicitudesColaborador.solicitud_colaborador.forEach(
                 (solicitudColacorador) => {
                     if (solicitudColacorador.status == 1) {
                         this.ids.push(solicitudColacorador.id);

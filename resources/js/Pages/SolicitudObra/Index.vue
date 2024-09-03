@@ -540,12 +540,13 @@ export default {
                         (estadoCount["APROBADO"] || 0) +
                         (estadoCount["APROBADO RRHH"] || 0) +
                         (estadoCount["APROBADO ADMINISTRADOR"] || 0) +
+                        (estadoCount["SOLICITUD APROBADA TOTAL"] || 0) +
                         (estadoCount["APROBADO VISITANTE"] || 0);
                 }
                  else if (estado === "RECHAZADO") {
                     // Sumar todas las variantes de "RECHAZADO"
                     this.conteoSolicitudes["RECHAZADO"] =
-                        (estadoCount["RECHAZADO"] || 0) +
+                        (estadoCount["SOLICITUD RECHAZADA"] || 0) +
                         (estadoCount["RECHAZADO RRHH"] || 0) +
                         (estadoCount["RECHAZADO ADMINISTRADOR"] || 0) +
                         (estadoCount["SOLICITUD RECHAZADA TOTAL"] || 0);

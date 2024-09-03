@@ -20,9 +20,14 @@ class SolicitudColaboradorController extends Controller
     }
 
 
-    public function delete($id)
+    public function delete($id, $id_solicitud)
     {
+
         $this->repository->update($id, ["enable" => 0]);
+        $detalle =  $this->repository->all(['*'], [], ['id_solicitud' => $id_solicitud, "enable" => 1])->count();
+        if ($detalle == 0) {
+            $this->repositorySolicitud->update($id_solicitud, ["enable" => 0]);
+        }
     }
 
     public function updateStatus(Request $request)
@@ -85,10 +90,13 @@ class SolicitudColaboradorController extends Controller
     {
         $update = $this->repository->update(
             $request->id,
-            $request->except(['id_solicitud'])
+            [
+                "aprobado_rrhh" => $request->status,
+                "comentario_rrhh" => $request->comentario_rrhh,
+            ]
         );
 
-        $this->updateStatusSolicitudRrhh($request);
+        $this->updateStatusSolicitudRrhh($request, 4);
         //enviar correo desaprobacion con comentario
         return $update;
     }
@@ -116,7 +124,7 @@ class SolicitudColaboradorController extends Controller
         );
 
         if ($solicitudes == 0) {
-            $nuevoStatus = ($solicitudes_aprobadas != 0) ? 3 : 5;
+            $nuevoStatus = ($solicitudes_aprobadas != 0) ? 2 : 5;
             $this->repositorySolicitud->update($request->id_solicitud, ["status" => $nuevoStatus]);
         }
     }
@@ -152,17 +160,24 @@ class SolicitudColaboradorController extends Controller
     public function updateAllStatusAprobadorRrhh(Request $request)
     {
         $this->repository->updateStatusMasiveRrhh($request->status, $request->ids);
-        $this->updateStatusSolicitudRrhh($request);
+        $this->updateStatusSolicitudRrhh($request, null);
     }
 
-    public function updateStatusSolicitudRrhh($request)
+    public function updateStatusSolicitudRrhh($request, $status)
     {
         $solicitudes = $this->repository->getSolicitudColaboradorPendinteRrhh(
             $request->id_solicitud,
-            5
+            $status
         );
+
+        $solicitudes_aprobadas = $this->repository->getSolicitudColaboradorPendinteRrhh(
+            $request->id_solicitud,
+            6
+        );
+
         if ($solicitudes == 0) {
-            $this->repositorySolicitud->update($request->id_solicitud, ["status" => $request->status]);
+            $nuevoStatus = ($solicitudes_aprobadas != 0) ? 4 : 5;
+            $this->repositorySolicitud->update($request->id_solicitud, ["status" => $nuevoStatus]);
         }
     }
 }

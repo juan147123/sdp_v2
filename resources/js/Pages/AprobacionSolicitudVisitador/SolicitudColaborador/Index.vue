@@ -349,15 +349,15 @@ export default {
                         value: null,
                         matchMode: FilterMatchMode.CONTAINS,
                     },
-                    codigo: {
-                        value: null,
-                        matchMode: FilterMatchMode.CONTAINS,
-                    },
                     user_id: {
                         value: null,
                         matchMode: FilterMatchMode.CONTAINS,
                     },
-                    user_created: {
+                    nombre_completo: {
+                        value: null,
+                        matchMode: FilterMatchMode.CONTAINS,
+                    },
+                    sap_maestro_causales_terminos: {
                         value: null,
                         matchMode: FilterMatchMode.CONTAINS,
                     },
@@ -372,19 +372,17 @@ export default {
                 },
                 globalFilterFields: [
                     "user_id",
-                    "codigo",
-                    "user_created",
+                    "nombre_completo",
+                    "sap_maestro_causales_terminos",
                     "centro_costo",
-                    "created_at",
                     "estado",
                 ],
             },
             filtersDropdownData: {
                 user_id: [],
-                codigo: [],
-                user_created: [],
+                nombre_completo: [],
+                sap_maestro_causales_terminos: [],
                 centro_costo: [],
-                created_at: [],
                 estado: [],
             },
             colaboradoresSeleccionados: [],
@@ -398,8 +396,17 @@ export default {
         },
         solicitud_selected: function (newValue, oldValue) {
             if (newValue) {
-                this.dataTable.data =
-                    this.solicitud_selected.solicitud_colaborador;
+                var data = this.solicitud_selected.solicitud_colaborador;
+                console.log(data);
+                if (data != undefined) {
+                    var filterdata = [];
+                    data.forEach((colaborador) => {
+                        if (colaborador.estadoadmin.id != 7) {
+                            filterdata.push(colaborador);
+                        }
+                    });
+                    this.dataTable.data = filterdata;
+                }
             }
         },
     },
@@ -415,7 +422,6 @@ export default {
         },
 
         initializeDropdownsData() {
-            console.log(this.dataTable.data);
             this.filtersDropdownData.user_id = [
                 ...new Set(
                     this.dataTable.data
@@ -544,7 +550,6 @@ export default {
             });
         },
 
-
         async updateStatus(id, status, id_solicitud, mensaje) {
             this.form.id = id;
             this.form.status = status;
@@ -574,7 +579,6 @@ export default {
                 });
         },
 
-
         async updateAllStatus(status, mensaje) {
             await new Promise((resolve) => {
                 setSwal({
@@ -593,12 +597,15 @@ export default {
             );
 
             await axios
-                .put(this.route("solicitud.colaborador.update.masive.visitador"), {
-                    ids: ids,
-                    status: status,
-                    id_solicitud: this.solicitud_selected.id,
-                    comentario_visitador: comentario_visitador,
-                })
+                .put(
+                    this.route("solicitud.colaborador.update.masive.visitador"),
+                    {
+                        ids: ids,
+                        status: status,
+                        id_solicitud: this.solicitud_selected.id,
+                        comentario_visitador: comentario_visitador,
+                    }
+                )
                 .then(async (response) => {
                     this.getData();
                     this.onClickClean();
