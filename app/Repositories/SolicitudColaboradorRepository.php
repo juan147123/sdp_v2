@@ -33,9 +33,12 @@ class SolicitudColaboradorRepository extends BaseRepository implements
         ]);
     }
 
-    public function updateStatusMasiveVisiObr($status, $ids)
+    public function updateStatusMasiveVisiObr($request)
     {
-        return $this->model->whereIn('id', $ids)->update(['aprobado_visitador_obra' => $status]);
+        return $this->model->whereIn('id', $request->ids)->update([
+            'aprobado_visitador_obra' => $request->status,
+            "comentario_visitador" => $request->comentario_visitador
+        ]);
     }
 
     public function updateStatusMasiveRrhh($status, $ids)
@@ -56,7 +59,7 @@ class SolicitudColaboradorRepository extends BaseRepository implements
     public function getSolicitudColaboradorPendinteVisiObr($idSolicitud, $status)
     {
         $data = $this->model
-            ->where('status', $status)
+            ->where('aprobado_visitador_obra', $status)
             ->where('id_solicitud', $idSolicitud)
             ->get()
             ->count();
@@ -65,7 +68,7 @@ class SolicitudColaboradorRepository extends BaseRepository implements
     public function getSolicitudColaboradorPendinteRrhh($idSolicitud, $status)
     {
         $data = $this->model
-            ->where('status', $status)
+            ->where('aprobado_rrhh', $status)
             ->where('id_solicitud', $idSolicitud)
             ->get()
             ->count();

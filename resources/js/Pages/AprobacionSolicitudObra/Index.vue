@@ -348,9 +348,6 @@ export default {
                                 (item) => item.id === oldId
                             );
                             this.solicitud_selected = newselected;
-                            console.log(oldId)
-                            console.log(newselected)
-                            console.log(this.details)
                         }
                     }
 

@@ -109,12 +109,16 @@
                                 :showFilterMatchModes="false"
                             >
                                 <template #body="{ data }">
-                                    {{data.sap_maestro_causales_terminos.name}}
+                                    {{
+                                        data.sap_maestro_causales_terminos.name
+                                    }}
                                 </template>
                                 <template #filter="{ filterModel }">
                                     <MultiSelect
                                         v-model="filterModel.value"
-                                        :options="filtersDropdownData.sap_maestro_causales_terminos"
+                                        :options="
+                                            filtersDropdownData.sap_maestro_causales_terminos
+                                        "
                                         placeholder="Cualquiera"
                                         class="p-column-filter"
                                         optionLabel="sap_maestro_causales_terminos.name"
@@ -166,8 +170,12 @@
                             >
                                 <template #body="{ data }">
                                     <Tag
-                                        :value="data.estadoadmin.descripcion"
-                                        :severity="data.estadoadmin.color"
+                                        :value="
+                                            setTagStatusValue(data).descripcion
+                                        "
+                                        :severity="
+                                            setTagStatusValue(data).color
+                                        "
                                     />
                                 </template>
                                 <template #filter="{ filterModel }">
@@ -189,8 +197,7 @@
                                 sortable
                                 :showFilterMatchModes="false"
                             >
-                            <template #body="{ data }">
-                                  
+                                <template #body="{ data }">
                                     <div class="text-center">
                                         <SplitButton
                                             menuButtonIcon="pi pi-cog"
@@ -203,7 +210,7 @@
                                         </SplitButton>
                                         <Button
                                             v-if="
-                                                data.estadoadmin.id == 7 &&
+                                                data.estadoadmin?.id == 7 &&
                                                 data.enable == 1
                                             "
                                             icon="pi pi-exclamation-triangle "
@@ -214,6 +221,20 @@
                                             "
                                             severity="warning"
                                             @click="alertaAdminObra(data)"
+                                        />
+                                        <Button
+                                            v-if="
+                                                data.estadovisitador?.id == 7 &&
+                                                data.enable == 1
+                                            "
+                                            icon="pi pi-exclamation-triangle "
+                                            class="ml-2"
+                                            style="
+                                                width: 2rem !important;
+                                                height: 2rem !important;
+                                            "
+                                            severity="warning"
+                                            @click="alertaAVisitadorObra(data)"
                                         />
                                     </div>
                                 </template>
@@ -242,21 +263,21 @@
                         </div>
 
                         <div class="flex flex-column pt-4">
-                            <!-- <div
+                            <div
                                 class="mb-3 p-text-secondary text-center"
                                 style="font-size: 14px"
                             >
                                 ¿Desea retornar al flujo inicial a este
                                 colaborador?
-                            </div> -->
+                            </div>
                             <div class="flex justify-content-end gap-2">
-                                <!-- <Button
+                                <Button
                                     type="button"
                                     label="Retornar"
                                     severity="info"
                                     @click="desactivarSolicitudcolaborador()"
                                     class="h-2rem"
-                                ></Button> -->
+                                ></Button>
                                 <Button
                                     type="button"
                                     label="Cancelar"
@@ -416,7 +437,7 @@ export default {
             ].map((o) => {
                 return { user_id: o };
             });
-           
+
             this.filtersDropdownData.nombre_completo = [
                 ...new Set(
                     this.dataTable.data
@@ -426,15 +447,19 @@ export default {
             ].map((o) => {
                 return { nombre_completo: o };
             });
-        
+
             this.filtersDropdownData.sap_maestro_causales_terminos = [
                 ...new Map(
                     this.dataTable.data
                         .filter(
                             (s) =>
-                                s.sap_maestro_causales_terminos != "" && s.sap_maestro_causales_terminos.name != null
+                                s.sap_maestro_causales_terminos != "" &&
+                                s.sap_maestro_causales_terminos.name != null
                         )
-                        .map((s) => [s.sap_maestro_causales_terminos.name, s.sap_maestro_causales_terminos])
+                        .map((s) => [
+                            s.sap_maestro_causales_terminos.name,
+                            s.sap_maestro_causales_terminos,
+                        ])
                 ).values(),
             ].map((o) => {
                 return { sap_maestro_causales_terminos: o };
@@ -461,7 +486,6 @@ export default {
             ].map((o) => {
                 return { estado: o };
             });
-
         },
         setImagenes(data) {
             this.visible = !this.visible;
@@ -480,13 +504,16 @@ export default {
         },
         alertaAdminObra(data) {
             this.visibleComentarioAdmin = !this.visibleComentarioAdmin;
-            if (data.estadoadmin.id == 7) {
-                this.title = "Comentario del Administrador de Obra";
-                this.comentario = data.comentario_admin_obra;
-            } else {
-                this.title = "Comentario del Administrador de RRHH";
-                this.comentario = data.comentario_rrhh;
-            }
+            this.title = "Comentario del Administrador de Obra";
+            this.comentario = data.comentario_admin_obra;
+
+            this.id_deactivate = data.id;
+        },
+       
+        alertaAVisitadorObra(data) {
+            this.visibleComentarioAdmin = !this.visibleComentarioAdmin;
+            this.title = "Comentario del Visitador de Obra";
+            this.comentario = data.comentario_visitador;
             this.id_deactivate = data.id;
         },
         async desactivarSolicitudcolaborador() {
@@ -504,6 +531,24 @@ export default {
             } catch (error) {
                 console.error("error:", error);
             }
+        },
+        setTagStatusValue(data) {
+            var descripcion = "";
+            var color = "";
+            if (data.status == 1 || data.status == 2 || data.status == 3) {
+                descripcion = "PENDIENTE";
+                color = "warning";
+            } else if (data.status == 4) {
+                descripcion = "APROBADO";
+                color = "success";
+            } else {
+                descripcion = "RECHAZADO";
+                color = "danger";
+            }
+            return {
+                descripcion: descripcion,
+                color: color,
+            };
         },
     },
 };

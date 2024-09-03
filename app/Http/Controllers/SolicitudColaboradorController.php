@@ -63,6 +63,23 @@ class SolicitudColaboradorController extends Controller
         return $update;
     }
 
+    //update aprobar solicitudes administrador de obra
+    public function updateStatusAprobadorVisitador(Request $request)
+    {
+        $update = $this->repository->update(
+            $request->id,
+            [
+                "aprobado_visitador_obra" => $request->status,
+                "comentario_visitador" => $request->comentario_visitador,
+            ]
+        );
+
+        $this->updateStatusSolicitud($request, 3);
+
+        //enviar correos de estado
+        return $update;
+    }
+
     //update aprobar solicitudes RRHH
     public function updateStatusAprobadorRrhh(Request $request)
     {
@@ -78,21 +95,13 @@ class SolicitudColaboradorController extends Controller
 
 
 
-    /* APROBACION MASIVA */
+    /* APROBACION MASIVA  ADMINISTRADOR DE OBRA*/
 
     public function updateAllStatusAprobadorCC(Request $request)
     {
         $this->repository->updateStatusMasiveAdmObr($request);
         $this->updateStatusSolicitud($request, null);
     }
-
-    public function updateAllStatusAprobadorRrhh(Request $request)
-    {
-        $this->repository->updateStatusMasiveRrhh($request->status, $request->ids);
-        $this->updateStatusSolicitudRrhh($request);
-    }
-
-
 
     public function updateStatusSolicitud($request, $status)
     {
@@ -107,9 +116,43 @@ class SolicitudColaboradorController extends Controller
         );
 
         if ($solicitudes == 0) {
-            $nuevoStatus = ($solicitudes_aprobadas != 0) ? 2 : 5;
+            $nuevoStatus = ($solicitudes_aprobadas != 0) ? 3 : 5;
             $this->repositorySolicitud->update($request->id_solicitud, ["status" => $nuevoStatus]);
         }
+    }
+
+    /* APROBACION MASIVA VISITADOR DE OBRA */
+
+    public function updateAllStatusVisitador(Request $request)
+    {
+        $this->repository->updateStatusMasiveVisiObr($request);
+        $this->updateStatusSolicitudVisitador($request, null);
+    }
+    public function updateStatusSolicitudVisitador($request, $status)
+    {
+        $solicitudes = $this->repository->getSolicitudColaboradorPendinteVisiObr(
+            $request->id_solicitud,
+            $status
+        );
+
+        $solicitudes_aprobadas = $this->repository->getSolicitudColaboradorPendinteVisiObr(
+            $request->id_solicitud,
+            6
+        );
+
+        if ($solicitudes == 0) {
+            $nuevoStatus = ($solicitudes_aprobadas != 0) ? 3 : 5;
+            $this->repositorySolicitud->update($request->id_solicitud, ["status" => $nuevoStatus]);
+        }
+    }
+
+
+    /* APROBACION MASIVA RRHH */
+
+    public function updateAllStatusAprobadorRrhh(Request $request)
+    {
+        $this->repository->updateStatusMasiveRrhh($request->status, $request->ids);
+        $this->updateStatusSolicitudRrhh($request);
     }
 
     public function updateStatusSolicitudRrhh($request)

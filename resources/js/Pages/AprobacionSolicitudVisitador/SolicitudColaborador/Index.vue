@@ -102,8 +102,8 @@
                                         v-model="colaboradoresSeleccionados"
                                         :value="data"
                                         :disabled="
-                                            data.estado.id == 8 ||
-                                            data.estado.id == 6
+                                            data.estadovisitador?.id == 6 ||
+                                            data.estadovisitador?.id == 7
                                         "
                                     />
                                 </template>
@@ -218,9 +218,17 @@
                             >
                                 <template #body="{ data }">
                                     <Tag
-                                        :value="data.estado.descripcion"
-                                        :severity="data.estado.color"
-                                        style="font-size:10px;"
+                                        :value="
+                                            data.estadovisitador == null
+                                                ? 'PENDIENTE'
+                                                : data.estadovisitador
+                                                      .descripcion
+                                        "
+                                        :severity="
+                                            data.estadovisitador == null
+                                                ? 'warning'
+                                                : data.estadovisitador?.color
+                                        "
                                     />
                                 </template>
                                 <template #filter="{ filterModel }">
@@ -314,7 +322,7 @@ export default {
                 id: 0,
                 status: 0,
                 id_solicitud: 0,
-                comentario_rrhh: "",
+                comentario_visitador: "",
             }),
             breadcrumbs: [
                 {
@@ -477,14 +485,14 @@ export default {
                     label: "Aprobar solicitudes",
                     icon: "pi pi-check",
                     command: () => {
-                        this.updateAllStatus(8, "aprobar");
+                        this.updateAllStatus(6, "aprobar");
                     },
                 },
                 {
                     label: "Rechazar solicitudes",
                     icon: "pi pi-times",
                     command: () => {
-                        this.updateAllStatus(9, "rechazar");
+                        this.updateAllStatus(7, "rechazar");
                     },
                 },
             ];
@@ -502,36 +510,42 @@ export default {
                     label: "Aprobar",
                     icon: "pi pi-check",
                     command: () => {
-                        this.updateStatus(data.id, 8, data.id_solicitud);
+                        this.updateStatus(
+                            data.id,
+                            6,
+                            data.id_solicitud,
+                            "aprobar"
+                        );
                     },
                 },
                 {
                     label: "Rechazar",
                     icon: "pi pi-times",
                     command: () => {
-                        this.updateStatus(data.id, 10, data.id_solicitud);
+                        this.updateStatus(
+                            data.id,
+                            7,
+                            data.id_solicitud,
+                            "rechazar"
+                        );
                     },
                 },
             ];
 
             return items.filter((item) => {
                 if (
-                    item.label === "Aprobar" &&
-                    (data.status == 8 || data.status == 9)
+                    (item.label === "Aprobar" || item.label === "Rechazar") &&
+                    data.estadovisitador != null
                 ) {
                     return false;
                 }
-                if (
-                    item.label === "Rechazar" &&
-                    (data.status == 8 || data.status == 9)
-                ) {
-                    return false;
-                }
+
                 return true;
             });
         },
 
-        async updateStatus(id, status, id_solicitud) {
+
+        async updateStatus(id, status, id_solicitud, mensaje) {
             this.form.id = id;
             this.form.status = status;
             this.form.id_solicitud = id_solicitud;
@@ -539,18 +553,20 @@ export default {
             await new Promise((resolve) => {
                 setSwal({
                     value: "updateStatusInput",
-                    callback: async (comentario_rrhh) => {
+                    data: status,
+                    mensaje: mensaje,
+                    callback: async (comentario_admin_obra) => {
                         resolve();
-                        this.update(comentario_rrhh);
+                        this.update(comentario_admin_obra);
                     },
                 });
             });
         },
-        async update(comentario_rrhh) {
-            this.form.comentario_rrhh = comentario_rrhh;
+        async update(comentario_visitador) {
+            this.form.comentario_visitador = comentario_visitador;
             await axios
                 .put(
-                    this.route("solicitud.colaborador.update.status.rrhh"),
+                    this.route("solicitud.colaborador.update.status.visitador"),
                     this.form
                 )
                 .then(async (response) => {
@@ -558,28 +574,30 @@ export default {
                 });
         },
 
+
         async updateAllStatus(status, mensaje) {
             await new Promise((resolve) => {
                 setSwal({
                     value: "aprobar_rechazo",
                     mensaje: mensaje,
-                    callback: async () => {
+                    callback: async (comentario_visitador) => {
                         resolve();
-                        this.updateAll(status);
+                        this.updateAll(status, comentario_visitador);
                     },
                 });
             });
         },
-        async updateAll(status) {
+        async updateAll(status, comentario_visitador) {
             const ids = this.colaboradoresSeleccionados.map(
                 (colaborador) => colaborador.id
             );
 
             await axios
-                .put(this.route("solicitud.colaborador.update.masive.cc"), {
+                .put(this.route("solicitud.colaborador.update.masive.visitador"), {
                     ids: ids,
                     status: status,
                     id_solicitud: this.solicitud_selected.id,
+                    comentario_visitador: comentario_visitador,
                 })
                 .then(async (response) => {
                     this.getData();

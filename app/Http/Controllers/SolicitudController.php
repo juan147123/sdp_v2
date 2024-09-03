@@ -112,6 +112,7 @@ class SolicitudController extends Controller
             'solicitudColaborador',
             'solicitudColaborador.archivos',
             'solicitudColaborador.estado',
+            'solicitudColaborador.estadovisitador',
             'solicitudColaborador.SapMaestroCausalesTerminos',
             'solicitudColaborador.checkAreaColaboradores'
         ], [], $centros_permitidos);
@@ -130,7 +131,9 @@ class SolicitudController extends Controller
             'solicitudColaborador.archivos',
             'solicitudColaborador.SapMaestroCausalesTerminos',
             'solicitudColaborador.checkAreaColaboradores',
-            'solicitudColaborador.estadoadmin'
+            'solicitudColaborador.estadoadmin',
+            'solicitudColaborador.estadovisitador',
+            'solicitudColaborador.estadorrhh',
         ], $conditionals);
     }
 

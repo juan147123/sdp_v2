@@ -119,16 +119,8 @@
                             >
                                 <template #body="{ data }">
                                     <Tag
-                                        :value="
-                                            data.estado.id == 5
-                                                ? 'PENDIENTE'
-                                                : data.estado.descripcion
-                                        "
-                                        :severity="
-                                            data.estado.id == 5
-                                                ? 'warning'
-                                                : data.estado.color
-                                        "
+                                        :value="data.estado.id == 3 ? 'APROBADO': data.estado.descripcion"
+                                        :severity="data.estado.id == 3 ? 'success':data.estado.color"
                                     />
                                 </template>
                                 <template #filter="{ filterModel }">

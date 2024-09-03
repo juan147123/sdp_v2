@@ -60,30 +60,23 @@ Route::middleware([
     Route::get('redirectpage/solicitud/rrhh', [SolicitudController::class, 'redirectPageSolicitudRrhhAprobar'])->name('redirect.solicitud.rrhh');
     Route::get('list/solicitud/rrhh', [SolicitudController::class, 'listAllAprobarRrhh'])->name('list.solicitud.rrhh');
 
-    //APROBADOR CC ESTADO
-    Route::put('solicitudes/status/cc', [SolicitudColaboradorController::class, 'updateStatusAprobadorCC'])->name('solicitud.colaborador.update.status.cc');
-    Route::put('solicitudes/status/masive/cc', [SolicitudColaboradorController::class, 'updateAllStatusAprobadorCC'])->name('solicitud.colaborador.update.masive.cc');
-
-    //APROBAR RRHH
-    Route::put('solicitudes/status/rrhh', [SolicitudColaboradorController::class, 'updateStatusAprobadorRrhh'])->name('solicitud.colaborador.update.status.rrhh');
-    Route::put('solicitudes/status/masive/rrhh', [SolicitudColaboradorController::class, 'updateAllStatusAprobadorRrhh'])->name('solicitud.colaborador.update.masive.rrhh');
-
+    
     //SOLICITUD OBRA
     Route::get('redirectpage/solicitud/obra', [SolicitudController::class, 'redirectPageSolicitudObra'])->name('redirect.solicitud.obra');
-
-
+    
+    
     //SOLICITUD COLABORADOR
     Route::put('solicitudes/status', [SolicitudColaboradorController::class, 'updateStatus'])->name('solicitud.colaborador.update.status');
     Route::put('solicitudes/status/masive', [SolicitudColaboradorController::class, 'updateAllStatus'])->name('solicitud.colaborador.update.masive');
     Route::delete('solicitud/colaborador/delete/{id}', [SolicitudColaboradorController::class, 'delete'])->name('solicitud.colaborador.delete');
-
+    
     //CONFIGURACION AREA
     Route::get('redirectpage/configuraciones/areas', [ConfiguracionController::class, 'listAllArea'])->name('configuracion.list.area');
-
+    
     //COLABORADORES PERU
     Route::get('redirectpage/colaboradores/pe', [ColaboradoresPeruController::class, 'redirectPage'])->name('redirect.colaboradores.pe');
     Route::get('colaboradores/pe', [ColaboradoresPeruController::class, 'getColaboradoresPe'])->name('list.colaboradores.pe');
-
+    
     //COLABORADORES CHILE
     Route::get('redirectpage/colaboradores/cl', [ColaboradoresChileController::class, 'redirectPage'])->name('redirect.colaboradores.cl');
     Route::get('colaboradores/cl', [ColaboradoresChileController::class, 'getColaboradoresCl'])->name('list.colaboradores.cl');
@@ -91,18 +84,18 @@ Route::middleware([
     //COLABORADORES CHILE | OBRA
     Route::get('redirectpage/obra/colaboradores/cl', [ColaboradoresChileController::class, 'redirectPageObraCl'])->name('redirect.colaboradores.obra.cl');
     Route::get('colaboradores/obra/cl', [ColaboradoresChileController::class, 'getColaboradoresObra'])->name('list.colaboradores.obra.cl');
-
+    
     //TERMINOS PERU
     Route::get('terminos/list', [TerminosController::class, 'listAll'])->name('terminos.list');
-
-
+    
+    
     // configuraciones / áreas / checklist
     Route::get('configuraciones/areas', [ConfiguracionController::class, 'listAll'])->name('redirect.configuraciones');
     Route::post('configuraciones/areas ', [ConfiguracionController::class, 'create'])->name('configuraciones.post');
     Route::put('configuraciones/areas ', [ConfiguracionController::class, 'update'])->name('configuraciones.update');
     Route::put('configuraciones/areas/delete ', [ConfiguracionController::class, 'delete'])->name('configuraciones.delete');
     Route::get('configuraciones/area', [ConfiguracionController::class, 'listByIdArea'])->name('list.configuracion.idarea');
-
+    
     //USUARIOS
     Route::post('usuarios/create', [UsuarioController::class, 'create'])->name('usuarios.create');
     Route::put('usuarios/update', [UsuarioController::class, 'update'])->name('usuarios.update');
@@ -116,4 +109,19 @@ Route::middleware([
     Route::get('redirectpage/usuarios', [AplicacionUsuarioController::class, 'redirectUsers'])->name('redirect.usuarios');
     Route::get('list/usuarios', [AplicacionUsuarioController::class, 'listAll'])->name('list.usuarios.seguridad');
     Route::delete('delete/usuarios/{id}', [AplicacionUsuarioController::class, 'delete'])->name('delete.usuarios.seguridad');
+    
+
+    /*  CAMBIOS DE ESTADO MASIVO Y UNICO POR ROLES EN OBRA*/
+
+    //APROBADOR ADMINISTRADOR DE OBRA ESTADO
+    Route::put('solicitudes/status/cc', [SolicitudColaboradorController::class, 'updateStatusAprobadorCC'])->name('solicitud.colaborador.update.status.cc');
+    Route::put('solicitudes/status/masive/cc', [SolicitudColaboradorController::class, 'updateAllStatusAprobadorCC'])->name('solicitud.colaborador.update.masive.cc');
+
+    //APROBADOR VISITADOR DE OBRA ESTADO
+    Route::put('solicitudes/status/visitador', [SolicitudColaboradorController::class, 'updateStatusAprobadorVisitador'])->name('solicitud.colaborador.update.status.visitador');
+    Route::put('solicitudes/status/masive/visitador', [SolicitudColaboradorController::class, 'updateAllStatusVisitador'])->name('solicitud.colaborador.update.masive.visitador');
+    
+    //APROBAR RRHH ESTADO
+    Route::put('solicitudes/status/rrhh', [SolicitudColaboradorController::class, 'updateStatusAprobadorRrhh'])->name('solicitud.colaborador.update.status.rrhh');
+    Route::put('solicitudes/status/masive/rrhh', [SolicitudColaboradorController::class, 'updateAllStatusAprobadorRrhh'])->name('solicitud.colaborador.update.masive.rrhh');
 });

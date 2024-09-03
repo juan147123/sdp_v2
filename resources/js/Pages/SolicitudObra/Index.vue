@@ -524,7 +524,6 @@ export default {
                 acc[descripcion] = (acc[descripcion] || 0) + 1;
                 return acc;
             }, {});
-            console.log(estadoCount);
             // Asegurar que todos los estados deseados estén presentes
             const estadosDeseados = [
                 "CREADO",
@@ -542,14 +541,23 @@ export default {
                         (estadoCount["APROBADO RRHH"] || 0) +
                         (estadoCount["APROBADO ADMINISTRADOR"] || 0) +
                         (estadoCount["APROBADO VISITANTE"] || 0);
-                } else if (estado === "RECHAZADO") {
+                }
+                 else if (estado === "RECHAZADO") {
                     // Sumar todas las variantes de "RECHAZADO"
                     this.conteoSolicitudes["RECHAZADO"] =
                         (estadoCount["RECHAZADO"] || 0) +
                         (estadoCount["RECHAZADO RRHH"] || 0) +
                         (estadoCount["RECHAZADO ADMINISTRADOR"] || 0) +
                         (estadoCount["SOLICITUD RECHAZADA TOTAL"] || 0);
-                } else {
+                } 
+                 else if (estado === "PENDIENTE") {
+                    // Sumar todas las variantes de "RECHAZADO"
+                    this.conteoSolicitudes["PENDIENTE"] =
+                        (estadoCount["PENDIENTE APROBAR POR ADMINISTRADOR DE OBRA"] || 0) +
+                        (estadoCount["PENDIENTE APROBAR POR DE VISITADOR DE OBRA"] || 0) +
+                        (estadoCount["PENDIENTE APROBAR POR RRHH"] || 0) 
+                } 
+                else {
                     // Para otros estados, asignar el valor directamente
                     this.conteoSolicitudes[estado] = estadoCount[estado] || 0;
                 }
@@ -566,7 +574,12 @@ export default {
             let existencia = false;
             data.forEach((colaborador) => {
                 const existen =
-                    colaborador.estadoadmin.id === 7 &&
+                    (
+                        colaborador.estadoadmin?.id === 7 ||
+                        colaborador.estadovisitador?.id === 7 ||
+                        colaborador.estadorrhh?.id === 7 
+                    )
+                    &&
                     colaborador.enable === 1;
                 if (existen) {
                     existencia = true;
