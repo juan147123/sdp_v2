@@ -221,8 +221,7 @@
                                         :value="
                                             data.estadorrhh == null
                                                 ? 'PENDIENTE'
-                                                : data.estadorrhh
-                                                      .descripcion
+                                                : data.estadorrhh.descripcion
                                         "
                                         :severity="
                                             data.estadorrhh == null
@@ -344,7 +343,7 @@ export default {
                     "RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink",
                 currentPageReportTemplate:
                     "Página {currentPage} de {totalPages}",
-                    filters: {
+                filters: {
                     global: {
                         value: null,
                         matchMode: FilterMatchMode.CONTAINS,
@@ -396,14 +395,25 @@ export default {
         },
         solicitud_selected: function (newValue, oldValue) {
             if (newValue) {
-                this.dataTable.data =
-                    this.solicitud_selected.solicitud_colaborador;
+                var data = this.solicitud_selected.solicitud_colaborador;
+
+                if (data != undefined) {
+                    var filterdata = [];
+                    data.forEach((colaborador) => {
+                        if (colaborador.estadovisitador) {
+                            if (colaborador.estadovisitador.id != 7) {
+                                filterdata.push(colaborador);
+                            }
+                        }
+                    });
+                    this.dataTable.data = filterdata;
+                }
             }
         },
     },
     methods: {
         ChangeView(data) {
-            this.$emit("ChangeView",data);
+            this.$emit("ChangeView", data);
         },
 
         getData() {
@@ -540,7 +550,6 @@ export default {
             });
         },
 
-
         async updateStatus(id, status, id_solicitud, mensaje) {
             this.form.id = id;
             this.form.status = status;
@@ -591,15 +600,12 @@ export default {
             );
 
             await axios
-                .put(
-                    this.route("solicitud.colaborador.update.masive.rrhh"),
-                    {
-                        ids: ids,
-                        status: status,
-                        id_solicitud: this.solicitud_selected.id,
-                        comentario_visitador: comentario_visitador,
-                    }
-                )
+                .put(this.route("solicitud.colaborador.update.masive.rrhh"), {
+                    ids: ids,
+                    status: status,
+                    id_solicitud: this.solicitud_selected.id,
+                    comentario_visitador: comentario_visitador,
+                })
                 .then(async (response) => {
                     this.getData();
                     this.onClickClean();

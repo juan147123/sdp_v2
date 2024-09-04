@@ -79,7 +79,7 @@ class SolicitudColaboradorController extends Controller
             ]
         );
 
-        $this->updateStatusSolicitud($request, 3);
+        $this->updateStatusSolicitudVisitador($request, 3);
 
         //enviar correos de estado
         return $update;

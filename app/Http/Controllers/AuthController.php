@@ -69,10 +69,10 @@ class AuthController extends Controller
             // $email = 'ctenazoa@flesan.com.pe';
 
 
-            $email = 'frida.morales@flesan.cl' ; //solicitante DMMTRM0066
+            // $email = 'frida.morales@flesan.cl' ; //solicitante DMMTRM0066
             // $email = 'sebastian.valck@flesan.cl'; //admin de obra
             // $email = 'rsalinas@flesan.cl'; //visitador de obra
-            // $email = 'carolina.zavala@flesan.cl'; // aprobador rrhh
+            $email = 'carolina.zavala@flesan.cl'; // aprobador rrhh
             // $email = 'miguel.opazo@flesan.cl';
         }
 

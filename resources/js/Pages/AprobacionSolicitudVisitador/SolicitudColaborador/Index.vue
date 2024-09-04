@@ -397,7 +397,7 @@ export default {
         solicitud_selected: function (newValue, oldValue) {
             if (newValue) {
                 var data = this.solicitud_selected.solicitud_colaborador;
-                console.log(data);
+                
                 if (data != undefined) {
                     var filterdata = [];
                     data.forEach((colaborador) => {
