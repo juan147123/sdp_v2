@@ -74,9 +74,10 @@ class SolicitudController extends Controller
             $aprobador = $this->personalChileRepository->getAprobadorObraCL(Auth::user()->username);
             $centros_permitidos = array("centro_costo" => explode(',', trim($aprobador->cc, '{}')));
             if (Auth::user()->username == 'miguel.opazo@flesan.cl') {
-                array_push($centros_permitidos, 'CFMR10005CFM');
+                $centros_permitidos['centro_costo'][] = 'CFMR10005CFM';
             }
         }
+       
         //CFMR10005CFM
         $result = $this->repository->all(['*'], [
             'estado',
@@ -103,7 +104,7 @@ class SolicitudController extends Controller
         if (!in_array('SUPERAD', session('objeto_permitido'))) {
             $aprobador = $this->personalChileRepository->getVisitadorObraCL(Auth::user()->username);
             $centros_permitidos = array("centro_costo" => explode(',', trim($aprobador->cc, '{}')));
-            if (Auth::user()->username == 'miguel.opazo@flesan.cl') {
+            if (Auth::user()->username == 'cristian.donoso@flesan.cl') {
                 array_push($centros_permitidos, 'CFMR10005CFM');
             }
         }
@@ -339,7 +340,7 @@ class SolicitudController extends Controller
             'solicitudColaborador.estadorrhh',
             'solicitudColaborador.SapMaestroCausalesTerminos',
             'solicitudColaborador.checkAreaColaboradores'
-        ])->whereIn('estado.id', [3, 4, 5]);
+        ])->whereIn('estado.id', [3, 4, 5])->where("enable",1);
 
         return $result->values();
     }

@@ -236,6 +236,21 @@
                                             severity="warning"
                                             @click="alertaAVisitadorObra(data)"
                                         />
+                                       
+                                        <Button
+                                            v-if="
+                                                data.estadorrhh?.id == 7 &&
+                                                data.enable == 1
+                                            "
+                                            icon="pi pi-exclamation-triangle "
+                                            class="ml-2"
+                                            style="
+                                                width: 2rem !important;
+                                                height: 2rem !important;
+                                            "
+                                            severity="warning"
+                                            @click="alertaRrhh(data)"
+                                        />
                                     </div>
                                 </template>
                             </Column>
@@ -516,6 +531,13 @@ export default {
             this.visibleComentarioAdmin = !this.visibleComentarioAdmin;
             this.title = "Comentario del Visitador de Obra";
             this.comentario = data.comentario_visitador;
+            this.id_deactivate = data.id;
+            this.id_data_deactivate = data.id_solicitud;
+        },
+        alertaRrhh(data) {
+            this.visibleComentarioAdmin = !this.visibleComentarioAdmin;
+            this.title = "Comentario del administrador de RRHH";
+            this.comentario = data.comentario_rrhh;
             this.id_deactivate = data.id;
             this.id_data_deactivate = data.id_solicitud;
         },
