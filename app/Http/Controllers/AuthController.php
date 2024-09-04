@@ -52,28 +52,15 @@ class AuthController extends Controller
         // if ($email == 'serodriguez@flesan.com.pe') {
         //     $email = 'dcollas@flesan.com.pe';
         if ($email == 'jmestanza@flesan.com.pe') {
-            // $email = 'abeckdorf@flesan.com.pe';
-            // $email = 'sebastian.valck@flesan.cl';
-            // $email = 'jorge.barrozo@flesan.cl';
-            // $email = 'acandia@flesan.cl';
-            // $email = 'SEBASTIAN.VALCK@FLESAN.CL';
-            // $email = 'mmatamoros@flesan.com.pe';
-            // $email = 'ESM@FLESAN.CL';
-            // $email = 'jorge.fernandezdelrio@flesan.cl';
-            // $email = 'david.vilugron@flesan.cl'; //pendiente
-            // $email = 'jonathan.gaete@dvc.cl';
-            // $email = 'sebastian.valck@flesan.cl';
-            // $email = 'serodriguez@flesan.com.pe';
-
             // $email = 'fabian.castro@flesan.cl';
-            // $email = 'ctenazoa@flesan.com.pe';
-
-
-            $email = 'miguel.opazo@flesan.cl'; //solicitante DMMTRM0066
-            // $email = 'sebastian.valck@flesan.cl'; //admin de obra
-            // $email = 'rsalinas@flesan.cl'; //visitador de obra
-            // $email = 'carolina.zavala@flesan.cl'; // aprobador rrhh
+            // $email = 'marcos.gallardo@flesan.cl';
             // $email = 'miguel.opazo@flesan.cl';
+            // $email = 'cristian.donoso@flesan.cl';
+            // $email = 'felisa.castillo@flesan.cl';
+            // $email = 'carlos.hermosilla@flesan.cl';
+            // $email = 'fernanda.stanic@flesan.cl';
+            $email = 'catalina.fuentes@flesan.cl';
+            
         }
 
 
@@ -238,6 +225,8 @@ class AuthController extends Controller
             $redirect = 'redirect.configuraciones';
         } else if (in_array(env("ADMAREA"), $objeto_permitido)) {
             $redirect = 'redirect.solicitud.area';
+        } else if (in_array(env("APROBVISITADOR"), $objeto_permitido)) {
+            $redirect = 'redirect.solicitud.visitador.aprobar';
         }
         return redirect()->route($redirect);
     }

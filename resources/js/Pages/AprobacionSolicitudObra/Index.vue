@@ -119,8 +119,8 @@
                             >
                                 <template #body="{ data }">
                                     <Tag
-                                        :value="data.estado.id == 2 ? 'APROBADO': data.estado.descripcion"
-                                        :severity="data.estado.id == 2 ? 'success':data.estado.color"
+                                        :value="(data.estado.id == 2 ||data.estado.id == 3) ? 'APROBADO': data.estado.descripcion"
+                                        :severity="(data.estado.id == 2 ||data.estado.id == 3) ? 'success':data.estado.color"
                                     />
                                 </template>
                                 <template #filter="{ filterModel }">
