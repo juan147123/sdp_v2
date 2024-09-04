@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\{
     AplicacionUsuarioController,
+    ArchivosController,
     SolicitudController,
     AuthController,
     ColaboradoresChileController,
@@ -47,7 +48,7 @@ Route::middleware([
     Route::get('redirectpage/solicitud', [SolicitudController::class, 'redirectPage'])->name('redirect.solicitud');
     Route::get('list/solicitud', [SolicitudController::class, 'listAll'])->name('list.solicitud');
     Route::post('create/solicitud/multiple', [SolicitudController::class, 'createMultiple'])->name('create.solicitud.multiple');
-    Route::post('update/solicitud/multiple/{id}', [SolicitudController::class, 'updateMultiple'])->name('update.solicitud.multiple');
+    Route::post('update/solicitud/multiple', [SolicitudController::class, 'updateMultiple'])->name('update.solicitud.multiple');
 
     //SOLICITUD APROBAR OBRA
     Route::get('redirectpage/solicitud/aprobar', [SolicitudController::class, 'redirectPageSolicitudObraAprobarCC'])->name('redirect.solicitud.aprobar');
@@ -125,4 +126,7 @@ Route::middleware([
     //APROBAR RRHH ESTADO
     Route::put('solicitudes/status/rrhh', [SolicitudColaboradorController::class, 'updateStatusAprobadorRrhh'])->name('solicitud.colaborador.update.status.rrhh');
     Route::put('solicitudes/status/masive/rrhh', [SolicitudColaboradorController::class, 'updateAllStatusAprobadorRrhh'])->name('solicitud.colaborador.update.masive.rrhh');
+    
+    //ARCHIVOS
+    Route::put('archivos/delete/{id}', [ArchivosController::class, 'delete'])->name('archivos.delete');
 });

@@ -81,6 +81,7 @@
                             >
                             <input
                                 type="file"
+                                multiple
                                 @change="
                                     handleFileChange(
                                         $event,
@@ -100,6 +101,7 @@
                             >
                             <input
                                 type="file"
+                                multiple
                                 @change="
                                     handleFileChange($event, index, 'cese_dt')
                                 "
@@ -116,6 +118,7 @@
                             <input
                                 required
                                 type="file"
+                                multiple
                                 @change="
                                     handleFileChange($event, index, 'cese_afc')
                                 "
@@ -131,6 +134,7 @@
                             >
                             <input
                                 type="file"
+                                multiple
                                 @change="
                                     handleFileChange(
                                         $event,
@@ -149,6 +153,7 @@
                             >
                             <input
                                 type="file"
+                                multiple
                                 @change="
                                     handleFileChange(
                                         $event,
@@ -167,6 +172,7 @@
                             >
                             <input
                                 type="file"
+                                multiple
                                 @change="
                                     handleFileChange(
                                         $event,
@@ -185,6 +191,7 @@
                             >
                             <input
                                 type="file"
+                                multiple
                                 @change="
                                     handleFileChange(
                                         $event,
@@ -203,6 +210,7 @@
                             >
                             <input
                                 type="file"
+                                multiple
                                 @change="
                                     handleFileChange(
                                         $event,

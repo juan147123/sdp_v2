@@ -2,19 +2,21 @@
 
 namespace App\Repositories;
 
-use App\Models\Archivo;
 use App\Interfaces\ArchivoRepositoryInterface;
+use App\Models\Archivos;
 use Illuminate\Support\Facades\Storage;
 
 class ArchivoRepository extends BaseRepository implements ArchivoRepositoryInterface
 {
+    protected $model;
 
-    public function __construct() {}
+    public function __construct(Archivos $model) {
+        $this->model = $model;
+    }
 
     public function uploadFile($archivos, $id, $new_solicitud, $origen)
     {
         $resultados = [];
-
         foreach ($archivos as $archivo) {
             $filename = $archivo->getClientOriginalName();
             $extension = $archivo->getClientOriginalExtension();
@@ -35,7 +37,6 @@ class ArchivoRepository extends BaseRepository implements ArchivoRepositoryInter
                 "origen" => $origen
             );
         }
-
         return $resultados;
     }
 

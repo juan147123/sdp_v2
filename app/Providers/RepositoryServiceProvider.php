@@ -15,6 +15,7 @@ use App\Interfaces\{
     TerminosRepositoryInterface,
     UsuarioRepositoryInterface,
     UsuarioRolRepositoryInterface,
+    ArchivoRepositoryInterface,
 };
 use App\Repositories\{
     AplicacionUsuarioRepository,
@@ -28,6 +29,7 @@ use App\Repositories\{
     TerminosRepository,
     UsuarioRepository,
     UsuarioRolRepository,
+    ArchivoRepository
 };
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -50,6 +52,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ConfiguracionRepositoryInterface::class, ConfiguracionRepository::class);
         $this->app->bind(TerminosRepositoryInterface::class, TerminosRepository::class);
         $this->app->bind(EstadosRepositoryInterface::class, EstadosRepository::class);
+        $this->app->bind(ArchivoRepositoryInterface::class, ArchivoRepository::class);
     }
 
     /**

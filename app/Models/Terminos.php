@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Scopes\EnableScope;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -53,5 +54,11 @@ class Terminos extends Model
     public function solicitudColaboradors()
     {
         return $this->hasMany('App\Models\SolicitudColaborador', 'motivo', 'externalcode');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope(new EnableScope);
     }
 }

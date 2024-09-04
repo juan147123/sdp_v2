@@ -401,7 +401,7 @@ div:where(.swal2-container) .swal2-html-container {
 }
 
 /* Select 2 */
-.select2{
+.select2 {
     margin: 0 !important;
     width: 100% !important;
 }
@@ -416,10 +416,10 @@ div:where(.swal2-container) .swal2-html-container {
     font-size: 12px;
 }
 .select2-results__option {
-    font-size: 12px; 
+    font-size: 12px;
 }
 
-.label-filter{
+.label-filter {
     font-size: 14px;
 }
 /* card */
@@ -449,7 +449,6 @@ div:where(.swal2-container) .swal2-html-container {
 .modal-body {
     font-size: 14px;
 }
-
 
 /* checkform css checkbox-wrapper-area */
 .form-check-input[type="checkbox"]:indeterminate {
@@ -827,7 +826,11 @@ div:where(.swal2-container) .swal2-html-container {
     cursor: pointer;
     padding: 5px;
 }
-.accordion-button{
+.accordion-button {
     height: 20px !important;
     font-size: 12px !important;
+}
+
+.swal2-container {
+    z-index: 999999 !important;
 }

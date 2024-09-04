@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Scopes\EnableScope;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -41,5 +42,11 @@ class Archivos extends Model
     public function solicitudColaborador()
     {
         return $this->belongsTo('App\Models\SolicitudColaborador', 'id_solicitud_colaborador');
+    }
+    
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope(new EnableScope);
     }
 }

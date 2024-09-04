@@ -71,14 +71,63 @@
                                 required
                             />
                         </div>
-                        <div class="mb-1" style="font-size: 12px">
+                        <div>
+                            <div class="flex flex-column mb-3">
+                                <label for="input1" class="form-label"
+                                    >Archivos adjuntos
+                                </label>
+                                <span
+                                    class="text-danger"
+                                    style="font-size: 13px"
+                                    >Si es necesario corregir un documento,
+                                    elimínalo y adjúntalo nuevamente.</span
+                                >
+                            </div>
                             <div
-                                class="flex  border gap-1"
-                                v-for="archivo in colaborador.archivos"
+                                v-for="(
+                                    archivo, indexarchivo
+                                ) in colaborador.archivos"
+                                class="m-1 p-1 border"
+                                style="font-size: 12px"
+                                :id="index + 'archivo' + indexarchivo"
                             >
-                                <i class="pi pi-file-o"></i>
-                                <strong>{{ archivo.origen }}</strong>
-                                <span>{{ archivo.name }}</span>
+                                <div class="">
+                                    <div class="flex text-align-center">
+                                        <i class="pi pi-file-o"></i>
+                                        <strong>{{
+                                            this.setOrigen(archivo.origen)
+                                        }}</strong>
+                                    </div>
+                                </div>
+
+                                <div class="ml-2">
+                                    <div class="text-left">
+                                        <span>{{ archivo.name }}</span>
+                                    </div>
+                                    <div>
+                                        <a
+                                            :href="this.ruta + archivo.path"
+                                            target="_blank"
+                                        >
+                                            <i
+                                                class="pi pi-download text-success mr-1"
+                                            >
+                                            </i>
+                                        </a>
+                                        <i
+                                            class="pi pi-trash text-danger"
+                                            style="cursor: pointer"
+                                            @click="
+                                                deleteData(
+                                                    index +
+                                                        'archivo' +
+                                                        indexarchivo,
+                                                    archivo.id
+                                                )
+                                            "
+                                        ></i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -248,6 +297,7 @@ import Preloader from "@/Components/Preloader.vue";
 import { rutaBase, pathName } from "../../../../../Utils/utils.js";
 import PrimeVueComponents from "../../../../primevue.js";
 import * as mensajes from "../../../../../Utils/message.js";
+import { setSwal } from "../../../../../Utils/swal.js";
 export default {
     props: ["terminos", "colaboradoresDetalle", "visiblemultiple"],
     emits: ["onClickClean", "showModal", "getData"],
@@ -260,6 +310,7 @@ export default {
             mensaje: "",
             isLoadingForm: false,
             formData: this.$inertia.form({}),
+            ruta: rutaBase,
         };
     },
     mounted() {},
@@ -276,13 +327,19 @@ export default {
             this.colaboradoresDetalle.forEach((colaborador, index) => {
                 const keys = Object.keys(colaborador);
                 keys.forEach((key) => {
+                    this.formData["id" + index] = colaborador.id;
+                    this.formData["id_solicitud" + index] =
+                        colaborador.id_solicitud;
                     this.formData["user_id" + index] = colaborador.user_id;
                     this.formData["nombre_completo" + index] =
                         colaborador.nombre_completo;
                     this.formData["motivo" + index] = colaborador.motivo;
-                    this.formData["fecha_desvinculacion" + index] = new Date();
+                    this.formData["fecha_desvinculacion" + index] = new Date(
+                        colaborador.fecha_desvinculacion
+                    );
                     this.formData["redireccion" + index] = "";
-                    this.formData["rut_empresa" + index] = colaborador.rut;
+                    this.formData["rut_empresa" + index] =
+                        colaborador.rut_empresa;
                     this.formData["centro_costo" + index] =
                         colaborador.centro_costo;
                     /* archivos */
@@ -314,11 +371,11 @@ export default {
             this.mensaje =
                 "registrando la solicitud, esto demorara según la cantidad y tamaño de los archivos";
             this.$inertia.post(
-                rutaBase + "/update/solicitud/multiple/1",
+                rutaBase + "/update/solicitud/multiple",
                 this.formData,
                 {
                     onFinish: () => {
-                        this.showModal();
+                        /*     this.showModal();
                         this.getData();
                         this.isLoadingForm = false;
                         this.mensaje = "";
@@ -328,7 +385,7 @@ export default {
                             summary: "Notificación",
                             detail: mensajes.MENSAJE_EXITO,
                             life: 3000,
-                        });
+                        }); */
                     },
                 }
             );
@@ -394,11 +451,61 @@ export default {
         handleFileChange(event, index, column) {
             const file = event.target.files[0];
             if (file) {
-                // Asigna el archivo directamente en lugar de envolverlo en un arreglo
-                this.formData[column + index] = file;
-            } else {
-                // Asegúrate de limpiar el valor si no hay archivo seleccionado
-                this.formData[column + index] = null;
+                this.formData[column + index] = [file];
+            }
+        },
+        setOrigen(origen) {
+            var origen_detail = "";
+            switch (origen) {
+                case "carta_firmada":
+                    origen_detail = "Carta firmada";
+                    break;
+                case "cese_dt":
+                    origen_detail = "CESE DT";
+                    break;
+                case "cese_afc":
+                    origen_detail = "CESE AFC";
+                    break;
+                case "convenio_practica":
+                    origen_detail =
+                        "Carta firmada o comprobante de envio por correo certificado";
+                    break;
+                case "aporte_empleador":
+                    origen_detail = "Aporte empleador AFC";
+                    break;
+                case "cert_defuncion":
+                    origen_detail = "CERTIFICADO DE DEFUNCIÓN";
+                    break;
+                case "boleta_funebre":
+                    origen_detail = "Boleta o comprobante de gastos funebres";
+                    break;
+                case "info_bancaria":
+                    origen_detail = "Información bancaria del beneficiario";
+                    break;
+                default:
+                    origen_detail = "Descripción no disponible";
+                    break;
+            }
+            return origen_detail;
+        },
+        deleteData(id, idFile) {
+            setSwal({
+                value: "deleteForm",
+                callback: () => {
+                    this.deleteFile(id, idFile);
+                    this.getData();
+                },
+            });
+        },
+        async deleteFile(id, idFile) {
+            let file = document.getElementById(id);
+            if (file) {
+                try {
+                    await axios.put(`${this.ruta}/archivos/delete/${idFile}`);
+                    file.remove();
+                } catch (error) {
+                    console.error("Error al eliminar el archivo:", error);
+                }
             }
         },
     },
