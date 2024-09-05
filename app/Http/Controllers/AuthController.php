@@ -59,7 +59,7 @@ class AuthController extends Controller
             // $email = 'felisa.castillo@flesan.cl';
             // $email = 'carlos.hermosilla@flesan.cl';
             // $email = 'fernanda.stanic@flesan.cl';
-            $email = 'catalina.fuentes@flesan.cl';
+            $email = 'alejandro.candia@flesan.cl';
             
         }
 
@@ -95,6 +95,9 @@ class AuthController extends Controller
         }
        
         if ($email == 'cesar.munoz@flesan.cl') {  //visitador de Obra DMOPR8110PU  
+            $email = 'fernanda.stanic@flesan.cl';
+        }
+        if ($email == 'alejandro.candia@flesan.cl') {  //visitador de Obra DMOPR8110PU  
             $email = 'fernanda.stanic@flesan.cl';
         }
 
