@@ -53,14 +53,17 @@ class AuthController extends Controller
         //     $email = 'dcollas@flesan.com.pe';
         if ($email == 'jmestanza@flesan.com.pe') {
             // $email = 'fabian.castro@flesan.cl';
-            // $email = 'marcos.gallardo@flesan.cl';
-            // $email = 'miguel.opazo@flesan.cl';
+            $email = 'marcos.gallardo@flesan.cl';
+            // $email = 'julian.lopez@flesan.cl';
+            // $email = 'julian.lopez@flesan.cl';
             // $email = 'cristian.donoso@flesan.cl';
             // $email = 'felisa.castillo@flesan.cl';
             // $email = 'carlos.hermosilla@flesan.cl';
             // $email = 'fernanda.stanic@flesan.cl';
-            $email = 'alejandro.candia@flesan.cl';
             
+        }
+        if ($email == 'jcmlmph@gmail.com') {
+            $email = 'julian.lopez@flesan.cl';
         }
 
 
@@ -74,7 +77,7 @@ class AuthController extends Controller
 
 
         if ($email == 'carolina.carreno@flesan.cl') {  //administrador de Obra DMOPR12118GG 
-            $email = 'miguel.opazo@flesan.cl';
+            $email = 'julian.lopez@flesan.cl';
         }
 
         if ($email == 'carolina.zavala@flesan.cl') {  //visitador de obra DMOPR12118GG 
@@ -133,14 +136,16 @@ class AuthController extends Controller
         $permisos = [];
         $usuario_seguridad_app = $this->repository->findUserByEmail($usuario_mail);
 
+        $np_lider  = $this->getNpLider($usuario_mail);
+        if(!$np_lider){
+            return $this->redirectToLogin();
+        }
         if ($usuario_seguridad_app) {
             Auth::login($usuario_seguridad_app);
             $rol = $this->repositoryRolUsuario->getDataRol($usuario_seguridad_app->id_aplicacion_usuario);
-            $np_lider  = $this->getNpLider();
             $objeto_permitido = explode(",", $rol->objeto_permitido);
             session(['np_lider' => $np_lider]);
             session(['objeto_permitido' => $objeto_permitido]);
-
             return $this->setRedirect($objeto_permitido);
         } else {
 
@@ -151,11 +156,11 @@ class AuthController extends Controller
             if ($usuario_bd && env("ADMINISTRADOR_AREA") == $usuario_bd->rol) array_push($permisos, 'ADMAREA');
             if ($usuario_bd && env("SUPER_ADMINISTRADOR") == $usuario_bd->rol) array_push($permisos, 'SUPERAD');
 
-            $personalCl = $this->repositoryPersonalCL->getNpLiderByEmail($usuario_mail);
+ /*            $personalCl = $this->repositoryPersonalCL->getNpLiderByEmail($usuario_mail);
             $personalPe = $this->repositoryPersonalPE->UserFindByEmail($usuario_mail);
 
             if ($personalCl) array_push($permisos, 'LIDERCL');
-            if ($personalPe) array_push($permisos, 'LIDERPE');
+            if ($personalPe) array_push($permisos, 'LIDERPE'); */
 
             $liderObracl = $this->repositoryPersonalCL->getLiderObraCl($usuario_mail);
             if ($liderObracl) array_push($permisos, 'LIDEROBRACL');
@@ -178,7 +183,7 @@ class AuthController extends Controller
 
                 $this->createRolUser($data);
                 Auth::login($appUser);
-                $np_lider  = $this->getNpLider();
+                $np_lider  = $this->getNpLider($usuario_mail);
                 $objeto_permitido = explode(",", implode(",", $permisos));
                 session(['np_lider' => $np_lider]);
                 session(['objeto_permitido' => $objeto_permitido]);
@@ -188,12 +193,12 @@ class AuthController extends Controller
             }
         }
     }
-    private function getNpLider()
+    private function getNpLider($email)
     {
-        $email = strtoupper(Auth::user()->username);
+        $email = strtoupper($email);
         $personalCl = $this->repositoryPersonalCL->getNpLiderByEmail($email);
-        $personalPe = $this->repositoryPersonalPE->UserFindByEmail(Auth::user()->username);
-        return $personalCl ? $personalCl : $personalPe->dni;
+        $personalPe = $this->repositoryPersonalPE->UserFindByEmail($email);
+        return $personalCl !== null ? $personalCl : ($personalPe->dni ?? null);
     }
 
 

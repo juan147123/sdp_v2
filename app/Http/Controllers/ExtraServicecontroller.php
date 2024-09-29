@@ -33,10 +33,11 @@ class ExtraServicecontroller extends Controller
         $data = [
             'cuerpo' => $body,
             'asunto' => $subject,
-            'destinatarios' => $emails_to
+            'destinatarios' => $emails_to,
+            'cabecera_img' => 'https://api.grupoflesan.com/img/LogoSDP.png'
         ];
         $response = Http::withHeaders($headers)->post(
-            "{$URL_API}sendNotificacion",
+            "{$URL_API}sendNotificacionVacia",
             $data
         );
         return $response;

@@ -195,6 +195,14 @@
                                         :value="data.estado.descripcion"
                                         :severity="data.estado.color"
                                     />
+
+                                    <Tag
+                                        v-if="this.countStatus(data.solicitud_colaborador) > 0"
+                                        style="font-size: 11px"
+                                        class="mt-1"
+                                        :value="('rechazados' +this.countStatus(data.solicitud_colaborador))"
+                                        severity="danger"
+                                    />
                                 </template>
                                 <template #filter="{ filterModel }">
                                     <MultiSelect
@@ -397,6 +405,9 @@ export default {
         this.initializeDropdownsData();
     },
     methods: {
+        countStatus(colaboradores){
+            return colaboradores.filter(colaborador => colaborador.aprobado_administrador_obra === 7).length;
+        },
         async updateStatus(id, status, id_solicitud) {
             this.form.id = id;
             this.form.status = status;

@@ -68,6 +68,7 @@
                                         'fecha_desvinculacion' + index
                                     ]
                                 "
+                                dateFormat="dd/mm/yy"
                                 required
                             />
                         </div>

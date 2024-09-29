@@ -119,8 +119,18 @@
                             >
                                 <template #body="{ data }">
                                     <Tag
-                                        :value="(data.estado.id == 2 ||data.estado.id == 3) ? 'APROBADO': data.estado.descripcion"
-                                        :severity="(data.estado.id == 2 ||data.estado.id == 3) ? 'success':data.estado.color"
+                                        :value="
+                                            data.estado.id == 2 ||
+                                            data.estado.id == 3
+                                                ? 'APROBADO'
+                                                : data.estado.descripcion
+                                        "
+                                        :severity="
+                                            data.estado.id == 2 ||
+                                            data.estado.id == 3
+                                                ? 'success'
+                                                : data.estado.color
+                                        "
                                     />
                                 </template>
                                 <template #filter="{ filterModel }">
@@ -270,11 +280,13 @@ export default {
             this.form.id = id;
             this.form.status = status;
             this.form.id_solicitud = id_solicitud;
+            this.mensaje = "espere mientras se efectuan los cambios....";
+            this.isLoadingForm = true;
 
             await new Promise((resolve) => {
                 setSwal({
                     value: "updateStatusInput",
-                    data:status,
+                    data: status,
                     callback: async (comentario) => {
                         resolve();
                         this.update(comentario);
@@ -284,8 +296,6 @@ export default {
         },
 
         update(comentario) {
-            this.mensaje = "espere mientras se efectuan los cambios....";
-            this.isLoadingForm = true;
             this.form.comentario = comentario;
             this.form.put(this.route("solicitud.colaborador.update.status"), {
                 onFinish: () => {
@@ -330,7 +340,7 @@ export default {
                 }
             );
         },
-        
+
         /* NUEVO CODIGO */
         async getData() {
             self = this;

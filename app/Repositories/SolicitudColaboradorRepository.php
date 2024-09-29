@@ -64,11 +64,11 @@ class SolicitudColaboradorRepository extends BaseRepository implements
             ->where('id_solicitud', $idSolicitud)
             ->get()
             ->count();
-            return $data;
-        }
-        public function getSolicitudColaboradorPendinteRrhh($idSolicitud, $status)
-        {
-            $data = $this->model
+        return $data;
+    }
+    public function getSolicitudColaboradorPendinteRrhh($idSolicitud, $status)
+    {
+        $data = $this->model
             ->where('aprobado_rrhh', $status)
             ->where('aprobado_visitador_obra', '!=', 7)
             ->where('id_solicitud', $idSolicitud)

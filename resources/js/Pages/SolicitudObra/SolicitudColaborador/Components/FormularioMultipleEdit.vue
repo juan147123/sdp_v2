@@ -68,6 +68,7 @@
                                         'fecha_desvinculacion' + index
                                     ]
                                 "
+                                dateFormat="dd/mm/yy"
                                 required
                             />
                         </div>
@@ -375,7 +376,7 @@ export default {
                 this.formData,
                 {
                     onFinish: () => {
-                        /*     this.showModal();
+                            this.showModal();
                         this.getData();
                         this.isLoadingForm = false;
                         this.mensaje = "";
@@ -385,7 +386,7 @@ export default {
                             summary: "Notificación",
                             detail: mensajes.MENSAJE_EXITO,
                             life: 3000,
-                        }); */
+                        });
                     },
                 }
             );

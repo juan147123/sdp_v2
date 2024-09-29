@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Interfaces\SolicitudColaboradorRepositoryInterface;
 use App\Interfaces\SolicitudRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Auth;
 
 class SolicitudColaboradorController extends Controller
 {
@@ -62,7 +64,12 @@ class SolicitudColaboradorController extends Controller
             ]
         );
 
-        $this->updateStatusSolicitud($request, 2);
+        $solicitud_colaborador = $this->repository->findById($request->id);
+        $solicitud = $this->repositorySolicitud->findById($request->id_solicitud);
+
+        $this->sendMailStatus($solicitud, $solicitud_colaborador, $request->status,"administrador de obra");
+
+        $this->updateStatusSolicitud($request, null);
 
         //enviar correos de estado
         return $update;
@@ -78,6 +85,11 @@ class SolicitudColaboradorController extends Controller
                 "comentario_visitador" => $request->comentario_visitador,
             ]
         );
+
+        $solicitud_colaborador = $this->repository->findById($request->id);
+        $solicitud = $this->repositorySolicitud->findById($request->id_solicitud);
+
+        $this->sendMailStatus($solicitud, $solicitud_colaborador, $request->status,"visitador de obra");
 
         $this->updateStatusSolicitudVisitador($request, 3);
 
@@ -117,7 +129,6 @@ class SolicitudColaboradorController extends Controller
             $request->id_solicitud,
             $status
         );
-
         $solicitudes_aprobadas = $this->repository->getSolicitudColaboradorPendinteAdmObr(
             $request->id_solicitud,
             6
@@ -179,5 +190,37 @@ class SolicitudColaboradorController extends Controller
             $nuevoStatus = ($solicitudes_aprobadas != 0) ? 4 : 5;
             $this->repositorySolicitud->update($request->id_solicitud, ["status" => $nuevoStatus]);
         }
+    }
+
+    public function sendMailStatus($solicitud, $solicitud_colaborador, $status,$rol)
+    {
+        $estados = [
+            6 => ['cabecera' => 'APROBADO(A)', 'descripcion' => 'APROBACIÓN'],
+            'default' => ['cabecera' => 'RECHAZADO(A)', 'descripcion' => 'RECHAZO']
+        ];
+
+        $estado = $estados[$status] ?? $estados['default'];         
+
+        $body = View::make('emails.SolicitudColaboradorEstado', [
+            'data' => [
+                'solicitud' => $solicitud,
+                'solicitud_colaborador' => $solicitud_colaborador,
+                'estado_cabecera' => $estado['cabecera'],
+                'estado_descripcion' => $estado['descripcion'],
+                'rol_usuario' => $rol,
+                'linkAcceso' => 'qadesvinculaciones.grupoflesan.com',
+                'usuario' => strtoupper(Auth::user()->name),
+            ],
+        ])->render();
+
+        $emails_to = 'jmestanza@flesan.com.pe';
+
+        $subject = "{$estado['descripcion']} DE COLABORADOR - SISTEMA DE DESVINCULACIÓN SDP";
+
+        ExtraServicecontroller::send_email_gf(
+            $body,
+            $subject,
+            $emails_to
+        );
     }
 }

@@ -10,6 +10,7 @@ use App\Models\Archivos;
 use App\Repositories\ArchivoRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 use Inertia\Inertia;
 
 class SolicitudController extends Controller
@@ -73,11 +74,11 @@ class SolicitudController extends Controller
         if (!in_array('SUPERAD', session('objeto_permitido'))) {
             $aprobador = $this->personalChileRepository->getAprobadorObraCL(Auth::user()->username);
             $centros_permitidos = array("centro_costo" => explode(',', trim($aprobador->cc, '{}')));
-            if (Auth::user()->username == 'miguel.opazo@flesan.cl') {
+            if (Auth::user()->username == 'julian.lopez@flesan.cl') {
                 $centros_permitidos['centro_costo'][] = 'CFMR10005CFM';
             }
         }
-       
+
         //CFMR10005CFM
         $result = $this->repository->all(['*'], [
             'estado',
@@ -105,7 +106,7 @@ class SolicitudController extends Controller
             $aprobador = $this->personalChileRepository->getVisitadorObraCL(Auth::user()->username);
             $centros_permitidos = array("centro_costo" => explode(',', trim($aprobador->cc, '{}')));
             if (Auth::user()->username == 'cristian.donoso@flesan.cl') {
-                array_push($centros_permitidos, 'CFMR10005CFM');
+                $centros_permitidos['centro_costo'][] = 'CFMR10005CFM';
             }
         }
         $result = $this->repository->all(['*'], [
@@ -226,6 +227,22 @@ class SolicitudController extends Controller
             $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos8, "convenio_practica");
         }
 
+
+        $body = View::make('emails.NuevaSolicitud', [
+            'data' => [
+                'solicitud' => $new_solicitud,
+                'linkAcceso' => 'qadesvinculaciones.grupoflesan.com',
+                'usuario' => strtoupper(Auth::user()->name),
+            ],
+        ])->render();
+        $emails_to = 'jmestanza@flesan.com.pe';
+        $subject = 'SISTEMA DE DESVINCULACIÓN SDP';
+        ExtraServicecontroller::send_email_gf(
+            $body,
+            $subject,
+            $emails_to
+        );
+
         return redirect($request->pathname0);
     }
 
@@ -340,7 +357,7 @@ class SolicitudController extends Controller
             'solicitudColaborador.estadorrhh',
             'solicitudColaborador.SapMaestroCausalesTerminos',
             'solicitudColaborador.checkAreaColaboradores'
-        ])->whereIn('estado.id', [3, 4, 5])->where("enable",1);
+        ])->whereIn('estado.id', [3, 4, 5])->where("enable", 1);
 
         return $result->values();
     }
