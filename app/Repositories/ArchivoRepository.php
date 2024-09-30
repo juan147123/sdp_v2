@@ -14,7 +14,7 @@ class ArchivoRepository extends BaseRepository implements ArchivoRepositoryInter
         $this->model = $model;
     }
 
-    public function uploadFile($archivos, $id, $new_solicitud, $origen)
+    public function uploadFile($archivos, $id, $new_solicitud, $origen,$titulo)
     {
         $resultados = [];
         foreach ($archivos as $archivo) {
@@ -34,7 +34,8 @@ class ArchivoRepository extends BaseRepository implements ArchivoRepositoryInter
                 "uuid_name" => $fileUuid,
                 "uuid" => $uuid,
                 "carpeta" => $carpeta,
-                "origen" => $origen
+                "origen" => $origen,
+                "titulo" => $titulo
             );
         }
         return $resultados;

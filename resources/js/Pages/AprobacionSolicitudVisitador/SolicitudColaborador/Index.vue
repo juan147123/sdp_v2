@@ -583,6 +583,7 @@ export default {
             await new Promise((resolve) => {
                 setSwal({
                     value: "aprobar_rechazo",
+                    data: status,
                     mensaje: mensaje,
                     callback: async (comentario_visitador) => {
                         resolve();

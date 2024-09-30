@@ -33,7 +33,8 @@ class Archivos extends Model
         'enable',
         'carpeta',
         'uuid',
-        'origen'
+        'origen',
+        'titulo'
     ];
 
     /**

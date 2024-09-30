@@ -237,7 +237,7 @@ export function setSwal(options) {
                 cancelButtonText: "Cancelar",
                 showLoaderOnConfirm: true,
                 preConfirm: (comentario) => {
-                    if ((data == 6 || data == 9) && !comentario) {
+                    if ((data == 7) && !comentario) {
                         Swal.showValidationMessage("El campo es obligatorio");
                         return false;
                     }
@@ -260,7 +260,7 @@ export function setSwal(options) {
                 cancelButtonText: "Cancelar",
                 showLoaderOnConfirm: true,
                 preConfirm: (comentario) => {
-                    if ((data == 6 || data == 9) && !comentario) {
+                    if ((data == 7) && !comentario) {
                         Swal.showValidationMessage("El campo es obligatorio");
                         return false;
                     }

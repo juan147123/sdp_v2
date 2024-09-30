@@ -9,7 +9,7 @@
                         v-model:selection="colaboradoresDetalle"
                         dataKey="user_id"
                         :value="dataTable.data"
-                        FilterMatchMode 
+                        FilterMatchMode
                         :rows="dataTable.rows"
                         showGridlines
                         paginator
@@ -161,27 +161,6 @@
                         </Column>
 
                         <Column
-                            filterField="full_ceco"
-                            field="full_ceco"
-                            header="Centro de costo"
-                            headerStyle="background-color:black; color:white"
-                            sortable
-                            :showFilterMatchModes="false"
-                        >
-                            <template #filter="{ filterModel }">
-                                <MultiSelect
-                                    v-model="filterModel.value"
-                                    :options="filtersDropdownData.full_ceco"
-                                    placeholder="Cualquiera"
-                                    class="p-column-filter"
-                                    optionLabel="full_ceco"
-                                    optionValue="full_ceco"
-                                    filter
-                                >
-                                </MultiSelect>
-                            </template>
-                        </Column>
-                        <Column
                             filterField="full_dep"
                             field="full_dep"
                             header="Departamento"
@@ -203,7 +182,29 @@
                             </template>
                         </Column>
 
-                       <!--  <Column
+                        <Column
+                            filterField="full_ceco"
+                            field="full_ceco"
+                            header="Centro de costo"
+                            headerStyle="background-color:black; color:white"
+                            sortable
+                            :showFilterMatchModes="false"
+                        >
+                            <template #filter="{ filterModel }">
+                                <MultiSelect
+                                    v-model="filterModel.value"
+                                    :options="filtersDropdownData.full_ceco"
+                                    placeholder="Cualquiera"
+                                    class="p-column-filter"
+                                    optionLabel="full_ceco"
+                                    optionValue="full_ceco"
+                                    filter
+                                >
+                                </MultiSelect>
+                            </template>
+                        </Column>
+
+                        <!--  <Column
                             field="planta_noplanta"
                             header="Ubicación"
                             headerStyle="background-color:black; color:white"

@@ -325,7 +325,7 @@ export default {
                             position: "top-right",
                             summary: "Notificación",
                             detail: mensajes.MENSAJE_EXITO,
-                            life: 3000,
+                            life: 6000,
                         });
                     },
                 }

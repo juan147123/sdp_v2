@@ -557,13 +557,17 @@ export default {
         },
         async update(comentario_admin_obra) {
             this.form.comentario_admin_obra = comentario_admin_obra;
+            this.mensaje = "espere mientras se efectuan los cambios....";
+            this.isLoadingForm = true;
             await axios
                 .put(
                     this.route("solicitud.colaborador.update.status.cc"),
                     this.form
                 )
                 .then(async (response) => {
-                    this.getData();
+                    this.getData();                    
+                    this.mensaje = "";
+                    this.isLoadingForm = false;
                 });
         },
 
@@ -571,6 +575,7 @@ export default {
             await new Promise((resolve) => {
                 setSwal({
                     value: "aprobar_rechazo",
+                    data: status,
                     mensaje: mensaje,
                     callback: async (comentario_admin_obra) => {
                         resolve();
@@ -583,7 +588,8 @@ export default {
             const ids = this.colaboradoresSeleccionados.map(
                 (colaborador) => colaborador.id
             );
-
+            this.form.comentario_admin_obra = comentario_admin_obra;
+            this.mensaje = "espere mientras se efectuan los cambios....";
             await axios
                 .put(this.route("solicitud.colaborador.update.masive.cc"), {
                     ids: ids,
@@ -593,6 +599,8 @@ export default {
                 })
                 .then(async (response) => {
                     this.getData();
+                    this.mensaje = "";
+                    this.isLoadingForm = false;
                     this.onClickClean();
                 });
         },

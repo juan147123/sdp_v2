@@ -190,19 +190,43 @@
                                 :showFilterMatchModes="false"
                             >
                                 <template #body="{ data }">
-                                    <Tag
-                                        style="font-size: 11px"
-                                        :value="data.estado.descripcion"
-                                        :severity="data.estado.color"
-                                    />
+                                    <div class="flex flex-column">
+                                        <Tag
+                                            style="font-size: 10px"
+                                            :value="data.estado.descripcion"
+                                            :severity="data.estado.color"
+                                        />
 
-                                    <Tag
-                                        v-if="this.countStatus(data.solicitud_colaborador) > 0"
-                                        style="font-size: 11px"
-                                        class="mt-1"
-                                        :value="('rechazados' +this.countStatus(data.solicitud_colaborador))"
-                                        severity="danger"
-                                    />
+                                        <Tag
+                                            v-if="
+                                                this.countStatus(
+                                                    data.solicitud_colaborador
+                                                ) > 0
+                                            "
+                                            style="font-size: 10px"
+                                            class="mt-1"
+                                            severity="danger"
+                                        >
+                                            <div
+                                                v-for="(
+                                                    value, key
+                                                ) in Object.entries(
+                                                    setStatusRechazado(
+                                                        data.solicitud_colaborador
+                                                    )
+                                                ).filter(
+                                                    ([_, value]) => value > 0
+                                                )"
+                                                :key="key"
+                                            >
+                                                Rechazado por {{ value[0] }} ({{
+                                                    value[1]
+                                                }})
+                                                <!-- Rechazado por {{ key[0] }}:
+                                                {{ value[0] }} -->
+                                            </div>
+                                        </Tag>
+                                    </div>
                                 </template>
                                 <template #filter="{ filterModel }">
                                     <MultiSelect
@@ -241,11 +265,7 @@
                                     />
 
                                     <Button
-                                        v-if="
-                                            setAlertButton(
-                                                data.solicitud_colaborador
-                                            ) == true
-                                        "
+                                        v-if="data.status == 5"
                                         icon="pi pi-pencil "
                                         class="ml-2"
                                         style="
@@ -269,6 +289,7 @@
                                             height: 2rem !important;
                                         "
                                         severity="warning"
+                                        v-tooltip.top="'observaciones'"
                                         @click="ChangeView(data)"
                                     />
                                 </template>
@@ -285,7 +306,7 @@
             :solicitud_selected="solicitud_selected"
             :details="this.details"
         />
-          <FormularioMultiple
+        <FormularioMultiple
             :terminos="this.terminos"
             :visiblemultiple="this.visiblemultiple"
             :colaboradoresDetalle="colaboradoresDetalle"
@@ -405,8 +426,27 @@ export default {
         this.initializeDropdownsData();
     },
     methods: {
-        countStatus(colaboradores){
-            return colaboradores.filter(colaborador => colaborador.aprobado_administrador_obra === 7).length;
+        countStatus(colaboradores) {
+            return colaboradores.filter(
+                (colaborador) => colaborador.aprobado_administrador_obra === 7
+            ).length;
+        },
+        setStatusRechazado(colaboradores) {
+            let admin = colaboradores.filter(
+                (colaborador) => colaborador.aprobado_administrador_obra === 7
+            ).length;
+            let visitador = colaboradores.filter(
+                (colaborador) => colaborador.aprobado_visitador_obra === 7
+            ).length;
+            let rrhh = colaboradores.filter(
+                (colaborador) => colaborador.aprobado_rrhh === 7
+            ).length;
+
+            return {
+                "administrador de obra": admin,
+                visitador: visitador,
+                rrhh: rrhh,
+            };
         },
         async updateStatus(id, status, id_solicitud) {
             this.form.id = id;
@@ -553,23 +593,24 @@ export default {
                         (estadoCount["APROBADO ADMINISTRADOR"] || 0) +
                         (estadoCount["SOLICITUD APROBADA TOTAL"] || 0) +
                         (estadoCount["APROBADO VISITANTE"] || 0);
-                }
-                 else if (estado === "RECHAZADO") {
+                } else if (estado === "RECHAZADO") {
                     // Sumar todas las variantes de "RECHAZADO"
                     this.conteoSolicitudes["RECHAZADO"] =
                         (estadoCount["SOLICITUD RECHAZADA"] || 0) +
                         (estadoCount["RECHAZADO RRHH"] || 0) +
                         (estadoCount["RECHAZADO ADMINISTRADOR"] || 0) +
                         (estadoCount["SOLICITUD RECHAZADA TOTAL"] || 0);
-                } 
-                 else if (estado === "PENDIENTE") {
+                } else if (estado === "PENDIENTE") {
                     // Sumar todas las variantes de "RECHAZADO"
                     this.conteoSolicitudes["PENDIENTE"] =
-                        (estadoCount["PENDIENTE APROBAR POR ADMINISTRADOR DE OBRA"] || 0) +
-                        (estadoCount["PENDIENTE APROBAR POR DE VISITADOR DE OBRA"] || 0) +
-                        (estadoCount["PENDIENTE APROBAR POR RRHH"] || 0) 
-                } 
-                else {
+                        (estadoCount[
+                            "PENDIENTE APROBAR POR ADMINISTRADOR DE OBRA"
+                        ] || 0) +
+                        (estadoCount[
+                            "PENDIENTE APROBAR POR DE VISITADOR DE OBRA"
+                        ] || 0) +
+                        (estadoCount["PENDIENTE APROBAR POR RRHH"] || 0);
+                } else {
                     // Para otros estados, asignar el valor directamente
                     this.conteoSolicitudes[estado] = estadoCount[estado] || 0;
                 }
@@ -586,12 +627,9 @@ export default {
             let existencia = false;
             data.forEach((colaborador) => {
                 const existen =
-                    (
-                        colaborador.estadoadmin?.id === 7 ||
+                    (colaborador.estadoadmin?.id === 7 ||
                         colaborador.estadovisitador?.id === 7 ||
-                        colaborador.estadorrhh?.id === 7 
-                    )
-                    &&
+                        colaborador.estadorrhh?.id === 7) &&
                     colaborador.enable === 1;
                 if (existen) {
                     existencia = true;
