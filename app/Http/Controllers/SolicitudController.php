@@ -236,6 +236,19 @@ class SolicitudController extends Controller
             ],
         ])->render();
         $emails_to = 'jmestanza@flesan.com.pe';
+
+        $centro_costo = $new_solicitud->centro_costo;
+
+        if ($centro_costo == 'DMOPR12118GG') {
+            $emails_to .= ',cecilia.silva@flesan.cl,carolina.carreno@flesan.cl';
+        } 
+        else if ($centro_costo == 'CFMR10005CFM') {
+            $emails_to .= ',lorena.faray@flesan.cl,carolina.carreno@flesan.cl';
+        }
+        else if ($centro_costo == 'DMOPR8110PU') {
+            $emails_to .= ',cristobal.figueroa@flesan.cl,nicolas.toro@flesan.cl';
+        }
+
         $subject = 'SISTEMA DE DESVINCULACIÓN SDP';
         ExtraServicecontroller::send_email_gf(
             $body,
@@ -344,7 +357,7 @@ class SolicitudController extends Controller
         return Inertia::render('AprobacionSolicitudRrhh/Index');
     }
 
-    public function listAllAprobarRrhh ()
+    public function listAllAprobarRrhh()
     {
 
         $result = $this->repository->all(['*'], [

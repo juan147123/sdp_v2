@@ -220,6 +220,18 @@ class SolicitudColaboradorController extends Controller
         
         $emails_to = 'jmestanza@flesan.com.pe';
 
+        $centro_costo = $solicitud->centro_costo;
+
+        if ($centro_costo == 'DMOPR12118GG') {
+            $emails_to .= ',cecilia.silva@flesan.cl';
+        } 
+        else if ($centro_costo == 'CFMR10005CFM') {
+            $emails_to .= ',lorena.faray@flesan.cl';
+        }
+        else if ($centro_costo == 'DMOPR8110PU') {
+            $emails_to .= ',cristobal.figueroa@flesan.cl';
+        }
+        
         $subject = "{$estado['descripcion']} DE COLABORADOR - SISTEMA DE DESVINCULACIÓN SDP";
 
         ExtraServicecontroller::send_email_gf(
