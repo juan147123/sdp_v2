@@ -88,7 +88,7 @@ class SolicitudController extends Controller
             'solicitudColaborador.SapMaestroCausalesTerminos',
             'solicitudColaborador.checkAreaColaboradores',
             'solicitudColaborador.estadoadmin'
-        ], [], $centros_permitidos);
+        ], [], $centros_permitidos)->whereIn('status', [1, 2]);
 
         return $result->values();
     }
@@ -118,7 +118,7 @@ class SolicitudController extends Controller
             'solicitudColaborador.estadovisitador',
             'solicitudColaborador.SapMaestroCausalesTerminos',
             'solicitudColaborador.checkAreaColaboradores'
-        ], [], $centros_permitidos);
+        ], [], $centros_permitidos)->whereIn('status', [2, 3]);
 
         return $result->values();
     }
@@ -154,7 +154,7 @@ class SolicitudController extends Controller
     {
         $solicitud_detail = $this->buildSolicitudDetail($request->all(), $new_solicitud);
         $newSolicitudDetail =  $this->repositorySolicitudDetalle->create($solicitud_detail);
-        return $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $request->file('filesForm'), '','');
+        return $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $request->file('filesForm'), '', '');
     }
 
     private function buildSolicitud($npLider, $userCreated, $centro_costo)
@@ -218,13 +218,13 @@ class SolicitudController extends Controller
             $newSolicitudDetail =  $this->repositorySolicitudDetalle->create($data);
 
             $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos1, "carta_firmada", "Carta firmada o comprobante de envio por correo certificado");
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos2, "cese_dt","CESE DT");
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos3, "cese_afc","CESE AFC");
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos4, "aporte_empleador","Aporte empleador AFC");
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos5, "cert_defuncion","Certificado de defunción");
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos6, "boleta_funebre","Boleta o comprobante de gastos funebres");
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos7, "info_bancaria","Información bancaria del beneficiario");
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos8, "convenio_practica","Convenio de práctica");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos2, "cese_dt", "CESE DT");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos3, "cese_afc", "CESE AFC");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos4, "aporte_empleador", "Aporte empleador AFC");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos5, "cert_defuncion", "Certificado de defunción");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos6, "boleta_funebre", "Boleta o comprobante de gastos funebres");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos7, "info_bancaria", "Información bancaria del beneficiario");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos8, "convenio_practica", "Convenio de práctica");
         }
 
 
@@ -294,13 +294,13 @@ class SolicitudController extends Controller
             $newSolicitudDetail =  $this->repositorySolicitudDetalle->update($request->{"id$index"}, $data);
 
             $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos1, "carta_firmada", "Carta firmada o comprobante de envio por correo certificado");
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos2, "cese_dt","CESE DT");
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos3, "cese_afc","CESE AFC");
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos4, "aporte_empleador","Aporte empleador AFC");
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos5, "cert_defuncion","Certificado de defunción");
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos6, "boleta_funebre","Boleta o comprobante de gastos funebres");
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos7, "info_bancaria","Información bancaria del beneficiario");
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos8, "convenio_practica","Convenio de práctica");
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos2, "cese_dt", "CESE DT");
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos3, "cese_afc", "CESE AFC");
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos4, "aporte_empleador", "Aporte empleador AFC");
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos5, "cert_defuncion", "Certificado de defunción");
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos6, "boleta_funebre", "Boleta o comprobante de gastos funebres");
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos7, "info_bancaria", "Información bancaria del beneficiario");
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos8, "convenio_practica", "Convenio de práctica");
         }
         $this->repository->update($old_solicitud->id, ["status" => 1]);
 
@@ -309,11 +309,11 @@ class SolicitudController extends Controller
 
 
 
-    public function saveDocumentLocal($id, $new_solicitud, $archivos, $origen ,$titulo)
+    public function saveDocumentLocal($id, $new_solicitud, $archivos, $origen, $titulo)
     {
         try {
             if ($archivos) {
-                $documents =  $this->archivoRepository->uploadFile($archivos, $id, $new_solicitud, $origen,$titulo);
+                $documents =  $this->archivoRepository->uploadFile($archivos, $id, $new_solicitud, $origen, $titulo);
                 foreach ($documents as $document) {
                     $this->archivoRepository->create($document);
                 }
@@ -344,7 +344,7 @@ class SolicitudController extends Controller
         return Inertia::render('AprobacionSolicitudRrhh/Index');
     }
 
-    public function listAllAprobarRrhh()
+    public function listAllAprobarRrhh ()
     {
 
         $result = $this->repository->all(['*'], [

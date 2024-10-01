@@ -569,6 +569,8 @@ export default {
         },
         async update(comentario_visitador) {
             this.form.comentario_visitador = comentario_visitador;
+            this.isLoadingForm = true;
+            this.mensaje = "espere mientras se efectuan los cambios....";
             await axios
                 .put(
                     this.route("solicitud.colaborador.update.status.visitador"),
@@ -576,6 +578,8 @@ export default {
                 )
                 .then(async (response) => {
                     this.getData();
+                    this.mensaje = "";
+                    this.isLoadingForm = false;
                 });
         },
 
@@ -583,7 +587,6 @@ export default {
             await new Promise((resolve) => {
                 setSwal({
                     value: "aprobar_rechazo",
-                    data: status,
                     mensaje: mensaje,
                     callback: async (comentario_visitador) => {
                         resolve();
@@ -596,7 +599,8 @@ export default {
             const ids = this.colaboradoresSeleccionados.map(
                 (colaborador) => colaborador.id
             );
-
+            this.isLoadingForm = true;
+            this.mensaje = "espere mientras se efectuan los cambios....";
             await axios
                 .put(
                     this.route("solicitud.colaborador.update.masive.visitador"),
@@ -610,6 +614,8 @@ export default {
                 .then(async (response) => {
                     this.getData();
                     this.onClickClean();
+                    this.mensaje = "";
+                    this.isLoadingForm = false;
                 });
         },
     },

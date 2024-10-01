@@ -81,7 +81,7 @@
                                     class="text-danger"
                                     style="font-size: 13px"
                                     >Si es necesario corregir un documento,
-                                    elimínalo y adjúntalo nuevamente.</span
+                                    elimínalo y adjúntelo nuevamente.</span
                                 >
                             </div>
                             <div

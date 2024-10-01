@@ -589,6 +589,7 @@ export default {
                 (colaborador) => colaborador.id
             );
             this.form.comentario_admin_obra = comentario_admin_obra;
+            this.isLoadingForm = true;
             this.mensaje = "espere mientras se efectuan los cambios....";
             await axios
                 .put(this.route("solicitud.colaborador.update.masive.cc"), {

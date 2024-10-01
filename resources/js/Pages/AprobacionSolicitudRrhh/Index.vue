@@ -119,8 +119,16 @@
                             >
                                 <template #body="{ data }">
                                     <Tag
-                                        :value="data.estado.id == 3 ? 'PENDIENTE': data.estado.descripcion"
-                                        :severity="data.estado.id == 3 ? 'warning':data.estado.color"
+                                        :value="
+                                            data.estado.id == 3
+                                                ? 'PENDIENTE'
+                                                : data.estado.descripcion
+                                        "
+                                        :severity="
+                                            data.estado.id == 3
+                                                ? 'warning'
+                                                : data.estado.color
+                                        "
                                     />
                                 </template>
                                 <template #filter="{ filterModel }">
@@ -340,7 +348,21 @@ export default {
                 .get(rutaBase + "/list/solicitud/rrhh")
                 .then(async (response) => {
                     if (response.status == 200) {
-                        this.dataTable.data = response.data;
+                        let filteredData = response.data.filter((item) => {
+                            // Solo mantener los elementos si no tienen estado.id == 5 y aprobado_visitador_obra no es 7
+                            return !(
+                                item.estado.id === 5 &&
+                                item.solicitud_colaborador.some(
+                                    (colaborador) =>
+                                        colaborador.aprobado_visitador_obra ===
+                                        7
+                                )
+                            );
+                        });
+
+                        // Asignar la lista filtrada a la tabla de datos
+                        this.dataTable.data = filteredData;
+
                         if (this.details == true) {
                             let oldId = self.solicitud_selected.id;
                             let newselected = self.dataTable.data.find(

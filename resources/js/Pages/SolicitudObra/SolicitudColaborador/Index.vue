@@ -571,17 +571,28 @@ export default {
             ) {
                 descripcion = "RECHAZADO";
                 color = "danger";
-            } else if (
+            }
+             
+            else if (
+                (data.estadorrhh && data.estadorrhh.id == 6)
+            ) {
+                descripcion = "APROBADO";
+                color = "success";
+            }
+
+            else if (
                 data.status == 1 ||
                 data.status == 2 ||
                 data.status == 3
             ) {
                 descripcion = "PENDIENTE";
                 color = "warning";
-            } else if (data.status == 4 || data.status == 6) {
+            } 
+            else if (data.status == 4 || data.status == 6) {
                 descripcion = "APROBADO";
                 color = "success";
-            } else {
+            } 
+            else {
                 descripcion = "RECHAZADO";
                 color = "danger";
             }

@@ -222,8 +222,6 @@
                                                 Rechazado por {{ value[0] }} ({{
                                                     value[1]
                                                 }})
-                                                <!-- Rechazado por {{ key[0] }}:
-                                                {{ value[0] }} -->
                                             </div>
                                         </Tag>
                                     </div>
@@ -428,7 +426,9 @@ export default {
     methods: {
         countStatus(colaboradores) {
             return colaboradores.filter(
-                (colaborador) => colaborador.aprobado_administrador_obra === 7
+                (colaborador) => colaborador.aprobado_administrador_obra === 7 ||
+                colaborador.aprobado_visitador_obra === 7 ||
+                colaborador.aprobado_rrhh === 7
             ).length;
         },
         setStatusRechazado(colaboradores) {
@@ -444,7 +444,7 @@ export default {
 
             return {
                 "administrador de obra": admin,
-                visitador: visitador,
+                "visitador de obra": visitador,
                 rrhh: rrhh,
             };
         },

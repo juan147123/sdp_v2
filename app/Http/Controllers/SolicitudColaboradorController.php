@@ -108,6 +108,11 @@ class SolicitudColaboradorController extends Controller
             ]
         );
 
+        $solicitud_colaborador = $this->repository->findById($request->id);
+        $solicitud = $this->repositorySolicitud->findById($request->id_solicitud);
+
+        $this->sendMailStatus($solicitud, $solicitud_colaborador, $request->status,"administrador de rrhh");
+
         $this->updateStatusSolicitudRrhh($request, 4);
         //enviar correo desaprobacion con comentario
         return $update;
@@ -212,7 +217,7 @@ class SolicitudColaboradorController extends Controller
                 'usuario' => strtoupper(Auth::user()->name),
             ],
         ])->render();
-
+        
         $emails_to = 'jmestanza@flesan.com.pe';
 
         $subject = "{$estado['descripcion']} DE COLABORADOR - SISTEMA DE DESVINCULACIÓN SDP";
