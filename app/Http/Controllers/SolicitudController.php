@@ -76,6 +76,7 @@ class SolicitudController extends Controller
             $centros_permitidos = array("centro_costo" => explode(',', trim($aprobador->cc, '{}')));
             if (Auth::user()->username == 'julian.lopez@flesan.cl') {
                 $centros_permitidos['centro_costo'][] = 'CFMR10005CFM';
+                $centros_permitidos['centro_costo'][] = 'DMOPR12118GG';
             }
         }
 
