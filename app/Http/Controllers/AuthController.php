@@ -107,13 +107,13 @@ class AuthController extends Controller
             $email = 'carlos.hermosilla@flesan.cl';
         }
        
-        if ($email == 'cesar.munoz@flesan.cl') {  //visitador de Obra DMOPR8110PU  
+        if ($email == 'david.vilugron@flesan.cl') {  //visitador de Obra DMOPR8110PU  
             $email = 'fernanda.stanic@flesan.cl';
         }
-        if ($email == 'alejandro.candia@flesan.cl') {  //visitador de Obra DMOPR8110PU  
+       /*  if ($email == 'alejandro.candia@flesan.cl') {  //visitador de Obra DMOPR8110PU  
             $email = 'fernanda.stanic@flesan.cl';
         }
-
+ */
 
         /* APROBADORES RRHH */
         if ($email == 'catalina.fuentes@flesan.cl') { // aprobador rrhh
