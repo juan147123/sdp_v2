@@ -5,7 +5,7 @@
             <breadcrumbs :modules="breadcrumbs" />
             <div class="col-md-12 mt-2">
                 <div class="row">
-                    <div class="col-lg-3 col-6">
+                   <!--  <div class="col-lg-3 col-6">
                         <div class="info-box">
                             <span
                                 class="info-box-icon bg-color-custom-creado elevation-1"
@@ -20,7 +20,7 @@
                                 }}</span>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="col-lg-3 col-6">
                         <div class="info-box">
                             <span

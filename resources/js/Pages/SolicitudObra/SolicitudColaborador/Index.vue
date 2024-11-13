@@ -135,6 +135,13 @@
                                 sortable
                                 :showFilterMatchModes="false"
                             >
+                                <template #body="{ data }">
+                                    <div>
+                                        {{
+                                            dateFormatChangeApi(data.fecha_desvinculacion)
+                                        }}
+                                    </div>
+                                </template>
                             </Column>
                             <Column
                                 filterField="centro_costo"
@@ -236,7 +243,7 @@
                                             severity="warning"
                                             @click="alertaAVisitadorObra(data)"
                                         />
-                                       
+
                                         <Button
                                             v-if="
                                                 data.estadorrhh?.id == 7 &&
@@ -561,38 +568,33 @@ export default {
                 console.error("error:", error);
             }
         },
+        dateFormatChangeApi(data) {
+            return dateFormatChange(data);
+        },
         setTagStatusValue(data) {
             var descripcion = "";
             var color = "";
             if (
-                (data.estadoadmin && data.estadoadmin.id == 7) || 
+                (data.estadoadmin && data.estadoadmin.id == 7) ||
                 (data.estadovisitador && data.estadovisitador.id == 7) ||
                 (data.estadorrhh && data.estadorrhh.id == 7)
             ) {
                 descripcion = "RECHAZADO";
                 color = "danger";
-            }
-             
-            else if (
-                (data.estadorrhh && data.estadorrhh.id == 6)
-            ) {
+            } else if (data.estadorrhh && data.estadorrhh.id == 6) {
                 descripcion = "APROBADO";
                 color = "success";
-            }
-
-            else if (
+            } else if (
                 data.status == 1 ||
                 data.status == 2 ||
                 data.status == 3
             ) {
                 descripcion = "PENDIENTE";
                 color = "warning";
-            } 
-            else if (data.status == 4 || data.status == 6) {
+            } else if (data.status == 4 || data.status == 6) {
                 descripcion = "APROBADO";
                 color = "success";
-            } 
-            else {
+            } else {
                 descripcion = "RECHAZADO";
                 color = "danger";
             }

@@ -183,6 +183,15 @@
                                 sortable
                                 :showFilterMatchModes="false"
                             >
+                                <template #body="{ data }">
+                                    <div>
+                                        {{
+                                            dateFormatChangeApi(
+                                                data.fecha_desvinculacion
+                                            )
+                                        }}
+                                    </div>
+                                </template>
                             </Column>
                             <Column
                                 filterField="centro_costo"
@@ -284,6 +293,7 @@ import { FilterMatchMode } from "primevue/api";
 import PrimeVueComponents from "../../../../js/primevue.js";
 import setLocaleES from "../../../primevue.config.js";
 import * as mensajes from "../../../../Utils/message.js";
+import { rutaBase, dateFormatChange } from "../../../../Utils/utils.js";
 
 export default {
     props: ["solicitud_selected", "details"],
@@ -340,7 +350,7 @@ export default {
                     "RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink",
                 currentPageReportTemplate:
                     "Página {currentPage} de {totalPages}",
-                    filters: {
+                filters: {
                     global: {
                         value: null,
                         matchMode: FilterMatchMode.CONTAINS,
@@ -565,7 +575,7 @@ export default {
                     this.form
                 )
                 .then(async (response) => {
-                    this.getData();                    
+                    this.getData();
                     this.mensaje = "";
                     this.isLoadingForm = false;
                 });
@@ -604,6 +614,9 @@ export default {
                     this.isLoadingForm = false;
                     this.onClickClean();
                 });
+        },
+        dateFormatChangeApi(data) {
+            return dateFormatChange(data);
         },
     },
 };
