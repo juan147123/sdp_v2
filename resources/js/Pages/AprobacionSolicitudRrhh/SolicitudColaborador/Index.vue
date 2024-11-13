@@ -18,6 +18,7 @@
                     <div class="box-body">
                         <DataTable
                             dataKey="id"
+                            v-model:selection="colaboradoresSeleccionados"
                             :value="dataTable.data"
                             :rows="dataTable.rows"
                             showGridlines
@@ -96,6 +97,7 @@
                             </template>
                             <Column
                                 headerStyle="width: 3rem;background-color:black;"
+                                selectionMode="multiple"
                             >
                                 <template #body="{ data }">
                                     <Checkbox
@@ -183,6 +185,15 @@
                                 sortable
                                 :showFilterMatchModes="false"
                             >
+                                <template #body="{ data }">
+                                    <div>
+                                        {{
+                                            dateFormatChangeApi(
+                                                data.fecha_desvinculacion
+                                            )
+                                        }}
+                                    </div>
+                                </template>
                             </Column>
                             <Column
                                 filterField="centro_costo"
@@ -286,6 +297,7 @@ import { FilterMatchMode } from "primevue/api";
 import PrimeVueComponents from "../../../../js/primevue.js";
 import setLocaleES from "../../../primevue.config.js";
 import * as mensajes from "../../../../Utils/message.js";
+import { rutaBase, dateFormatChange } from "../../../../Utils/utils.js";
 
 export default {
     props: ["solicitud_selected", "details"],
@@ -610,6 +622,9 @@ export default {
                     this.getData();
                     this.onClickClean();
                 });
+        },
+        dateFormatChangeApi(data) {
+            return dateFormatChange(data);
         },
     },
 };

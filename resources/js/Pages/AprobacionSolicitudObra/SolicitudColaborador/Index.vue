@@ -18,6 +18,7 @@
                     <div class="box-body">
                         <DataTable
                             dataKey="id"
+                            v-model:selection="colaboradoresSeleccionados"
                             :value="dataTable.data"
                             :rows="dataTable.rows"
                             showGridlines
@@ -96,6 +97,7 @@
                             </template>
                             <Column
                                 headerStyle="width: 3rem;background-color:black;"
+                                selectionMode="multiple"
                             >
                                 <template #body="{ data }">
                                     <Checkbox
