@@ -55,48 +55,40 @@ class AuthController extends Controller
             // $email = 'fabian.castro@flesan.cl'; // -->solicitante DMOPR12118GG
             // $email = 'fernando.david@flesan.cl'; // -->administrador DMOPR12118GG
             // $email = 'cristian.donoso@flesan.cl'; // -->VISITADOR DMOPR12118GG
-           
-           
+
+
             // $email = 'andres.bravo@flesan.cl'; //-->solicitante DMRM1052DEM
             // $email = 'cmachado@flesan.cl'; //  --> administrador DMRM1052DEM
             // $email = 'sebastian.valck@flesan.cl'; //  --> visitador DMRM1052DEM
-            
-            
-            
-            
-            
+
+
+
+
+
             $email = 'catalina.fuentes@flesan.cl'; // --> adminsitrador rrhh
-            
+
         }
-        
-        if ($email == 'jcmlmph@gmail.com') {
-            $email = 'andres.bravo@flesan.cl'; //-->solicitante DMRM1052DEM
-        }
+
+
         if ($email == 'bruno.cuevas@flesan.cl') {
             $email = 'marcos.gallardo@flesan.cl';
         }
-        
+
+        /*DMOPR12118GG  */
+
+
         if ($email == 'gabriel.fernandez@flesan.cl') {  //solicitante DMOPR12118GG 
             $email = 'fabian.castro@flesan.cl';
         }
 
 
-        
         if ($email == 'cecilia.silva@flesan.cl') {  //solicitante DMOPR12118GG 
             $email = 'fabian.castro@flesan.cl';
         }
 
-        if ($email == 'lorena.faray@flesan.cl') {  //SOLICITANTE de Obra CFMR10005CFM  
-            $email = 'marcos.gallardo@flesan.cl';
-        }
-
 
         if ($email == 'carolina.carreno@flesan.cl') {  //administrador de Obra DMOPR12118GG 
-            $email = 'julian.lopez@flesan.cl';
-        }
-
-        if ($email == 'serodriguez@flesan.com.pe') {  //administrador de Obra DMOPR12118GG 
-            $email = 'julian.lopez@flesan.cl';
+            $email = 'fernando.david@flesan.cl';
         }
 
         if ($email == 'carolina.zavala@flesan.cl') {  //visitador de obra DMOPR12118GG 
@@ -105,21 +97,21 @@ class AuthController extends Controller
 
 
 
-            
-        /* DMOPR8110PU */
 
-        if ($email == 'cristobal.figueroa@flesan.cl') {  //SOLICITANTE de Obra DMOPR8110PU  
-            $email = 'felisa.castillo@flesan.cl';
+        /* DMRM1052DEM */
+
+        if ($email == 'cristobal.figueroa@flesan.cl') {  //SOLICITANTE de Obra DMRM1052DEM  
+            $email = 'andres.bravo@flesan.cl';
         }
-  
-        if ($email == 'nicolas.toro@flesan.cl') {  //administrador de Obra DMOPR8110PU  
-            $email = 'carlos.hermosilla@flesan.cl';
+
+        if ($email == 'nicolas.toro@flesan.cl') {  //administrador de Obra DMRM1052DEM  
+            $email = 'cmachado@flesan.cl';
         }
-       
-        if ($email == 'david.vilugron@flesan.cl') {  //visitador de Obra DMOPR8110PU  
-            $email = 'fernanda.stanic@flesan.cl';
+
+        if ($email == 'david.vilugron@flesan.cl') {  //visitador de Obra DMRM1052DEM  
+            $email = 'sebastian.valck@flesan.cl';
         }
-       /*  if ($email == 'alejandro.candia@flesan.cl') {  //visitador de Obra DMOPR8110PU  
+        /*  if ($email == 'alejandro.candia@flesan.cl') {  //visitador de Obra DMRM1052DEM  
             $email = 'fernanda.stanic@flesan.cl';
         }
  */
@@ -156,7 +148,7 @@ class AuthController extends Controller
         $usuario_seguridad_app = $this->repository->findUserByEmail($usuario_mail);
 
         $np_lider  = $this->getNpLider($usuario_mail);
-        if(!$np_lider){
+        if (!$np_lider) {
             return $this->redirectToLogin();
         }
         if ($usuario_seguridad_app) {
@@ -175,7 +167,7 @@ class AuthController extends Controller
             if ($usuario_bd && env("ADMINISTRADOR_AREA") == $usuario_bd->rol) array_push($permisos, 'ADMAREA');
             if ($usuario_bd && env("SUPER_ADMINISTRADOR") == $usuario_bd->rol) array_push($permisos, 'SUPERAD');
 
- /*            $personalCl = $this->repositoryPersonalCL->getNpLiderByEmail($usuario_mail);
+            /*            $personalCl = $this->repositoryPersonalCL->getNpLiderByEmail($usuario_mail);
             $personalPe = $this->repositoryPersonalPE->UserFindByEmail($usuario_mail);
 
             if ($personalCl) array_push($permisos, 'LIDERCL');
