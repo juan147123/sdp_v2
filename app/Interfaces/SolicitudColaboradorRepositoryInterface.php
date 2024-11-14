@@ -6,7 +6,7 @@ interface SolicitudColaboradorRepositoryInterface extends EloquentRepositoryInte
 {
     public function updateStatusMasiveAdmObr($request);
     public function updateStatusMasiveVisiObr($request);
-    public function updateStatusMasiveRrhh($status, $ids);
+    public function updateStatusMasiveRrhh($request);
     public function CountSolicitudByUserId($user_id);
     public function getSolicitudColaboradorPendinteAdmObr($idSolicitud,$status);
     public function getSolicitudColaboradorPendinteVisiObr($idSolicitud,$status);

@@ -142,6 +142,8 @@ class SolicitudColaboradorController extends Controller
         if ($solicitudes == 0) {
             $nuevoStatus = ($solicitudes_aprobadas != 0) ? 2 : 5;
             $this->repositorySolicitud->update($request->id_solicitud, ["status" => $nuevoStatus]);
+            $solicitud = $this->repositorySolicitud->findById($request->id_solicitud);
+            $this->sendMailStatusMasive($solicitud,$nuevoStatus);
         }
     }
 
@@ -152,6 +154,7 @@ class SolicitudColaboradorController extends Controller
         $this->repository->updateStatusMasiveVisiObr($request);
         $this->updateStatusSolicitudVisitador($request, null);
     }
+    
     public function updateStatusSolicitudVisitador($request, $status)
     {
         $solicitudes = $this->repository->getSolicitudColaboradorPendinteVisiObr(
@@ -167,6 +170,8 @@ class SolicitudColaboradorController extends Controller
         if ($solicitudes == 0) {
             $nuevoStatus = ($solicitudes_aprobadas != 0) ? 3 : 5;
             $this->repositorySolicitud->update($request->id_solicitud, ["status" => $nuevoStatus]);
+            $solicitud = $this->repositorySolicitud->findById($request->id_solicitud);
+            $this->sendMailStatusMasive($solicitud,$nuevoStatus);
         }
     }
 
@@ -175,7 +180,7 @@ class SolicitudColaboradorController extends Controller
 
     public function updateAllStatusAprobadorRrhh(Request $request)
     {
-        $this->repository->updateStatusMasiveRrhh($request->status, $request->ids);
+        $this->repository->updateStatusMasiveRrhh($request);
         $this->updateStatusSolicitudRrhh($request, null);
     }
 
@@ -194,6 +199,8 @@ class SolicitudColaboradorController extends Controller
         if ($solicitudes == 0) {
             $nuevoStatus = ($solicitudes_aprobadas != 0) ? 4 : 5;
             $this->repositorySolicitud->update($request->id_solicitud, ["status" => $nuevoStatus]);
+            $solicitud = $this->repositorySolicitud->findById($request->id_solicitud);
+            $this->sendMailStatusMasive($solicitud,$nuevoStatus);
         }
     }
 
@@ -233,6 +240,46 @@ class SolicitudColaboradorController extends Controller
         }
          */
         $subject = "{$estado['descripcion']} DE COLABORADOR - SISTEMA DE DESVINCULACIÓN SDP";
+
+        ExtraServicecontroller::send_email_gf(
+            $body,
+            $subject,
+            $emails_to
+        );
+    }
+    public function sendMailStatusMasive($solicitud, $status)
+    {
+        $estados = [
+            5 => ['cabecera' => 'RECHAZADA', 'descripcion' => 'RECHAZO'],
+            'default' => ['cabecera' => 'APROBADA', 'descripcion' => 'APROBACIÓN']
+        ];
+
+        $estado = $estados[$status] ?? $estados['default'];         
+
+        $body = View::make('emails.SolicitudColaboradorEstadoMultiple', [
+            'data' => [
+                'solicitud' => $solicitud,
+                'estado_cabecera' => $estado['cabecera'],
+                'estado_descripcion' => $estado['descripcion'],
+                'linkAcceso' => 'qadesvinculaciones.grupoflesan.com'
+            ],
+        ])->render();
+        
+        $emails_to = 'jmestanza@flesan.com.pe';
+
+       /*  $centro_costo = $solicitud->centro_costo;
+
+        if ($centro_costo == 'DMOPR12118GG') {
+            $emails_to .= ',cecilia.silva@flesan.cl';
+        } 
+        else if ($centro_costo == 'CFMR10005CFM') {
+            $emails_to .= ',lorena.faray@flesan.cl';
+        }
+        else if ($centro_costo == 'DMOPR8110PU') {
+            $emails_to .= ',cristobal.figueroa@flesan.cl';
+        }
+         */
+        $subject = "{$estado['descripcion']} DE SOLICITUD - SISTEMA DE DESVINCULACIÓN SDP";
 
         ExtraServicecontroller::send_email_gf(
             $body,

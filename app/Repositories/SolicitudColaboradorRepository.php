@@ -41,9 +41,13 @@ class SolicitudColaboradorRepository extends BaseRepository implements
         ]);
     }
 
-    public function updateStatusMasiveRrhh($status, $ids)
+    public function updateStatusMasiveRrhh($request)
     {
-        return $this->model->whereIn('id', $ids)->update(['aprobado_rrhh' => $status]);
+        return $this->model->whereIn('id', $request->ids)->update([
+            'aprobado_rrhh' => $request->status,
+            "comentario_rrhh" =>
+            $request->comentario_rrhh
+        ]);
     }
 
     public function getSolicitudColaboradorPendinteAdmObr($idSolicitud, $status)

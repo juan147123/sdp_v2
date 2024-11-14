@@ -119,8 +119,16 @@
                             >
                                 <template #body="{ data }">
                                     <Tag
-                                        :value="data.estado.id == 3 ? 'APROBADO': data.estado.descripcion"
-                                        :severity="data.estado.id == 3 ? 'success':data.estado.color"
+                                        :value="
+                                            data.estado.id == 3
+                                                ? 'APROBADO'
+                                                : data.estado.descripcion
+                                        "
+                                        :severity="
+                                            data.estado.id == 3
+                                                ? 'success'
+                                                : data.estado.color
+                                        "
                                     />
                                 </template>
                                 <template #filter="{ filterModel }">
@@ -347,6 +355,13 @@ export default {
                                 (item) => item.id === oldId
                             );
                             this.solicitud_selected = newselected;
+                            if (newselected) {
+                                // Si el elemento existe, asignarlo a solicitud_selected
+                                this.solicitud_selected = newselected;
+                            } else {
+                                // Si el elemento no existe, ejecutar la función changevire
+                                this.ChangeView();
+                            }
                         }
                     }
 

@@ -3,6 +3,77 @@
     <AppLayout>
         <div v-if="this.details != true">
             <breadcrumbs :modules="breadcrumbs" />
+            <div class="col-md-12 mt-2">
+                <div class="row">
+                    <!--  <div class="col-lg-3 col-6">
+                        <div class="info-box">
+                            <span
+                                class="info-box-icon bg-color-custom-creado elevation-1"
+                                ><i class="fas fa-list-ol"></i
+                            ></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text color-custom-creado"
+                                    >CREADOS</span
+                                >
+                                <span class="info-box-number">{{
+                                    conteoSolicitudes.CREADO
+                                }}</span>
+                            </div>
+                        </div>
+                    </div> -->
+                    <div class="col-lg-3 col-6">
+                        <div class="info-box">
+                            <span
+                                class="info-box-icon bg-color-custom-pendiente elevation-1"
+                                ><i class="fas fa-bookmark"></i
+                            ></span>
+                            <div class="info-box-content">
+                                <span
+                                    class="info-box-text color-custom-pendiente"
+                                    >PENDIENTES</span
+                                >
+                                <span class="info-box-number">{{
+                                    conteoSolicitudes.PENDIENTE
+                                }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="info-box">
+                            <span
+                                class="info-box-icon bg-color-custom-aprobado elevation-1"
+                                ><i class="fas fa-check-circle"></i
+                            ></span>
+                            <div class="info-box-content">
+                                <span
+                                    class="info-box-text color-custom-aprobado"
+                                    >APROBADOS</span
+                                >
+                                <span class="info-box-number">{{
+                                    conteoSolicitudes.APROBADO
+                                }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-6">
+                        <div class="info-box">
+                            <span
+                                class="info-box-icon bg-color-custom-rechazado elevation-1"
+                                ><i class="fas fa-times-circle"></i
+                            ></span>
+                            <div class="info-box-content">
+                                <span
+                                    class="info-box-text color-custom-rechazado"
+                                    >RECHAZADOS</span
+                                >
+                                <span class="info-box-number">{{
+                                    conteoSolicitudes.RECHAZADO
+                                }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="box m-1 mt-5 bg-white p-3 border-round">
                 <div class="container-fluid">
                     <div class="box-body">
@@ -118,18 +189,39 @@
                                 :showFilterMatchModes="false"
                             >
                                 <template #body="{ data }">
-                                    <Tag
-                                        :value="
-                                            data.estado.id == 3
-                                                ? 'PENDIENTE'
-                                                : data.estado.descripcion
-                                        "
-                                        :severity="
-                                            data.estado.id == 3
-                                                ? 'warning'
-                                                : data.estado.color
-                                        "
-                                    />
+                                    <div class="flex flex-column">
+                                        <Tag
+                                            style="font-size: 10px"
+                                            :value="data.estado.descripcion"
+                                            :severity="data.estado.color"
+                                        />
+
+                                        <Tag
+                                            v-if="
+                                                this.countStatus(
+                                                    data.solicitud_colaborador
+                                                ) > 0
+                                            "
+                                            style="font-size: 10px"
+                                            class="mt-1"
+                                            severity="danger"
+                                        >
+                                            <div
+                                                v-for="(
+                                                    value, key
+                                                ) in Object.entries(
+                                                    setStatusRechazado(
+                                                        data.solicitud_colaborador
+                                                    )
+                                                ).filter(
+                                                    ([_, value]) => value > 0
+                                                )"
+                                                :key="key"
+                                            >
+                                                {{ value[0] }} ({{ value[1] }})
+                                            </div>
+                                        </Tag>
+                                    </div>
                                 </template>
                                 <template #filter="{ filterModel }">
                                     <MultiSelect
@@ -212,6 +304,12 @@ export default {
             isLoadingForm: false,
             table: [],
             tableDetalle: [],
+            conteoSolicitudes: {
+                CREADO: 0,
+                PEDIENTE: 0,
+                APROBADO: 0,
+                RECHAZADO: 0,
+            },
             part: 0,
             solicitud_selected: [],
             form: this.$inertia.form({
@@ -369,6 +467,14 @@ export default {
                                 (item) => item.id === oldId
                             );
                             this.solicitud_selected = newselected;
+
+                            if (newselected) {
+                                // Si el elemento existe, asignarlo a solicitud_selected
+                                this.solicitud_selected = newselected;
+                            } else {
+                                // Si el elemento no existe, ejecutar la función changevire
+                                this.ChangeView();
+                            }
                         }
                     }
 
@@ -409,6 +515,55 @@ export default {
             ].map((o) => {
                 return { estado: o };
             });
+
+            const estadoCount = this.dataTable.data.reduce((acc, s) => {
+                const descripcion =
+                    s.estado && s.estado.descripcion
+                        ? s.estado.descripcion
+                        : "desconocido";
+                acc[descripcion] = (acc[descripcion] || 0) + 1;
+                return acc;
+            }, {});
+            // Asegurar que todos los estados deseados estén presentes
+            const estadosDeseados = [
+                "CREADO",
+                "PENDIENTE",
+                "APROBADO",
+                "RECHAZADO",
+            ];
+            this.conteoSolicitudes = {};
+
+            estadosDeseados.forEach((estado) => {
+                if (estado === "APROBADO") {
+                    // Sumar todas las variantes de "APROBADO"
+                    this.conteoSolicitudes["APROBADO"] =
+                        (estadoCount["APROBADO"] || 0) +
+                        (estadoCount["APROBADO RRHH"] || 0) +
+                        (estadoCount["APROBADO ADMINISTRADOR"] || 0) +
+                        (estadoCount["SOLICITUD APROBADA TOTAL"] || 0) +
+                        (estadoCount["APROBADO VISITANTE"] || 0);
+                } else if (estado === "RECHAZADO") {
+                    // Sumar todas las variantes de "RECHAZADO"
+                    this.conteoSolicitudes["RECHAZADO"] =
+                        (estadoCount["SOLICITUD RECHAZADA"] || 0) +
+                        (estadoCount["RECHAZADO RRHH"] || 0) +
+                        (estadoCount["RECHAZADO ADMINISTRADOR"] || 0) +
+                        (estadoCount["SOLICITUD RECHAZADA TOTAL"] || 0);
+                } else if (estado === "PENDIENTE") {
+                    // Sumar todas las variantes de "RECHAZADO"
+                    this.conteoSolicitudes["PENDIENTE"] =
+                        (estadoCount[
+                            "PENDIENTE APROBAR POR ADMINISTRADOR DE OBRA"
+                        ] || 0) +
+                        (estadoCount[
+                            "PENDIENTE APROBAR POR DE VISITADOR DE OBRA"
+                        ] || 0) +
+                        (estadoCount["PENDIENTE APROBAR POR RRHH"] || 0);
+                } else {
+                    // Para otros estados, asignar el valor directamente
+                    this.conteoSolicitudes[estado] = estadoCount[estado] || 0;
+                }
+            });
         },
         dateFormatChangeApi(data) {
             return dateFormatChange(data);
@@ -416,6 +571,31 @@ export default {
         ChangeView(data) {
             this.details = !this.details;
             this.solicitud_selected = data ? data : [];
+        },
+        countStatus(colaboradores) {
+            return colaboradores.filter(
+                (colaborador) =>
+                    colaborador.aprobado_administrador_obra === 7 ||
+                    colaborador.aprobado_visitador_obra === 7 ||
+                    colaborador.aprobado_rrhh === 7
+            ).length;
+        },
+        setStatusRechazado(colaboradores) {
+            let admin = colaboradores.filter(
+                (colaborador) => colaborador.aprobado_administrador_obra === 7
+            ).length;
+            let visitador = colaboradores.filter(
+                (colaborador) => colaborador.aprobado_visitador_obra === 7
+            ).length;
+            let rrhh = colaboradores.filter(
+                (colaborador) => colaborador.aprobado_rrhh === 7
+            ).length;
+
+            return {
+                "Con observaciones ": admin,
+                "Con observaciones ": visitador,
+                "Con observaciones ": rrhh,
+            };
         },
     },
 };

@@ -596,9 +596,9 @@ export default {
                     value: "aprobar_rechazo",
                     data: status,
                     mensaje: mensaje,
-                    callback: async (comentario_visitador) => {
+                    callback: async (comentario_rrhh) => {
                         resolve();
-                        this.updateAll(status, comentario_visitador);
+                        this.updateAll(status, comentario_rrhh);
                     },
                 });
             });
@@ -606,26 +606,31 @@ export default {
         onClickClean() {
             this.colaboradoresSeleccionados = [];
         },
-        async updateAll(status, comentario_visitador) {
+        async updateAll(status, comentario_rrhh) {
             const ids = this.colaboradoresSeleccionados.map(
                 (colaborador) => colaborador.id
             );
-
+            this.form.comentario_rrhh = comentario_rrhh;
+            this.isLoadingForm = true;
+            this.mensaje = "espere mientras se efectuan los cambios....";
             await axios
                 .put(this.route("solicitud.colaborador.update.masive.rrhh"), {
                     ids: ids,
                     status: status,
                     id_solicitud: this.solicitud_selected.id,
-                    comentario_visitador: comentario_visitador,
+                    comentario_rrhh: comentario_rrhh,
                 })
                 .then(async (response) => {
                     this.getData();
+                    this.mensaje = "";
+                    this.isLoadingForm = false;
                     this.onClickClean();
                 });
         },
         dateFormatChangeApi(data) {
             return dateFormatChange(data);
         },
+       
     },
 };
 </script>
