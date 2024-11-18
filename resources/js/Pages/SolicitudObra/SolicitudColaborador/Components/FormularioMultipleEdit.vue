@@ -1,53 +1,28 @@
 <template>
     <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
-    <Dialog
-        header="Editar solicitud"
-        :visible="visiblemultiple"
-        :closable="false"
-        :draggable="false"
-        pt:mask:class="backdrop-blur-sm"
-        maximizable
-        modal
-        :style="{
+    <Dialog header="Editar solicitud" :visible="visiblemultiple" :closable="false" :draggable="false"
+        pt:mask:class="backdrop-blur-sm" maximizable modal :style="{
             width: colaboradoresDetalle.length === 1 ? '50rem' : '70rem',
-        }"
-    >
+        }">
         <form class="grid" @submit.prevent="submit">
-            <div
-                :class="colaboradoresDetalle.length == 1 ? 'col-12' : 'col-6'"
-                v-for="(colaborador, index) in this.colaboradoresDetalle"
-            >
+            <div :class="colaboradoresDetalle.length == 1 ? 'col-12' : 'col-6'"
+                v-for="(colaborador, index) in this.colaboradoresDetalle">
                 <div class="card" style="width: 100%">
                     <div class="card-body">
                         <div class="mb-3 flex flex-column">
                             <div class="align-items-center">
-                                <i
-                                    class="pi pi-user mr-2 ml-1"
-                                    style="font-size: 1rem"
-                                ></i>
+                                <i class="pi pi-user mr-2 ml-1" style="font-size: 1rem"></i>
                                 {{ colaborador.nombre_completo }}
                                 ( NP: {{ colaborador.user_id }} )
                             </div>
                         </div>
                         <div class="mb-3 flex flex-column">
-                            <label for="input1" class="form-label"
-                                >Motivo de desvinculación</label
-                            >
-                            <Dropdown
-                                :options="this.terminos"
-                                option-label="name"
-                                filter
-                                :class="`w-full`"
-                                option-value="externalcode"
-                                v-model="this.formData['motivo' + index]"
-                                placeholder="Seleccione"
-                                @change="handleDropdownChange(index, $event)"
-                                required
-                            >
+                            <label for="input1" class="form-label">Motivo de desvinculación</label>
+                            <Dropdown :options="this.terminos" option-label="name" filter :class="`w-full`"
+                                option-value="externalcode" v-model="this.formData['motivo' + index]"
+                                placeholder="Seleccione" @change="handleDropdownChange(index, $event)" required>
                                 <template #option="slotProps">
-                                    <div
-                                        class="flex align-items-center dropdown-option"
-                                    >
+                                    <div class="flex align-items-center dropdown-option">
                                         <div>
                                             {{ slotProps.option.name }}
                                         </div>
@@ -56,48 +31,29 @@
                             </Dropdown>
                         </div>
                         <div class="mb-3 flex flex-column">
-                            <label for="input1" class="form-label"
-                                >Fecha a desvincular</label
-                            >
-                            <Calendar
-                                showIcon
-                                class="w-full"
-                                locale="es"
-                                v-model="
-                                    this.formData[
-                                        'fecha_desvinculacion' + index
-                                    ]
-                                "
-                                dateFormat="dd/mm/yy"
-                                required
-                            />
+                            <label for="input1" class="form-label">Fecha a desvincular</label>
+                            <Calendar showIcon class="w-full" locale="es" v-model="this.formData[
+                                'fecha_desvinculacion' + index
+                            ]
+                                " dateFormat="dd/mm/yy" required />
                         </div>
                         <div>
                             <div class="flex flex-column mb-3">
-                                <label for="input1" class="form-label"
-                                    >Archivos adjuntos
+                                <label for="input1" class="form-label">Archivos adjuntos
                                 </label>
-                                <span
-                                    class="text-danger"
-                                    style="font-size: 13px"
-                                    >Si es necesario corregir un documento,
-                                    elimínalo y adjúntelo nuevamente.</span
-                                >
+                                <span class="text-danger" style="font-size: 13px">Si es necesario corregir un documento,
+                                    elimínelo y adjúntelo nuevamente.</span>
                             </div>
-                            <div
-                                v-for="(
+                            <div v-for="(
                                     archivo, indexarchivo
-                                ) in colaborador.archivos"
-                                class="m-1 p-1 border"
-                                style="font-size: 12px"
-                                :id="index + 'archivo' + indexarchivo"
-                            >
+                                ) in colaborador.archivos" class="m-1 p-1 border" style="font-size: 12px"
+                                :id="index + 'archivo' + indexarchivo">
                                 <div class="">
                                     <div class="flex text-align-center">
                                         <i class="pi pi-file-o"></i>
                                         <strong>{{
                                             this.setOrigen(archivo.origen)
-                                        }}</strong>
+                                            }}</strong>
                                     </div>
                                 </div>
 
@@ -106,189 +62,104 @@
                                         <span>{{ archivo.name }}</span>
                                     </div>
                                     <div>
-                                        <a
-                                            :href="this.ruta + archivo.path"
-                                            target="_blank"
-                                        >
-                                            <i
-                                                class="pi pi-download text-success mr-1"
-                                            >
+                                        <a :href="this.ruta + archivo.path" target="_blank">
+                                            <i class="pi pi-download text-success mr-1">
                                             </i>
                                         </a>
-                                        <i
-                                            class="pi pi-trash text-danger"
-                                            style="cursor: pointer"
-                                            @click="
-                                                deleteData(
-                                                    index +
-                                                        'archivo' +
-                                                        indexarchivo,
-                                                    archivo.id
-                                                )
-                                            "
-                                        ></i>
+                                        <i class="pi pi-trash text-danger" style="cursor: pointer" @click="
+                                            deleteData(
+                                                index +
+                                                'archivo' +
+                                                indexarchivo,
+                                                archivo.id
+                                            )
+                                            "></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div
-                            class="mb-3 flex flex-column border p-2"
-                            :id="'carta_firmada' + index"
-                        >
-                            <label for="input1" class="form-label"
-                                >Carta firmada o comprobante de envio por correo
-                                certificado</label
-                            >
-                            <input
-                                type="file"
-                                @change="
-                                    handleFileChange(
-                                        $event,
-                                        index,
-                                        'carta_firmada'
-                                    )
-                                "
-                            />
+                        <div class="mb-3 flex flex-column border p-2" :id="'carta_firmada' + index">
+                            <label for="input1" class="form-label">Carta firmada o comprobante de envio por correo
+                                certificado</label>
+                            <input type="file" @change="
+                                handleFileChange(
+                                    $event,
+                                    index,
+                                    'carta_firmada'
+                                )
+                                " />
                         </div>
-                        <div
-                            class="mb-3 flex flex-column border p-2"
-                            :id="'cese_dt' + index"
-                        >
-                            <label for="input1" class="form-label"
-                                >CESE DT</label
-                            >
-                            <input
-                                type="file"
-                                @change="
-                                    handleFileChange($event, index, 'cese_dt')
-                                "
-                            />
+                        <div class="mb-3 flex flex-column border p-2" :id="'cese_dt' + index">
+                            <label for="input1" class="form-label">CESE DT</label>
+                            <input type="file" @change="
+                                handleFileChange($event, index, 'cese_dt')
+                                " />
                         </div>
-                        <div
-                            class="mb-3 flex flex-column border p-2"
-                            :id="'cese_afc' + index"
-                        >
-                            <label for="input1" class="form-label"
-                                >CESE AFC</label
-                            >
-                            <input
-                                type="file"
-                                @change="
-                                    handleFileChange($event, index, 'cese_afc')
-                                "
-                            />
+                        <div class="mb-3 flex flex-column border p-2" :id="'cese_afc' + index">
+                            <label for="input1" class="form-label">CESE AFC</label>
+                            <input type="file" @change="
+                                handleFileChange($event, index, 'cese_afc')
+                                " />
                         </div>
                         <!-- ocultos -->
-                        <div
-                            class="mb-3 flex flex-column border p-2 d-none"
-                            :id="'aporte_empleador' + index"
-                        >
-                            <label for="input1" class="form-label"
-                                >Aporte empleador AFC</label
-                            >
-                            <input
-                                type="file"
-                                @change="
-                                    handleFileChange(
-                                        $event,
-                                        index,
-                                        'aporte_empleador'
-                                    )
-                                "
-                            />
+                        <div class="mb-3 flex flex-column border p-2 d-none" :id="'aporte_empleador' + index">
+                            <label for="input1" class="form-label">Aporte empleador AFC</label>
+                            <input type="file" @change="
+                                handleFileChange(
+                                    $event,
+                                    index,
+                                    'aporte_empleador'
+                                )
+                                " />
                         </div>
-                        <div
-                            class="mb-3 flex flex-column border p-2 d-none"
-                            :id="'cert_defuncion' + index"
-                        >
-                            <label for="input1" class="form-label"
-                                >CERTIFICADO DE DEFUNCIÓN</label
-                            >
-                            <input
-                                type="file"
-                                @change="
-                                    handleFileChange(
-                                        $event,
-                                        index,
-                                        'cert_defuncion'
-                                    )
-                                "
-                            />
+                        <div class="mb-3 flex flex-column border p-2 d-none" :id="'cert_defuncion' + index">
+                            <label for="input1" class="form-label">CERTIFICADO DE DEFUNCIÓN</label>
+                            <input type="file" @change="
+                                handleFileChange(
+                                    $event,
+                                    index,
+                                    'cert_defuncion'
+                                )
+                                " />
                         </div>
-                        <div
-                            class="mb-3 flex flex-column border p-2 d-none"
-                            :id="'boleta_funebre' + index"
-                        >
-                            <label for="input1" class="form-label"
-                                >Boleta o comprobante de gastos funebres</label
-                            >
-                            <input
-                                type="file"
-                                @change="
-                                    handleFileChange(
-                                        $event,
-                                        index,
-                                        'boleta_funebre'
-                                    )
-                                "
-                            />
+                        <div class="mb-3 flex flex-column border p-2 d-none" :id="'boleta_funebre' + index">
+                            <label for="input1" class="form-label">Boleta o comprobante de gastos funebres</label>
+                            <input type="file" @change="
+                                handleFileChange(
+                                    $event,
+                                    index,
+                                    'boleta_funebre'
+                                )
+                                " />
                         </div>
-                        <div
-                            class="mb-3 flex flex-column border p-2 d-none"
-                            :id="'info_bancaria' + index"
-                        >
-                            <label for="input1" class="form-label"
-                                >Información bancaria del beneficiario</label
-                            >
-                            <input
-                                type="file"
-                                @change="
-                                    handleFileChange(
-                                        $event,
-                                        index,
-                                        'info_bancaria'
-                                    )
-                                "
-                            />
+                        <div class="mb-3 flex flex-column border p-2 d-none" :id="'info_bancaria' + index">
+                            <label for="input1" class="form-label">Información bancaria del beneficiario</label>
+                            <input type="file" @change="
+                                handleFileChange(
+                                    $event,
+                                    index,
+                                    'info_bancaria'
+                                )
+                                " />
                         </div>
-                        <div
-                            class="mb-3 flex flex-column border p-2 d-none"
-                            :id="'convenio_practica' + index"
-                        >
-                            <label for="input1" class="form-label"
-                                >Convenio de práctica</label
-                            >
-                            <input
-                                type="file"
-                                @change="
-                                    handleFileChange(
-                                        $event,
-                                        index,
-                                        'convenio_practica'
-                                    )
-                                "
-                            />
+                        <div class="mb-3 flex flex-column border p-2 d-none" :id="'convenio_practica' + index">
+                            <label for="input1" class="form-label">Convenio de práctica</label>
+                            <input type="file" @change="
+                                handleFileChange(
+                                    $event,
+                                    index,
+                                    'convenio_practica'
+                                )
+                                " />
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="w-full flex justify-content-end p-2">
-                <Button
-                    class="h-2rem m-1"
-                    label="Cancelar"
-                    severity="danger"
-                    icon="pi pi-times"
-                    @click="showModal"
-                />
-                <Button
-                    class="h-2rem m-1"
-                    label="Guardar"
-                    severity="success"
-                    icon="pi pi-check"
-                    type="submit"
-                />
+                <Button class="h-2rem m-1" label="Cancelar" severity="danger" icon="pi pi-times" @click="showModal" />
+                <Button class="h-2rem m-1" label="Guardar" severity="success" icon="pi pi-check" type="submit" />
             </div>
         </form>
     </Dialog>
@@ -314,11 +185,10 @@ export default {
             ruta: rutaBase,
         };
     },
-    mounted() {},
+    mounted() { },
     watch: {
         visiblemultiple: function (newValue, oldValue) {
             if (newValue == 1) {
-                console.log(1);
                 this.armarVModel();
             }
         },
@@ -352,8 +222,11 @@ export default {
                     this.formData["boleta_funebre" + index] = null;
                     this.formData["info_bancaria" + index] = null;
                     this.formData["pathname" + index] = pathName;
-                });
+                    this.formData["aprobado_administrador_obra" + index] = colaborador.aprobado_administrador_obra == 7 ? null : colaborador.aprobado_administrador_obra;
+                    this.formData["aprobado_visitador_obra" + index] = colaborador.aprobado_visitador_obra == 7 ? null : colaborador.aprobado_visitador_obra;
+                    this.formData["aprobado_rrhh" + index] = colaborador.aprobado_rrhh == 7 ? null : colaborador.aprobado_rrhh;
 
+                });
                 setTimeout(() => {
                     this.handleDropdownChange(index, null);
                 }, 500);
@@ -376,7 +249,7 @@ export default {
                 this.formData,
                 {
                     onFinish: () => {
-                            this.showModal();
+                        this.showModal();
                         this.getData();
                         this.isLoadingForm = false;
                         this.mensaje = "";

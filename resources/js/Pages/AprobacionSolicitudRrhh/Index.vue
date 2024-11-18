@@ -5,23 +5,7 @@
             <breadcrumbs :modules="breadcrumbs" />
             <div class="col-md-12 mt-2">
                 <div class="row">
-                    <!--  <div class="col-lg-3 col-6">
-                        <div class="info-box">
-                            <span
-                                class="info-box-icon bg-color-custom-creado elevation-1"
-                                ><i class="fas fa-list-ol"></i
-                            ></span>
-                            <div class="info-box-content">
-                                <span class="info-box-text color-custom-creado"
-                                    >CREADOS</span
-                                >
-                                <span class="info-box-number">{{
-                                    conteoSolicitudes.CREADO
-                                }}</span>
-                            </div>
-                        </div>
-                    </div> -->
-                    <div class="col-lg-3 col-6">
+                    <div class="col-lg-3 col-12">
                         <div class="info-box">
                             <span
                                 class="info-box-icon bg-color-custom-pendiente elevation-1"
@@ -38,7 +22,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-6">
+                    <div class="col-lg-3 col-12">
                         <div class="info-box">
                             <span
                                 class="info-box-icon bg-color-custom-aprobado elevation-1"
@@ -55,7 +39,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-6">
+                    <div class="col-lg-3 col-12">
                         <div class="info-box">
                             <span
                                 class="info-box-icon bg-color-custom-rechazado elevation-1"

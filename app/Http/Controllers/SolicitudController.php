@@ -287,11 +287,11 @@ class SolicitudController extends Controller
                 "redireccion" => $request->{"redireccion$index"},
                 "rut_empresa" => $request->{"rut_empresa$index"},
                 "centro_costo" => $request->{"centro_costo$index"},
-                "aprobado_administrador_obra" => null,
+                "aprobado_administrador_obra" => $request->{"aprobado_administrador_obra$index"},
                 "comentario_admin_obra" => null,
-                "aprobado_visitador_obra" => null,
+                "aprobado_visitador_obra" => $request->{"aprobado_visitador_obra$index"},
                 "comentario_visitador" => null,
-                "aprobado_rrhh" => null,
+                "aprobado_rrhh" =>  $request->{"aprobado_rrhh$index"},
                 "comentario_rrhh" => null,
             );
 

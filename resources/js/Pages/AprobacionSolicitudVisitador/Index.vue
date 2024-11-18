@@ -3,37 +3,58 @@
     <AppLayout>
         <div v-if="this.details != true">
             <breadcrumbs :modules="breadcrumbs" />
+            <div class="col-md-12 mt-2">
+                <div class="row">
+                    <div class="col-lg-3 col-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-color-custom-pendiente elevation-1"><i
+                                    class="fas fa-bookmark"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text color-custom-pendiente">PENDIENTES</span>
+                                <span class="info-box-number">{{
+                                    conteoSolicitudes.PENDIENTE
+                                    }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-color-custom-aprobado elevation-1"><i
+                                    class="fas fa-check-circle"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text color-custom-aprobado">APROBADOS</span>
+                                <span class="info-box-number">{{
+                                    conteoSolicitudes.APROBADO
+                                    }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-color-custom-rechazado elevation-1"><i
+                                    class="fas fa-times-circle"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text color-custom-rechazado">RECHAZADOS</span>
+                                <span class="info-box-number">{{
+                                    conteoSolicitudes.RECHAZADO
+                                    }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="box m-1 mt-5 bg-white p-3 border-round">
                 <div class="container-fluid">
                     <div class="box-body">
-                        <DataTable
-                            dataKey="id"
-                            :value="dataTable.data"
-                            :rows="dataTable.rows"
-                            showGridlines
-                            paginator
-                            :paginatorTemplate="dataTable.paginatorTemplate"
-                            :currentPageReportTemplate="
-                                dataTable.currentPageReportTemplate
-                            "
-                            :rowsPerPageOptions="dataTable.rowsPerPageOptions"
-                            sortMode="single"
-                            :globalFilterFields="dataTable.globalFilterFields"
-                            v-model:filters="dataTable.filters"
-                            filterDisplay="menu"
-                            FilterMatchMode
-                        >
+                        <DataTable dataKey="id" :value="dataTable.data" :rows="dataTable.rows" showGridlines paginator
+                            :paginatorTemplate="dataTable.paginatorTemplate" :currentPageReportTemplate="dataTable.currentPageReportTemplate
+                                " :rowsPerPageOptions="dataTable.rowsPerPageOptions" sortMode="single"
+                            :globalFilterFields="dataTable.globalFilterFields" v-model:filters="dataTable.filters"
+                            filterDisplay="menu" FilterMatchMode>
                             <template #header>
-                                <div
-                                    class="flex justify-content-end align-items-center"
-                                >
-                                    <InputText
-                                        placeholder="Buscador general"
-                                        v-model="
-                                            dataTable.filters['global'].value
-                                        "
-                                        style="font-size: 0.9rem; height: 30px"
-                                    />
+                                <div class="flex justify-content-end align-items-center">
+                                    <InputText placeholder="Buscador general" v-model="dataTable.filters['global'].value
+                                        " style="font-size: 0.9rem; height: 30px" />
                                 </div>
                             </template>
                             <template #empty>
@@ -41,65 +62,33 @@
                                     <span>No hay datos que mostrar</span>
                                 </div>
                             </template>
-                            <Column
-                                field="codigo"
-                                header="Código de solicitud"
-                                headerStyle="background-color:black; color:white"
-                                sortable
-                                filterField="codigo"
-                                :showFilterMatchModes="false"
-                            >
+                            <Column field="codigo" header="Código de solicitud"
+                                headerStyle="background-color:black; color:white" sortable filterField="codigo"
+                                :showFilterMatchModes="false">
                                 <template #filter="{ filterModel }">
-                                    <MultiSelect
-                                        v-model="filterModel.value"
-                                        :options="filtersDropdownData.codigo"
-                                        placeholder="Cualquiera"
-                                        class="p-column-filter"
-                                        optionLabel="codigo"
-                                        optionValue="codigo"
-                                    >
+                                    <MultiSelect v-model="filterModel.value" :options="filtersDropdownData.codigo"
+                                        placeholder="Cualquiera" class="p-column-filter" optionLabel="codigo"
+                                        optionValue="codigo">
                                     </MultiSelect>
                                 </template>
                             </Column>
-                            <Column
-                                field="user_created"
-                                header="Solicitante"
-                                headerStyle="background-color:black; color:white"
-                                sortable
-                                filterField="user_id"
-                                :showFilterMatchModes="false"
-                            >
+                            <Column field="user_created" header="Solicitante"
+                                headerStyle="background-color:black; color:white" sortable filterField="user_id"
+                                :showFilterMatchModes="false">
                             </Column>
-                            <Column
-                                field="centro_costo"
-                                header="Centro de costo"
-                                headerStyle="background-color:black; color:white"
-                                sortable
-                                filterField="centro_costo"
-                                :showFilterMatchModes="false"
-                            >
+                            <Column field="centro_costo" header="Centro de costo"
+                                headerStyle="background-color:black; color:white" sortable filterField="centro_costo"
+                                :showFilterMatchModes="false">
                                 <template #filter="{ filterModel }">
-                                    <MultiSelect
-                                        v-model="filterModel.value"
-                                        :options="
-                                            filtersDropdownData.centro_costo
-                                        "
-                                        placeholder="Cualquiera"
-                                        class="p-column-filter"
-                                        optionLabel="centro_costo"
-                                        optionValue="centro_costo"
-                                    >
-                                    </MultiSelect
-                                ></template>
+                                    <MultiSelect v-model="filterModel.value" :options="filtersDropdownData.centro_costo
+                                        " placeholder="Cualquiera" class="p-column-filter" optionLabel="centro_costo"
+                                        optionValue="centro_costo">
+                                    </MultiSelect>
+                                </template>
                             </Column>
-                            <Column
-                                field="created_at"
-                                header="Fecha de creación"
-                                headerStyle="background-color:black; color:white"
-                                sortable
-                                filterField="created_at"
-                                :showFilterMatchModes="false"
-                            >
+                            <Column field="created_at" header="Fecha de creación"
+                                headerStyle="background-color:black; color:white" sortable filterField="created_at"
+                                :showFilterMatchModes="false">
                                 <template #body="{ data }">
                                     <div>
                                         {{
@@ -108,59 +97,31 @@
                                     </div>
                                 </template>
                             </Column>
-                            <Column
-                                field="estado.descripcion"
-                                filterField="estado"
-                                header="Estado"
-                                headerStyle="background-color:black; color:white"
-                                style="text-align: center"
-                                sortable
-                                :showFilterMatchModes="false"
-                            >
+                            <Column field="estado.descripcion" filterField="estado" header="Estado"
+                                headerStyle="background-color:black; color:white" style="text-align: center" sortable
+                                :showFilterMatchModes="false">
                                 <template #body="{ data }">
-                                    <Tag
-                                        :value="
-                                            data.estado.id == 3
-                                                ? 'APROBADO'
-                                                : data.estado.descripcion
-                                        "
-                                        :severity="
-                                            data.estado.id == 3
+                                    <Tag :value="data.estado.id == 3
+                                            ? 'APROBADO'
+                                            : data.estado.descripcion
+                                        " :severity="data.estado.id == 3
                                                 ? 'success'
                                                 : data.estado.color
-                                        "
-                                    />
+                                            " />
                                 </template>
                                 <template #filter="{ filterModel }">
-                                    <MultiSelect
-                                        v-model="filterModel.value"
-                                        :options="filtersDropdownData.estado"
-                                        placeholder="Cualquiera"
-                                        class="p-column-filter"
-                                        optionLabel="estado.descripcion"
-                                        optionValue="estado"
-                                    >
-                                    </MultiSelect
-                                ></template>
+                                    <MultiSelect v-model="filterModel.value" :options="filtersDropdownData.estado"
+                                        placeholder="Cualquiera" class="p-column-filter"
+                                        optionLabel="estado.descripcion" optionValue="estado">
+                                    </MultiSelect>
+                                </template>
                             </Column>
-                            <Column
-                                :field="null"
-                                filterField="user_id"
-                                header="Colaboradores"
-                                headerStyle="background-color:black; color:white"
-                                sortable
-                                style="text-align: center"
-                                :showFilterMatchModes="false"
-                            >
+                            <Column :field="null" filterField="user_id" header="Colaboradores"
+                                headerStyle="background-color:black; color:white" sortable style="text-align: center"
+                                :showFilterMatchModes="false">
                                 <template #body="{ data }">
-                                    <Button
-                                        icon="pi pi-users"
-                                        class="ml-2"
-                                        style="font-size: 0.9rem; height: 30px"
-                                        severity="info"
-                                        @click="ChangeView(data)"
-                                        v-tooltip.top="'colaboradores'"
-                                    />
+                                    <Button icon="pi pi-users" class="ml-2" style="font-size: 0.9rem; height: 30px"
+                                        severity="info" @click="ChangeView(data)" v-tooltip.top="'colaboradores'" />
                                 </template>
                             </Column>
                         </DataTable>
@@ -168,12 +129,8 @@
                 </div>
             </div>
         </div>
-        <SolicitudesColaborador
-            @ChangeView="this.ChangeView"
-            @getData="this.getData"
-            :solicitud_selected="solicitud_selected"
-            :details="this.details"
-        />
+        <SolicitudesColaborador @ChangeView="this.ChangeView" @getData="this.getData"
+            :solicitud_selected="solicitud_selected" :details="this.details" />
     </AppLayout>
 </template>
 <script>
@@ -220,6 +177,12 @@ export default {
                 id_solicitud: 0,
                 comentario: "",
             }),
+            conteoSolicitudes: {
+                CREADO: 0,
+                PEDIENTE: 0,
+                APROBADO: 0,
+                RECHAZADO: 0,
+            },
             dataTable: {
                 rows: 10,
                 data: [],
@@ -401,6 +364,50 @@ export default {
                 ).values(),
             ].map((o) => {
                 return { estado: o };
+            });
+
+            const estadoCount = this.dataTable.data.reduce((acc, s) => {
+                const descripcion =
+                    s.estado && s.estado.descripcion
+                        ? s.estado.descripcion
+                        : "desconocido";
+                acc[descripcion] = (acc[descripcion] || 0) + 1;
+                return acc;
+            }, {});
+            // Asegurar que todos los estados deseados estén presentes
+            const estadosDeseados = [
+                "CREADO",
+                "PENDIENTE",
+                "APROBADO",
+                "RECHAZADO",
+            ];
+            this.conteoSolicitudes = {};
+
+            estadosDeseados.forEach((estado) => {
+                if (estado === "APROBADO") {
+                    // Sumar todas las variantes de "APROBADO"
+                    this.conteoSolicitudes["APROBADO"] =
+                        (estadoCount["APROBADO"] || 0) +
+                        (estadoCount["APROBADO ADMINISTRADOR"] || 0) +
+                        (estadoCount["SOLICITUD APROBADA TOTAL"] || 0) +
+                        (estadoCount["PENDIENTE APROBAR POR RRHH"] || 0);
+                } else if (estado === "RECHAZADO") {
+                    // Sumar todas las variantes de "RECHAZADO"
+                    this.conteoSolicitudes["RECHAZADO"] =
+                        (estadoCount["SOLICITUD RECHAZADA"] || 0) +
+                        (estadoCount["RECHAZADO RRHH"] || 0) +
+                        (estadoCount["RECHAZADO ADMINISTRADOR"] || 0) +
+                        (estadoCount["SOLICITUD RECHAZADA TOTAL"] || 0);
+                } else if (estado === "PENDIENTE") {
+                    // Sumar todas las variantes de "RECHAZADO"
+                    this.conteoSolicitudes["PENDIENTE"] =
+                        (estadoCount[
+                            "PENDIENTE APROBAR POR DE VISITADOR DE OBRA"
+                        ] || 0);
+                } else {
+                    // Para otros estados, asignar el valor directamente
+                    this.conteoSolicitudes[estado] = estadoCount[estado] || 0;
+                }
             });
         },
         dateFormatChangeApi(data) {
