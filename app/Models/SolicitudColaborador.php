@@ -58,7 +58,9 @@ class SolicitudColaborador extends Model
         'aprobado_administrador_obra',
         'aprobado_visitador_obra',
         'aprobado_rrhh',
-        'comentario_visitador'
+        'comentario_visitador',
+        'full_ceco',
+        'fecha_ingreso'
     ];
 
     /**
@@ -109,7 +111,7 @@ class SolicitudColaborador extends Model
     {
         return $this->belongsTo('App\Models\Estados', 'aprobado_visitador_obra', 'id');
     }
-    
+
     public function estadorrhh()
     {
         return $this->belongsTo('App\Models\Estados', 'aprobado_rrhh', 'id');

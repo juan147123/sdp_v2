@@ -129,4 +129,8 @@ Route::middleware([
     
     //ARCHIVOS
     Route::put('archivos/delete/{id}', [ArchivosController::class, 'delete'])->name('archivos.delete');
+
+
+    // EXPORTAR
+    Route::get('/exportar-solicitudes/{fecha_inicio}/{fecha_fin}', [SolicitudController::class, 'export']);
 });

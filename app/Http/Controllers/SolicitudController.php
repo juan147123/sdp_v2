@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\SolicitudExport;
 use App\Interfaces\PersonalChileRepositoryInterface;
 use App\Interfaces\SolicitudColaboradorRepositoryInterface;
 use App\Interfaces\SolicitudRepositoryInterface;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SolicitudController extends Controller
 {
@@ -146,7 +148,7 @@ class SolicitudController extends Controller
     {
         $userCreated = strtoupper(Auth::user()->username);
         $np_lider = session('np_lider');
-        $solicitud = $this->buildSolicitud($np_lider, $userCreated, $request->centro_costo0);
+        $solicitud = $this->buildSolicitud($np_lider, $userCreated, $request);
         $new_solicitud = $this->repository->create($solicitud);
         return $new_solicitud;
     }
@@ -158,12 +160,16 @@ class SolicitudController extends Controller
         return $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $request->file('filesForm'), '', '');
     }
 
-    private function buildSolicitud($npLider, $userCreated, $centro_costo)
+    private function buildSolicitud($npLider, $userCreated,$request)
     {
         return [
             'np_lider' => $npLider,
             'user_created' => $userCreated,
-            'centro_costo' => $centro_costo,
+            'user_created_name' =>strtoupper(Auth::user()->name),
+            'centro_costo' => $request->centro_costo0,
+            'full_ceco' => $request->full_ceco0,
+            'rut_empresa' => $request->rut_empresa0,
+            'razon_social' => $request->razon_social0,
             'obra' => session('obra') == null ? 0 : session('obra'),
         ];
     }
@@ -205,6 +211,8 @@ class SolicitudController extends Controller
                 "redireccion" => $request->{"redireccion$index"},
                 "rut_empresa" => $request->{"rut_empresa$index"},
                 "centro_costo" => $request->{"centro_costo$index"},
+                "full_ceco" => $request->{"full_ceco$index"},
+                "fecha_ingreso" => $request->{"fecha_ingreso$index"},
                 'id_solicitud' => $new_solicitud->id
             );
             $archivos1 = $request->file("carta_firmada$index");
@@ -374,5 +382,11 @@ class SolicitudController extends Controller
         ])->whereIn('estado.id', [3, 4, 5])->where("enable", 1);
 
         return $result->values();
+    }
+
+    public function export($fecha_inicio, $fecha_fin)
+    {
+        // Asegúrate de que las fechas estén en el formato correcto (Y-m-d)
+        return Excel::download(new SolicitudExport($fecha_inicio, $fecha_fin ,$this->repository), 'solicitudes_'.$fecha_inicio.'_a_'.$fecha_fin.'.xlsx');
     }
 }

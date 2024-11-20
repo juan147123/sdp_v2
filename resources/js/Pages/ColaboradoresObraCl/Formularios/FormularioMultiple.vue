@@ -1,53 +1,29 @@
 <template>
     <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
-    <Dialog
-        header="Registrar solicitud"
-        :visible="visible"
-        :closable="false"
-        :draggable="false"
-        pt:mask:class="backdrop-blur-sm"
-        maximizable
-        modal
-        :style="{
+    <Dialog header="Registrar solicitud" :visible="visible" :closable="false" :draggable="false"
+        pt:mask:class="backdrop-blur-sm" maximizable modal :style="{
             width: colaboradoresDetalle.length === 1 ? '50rem' : '70rem',
-        }"
-    >
+        }">
         <form class="grid" @submit.prevent="submit">
-            <div
-                :class="colaboradoresDetalle.length == 1 ? 'col-12' : 'col-6'"
-                v-for="(colaborador, index) in this.colaboradoresDetalle"
-            >
+            <div :class="colaboradoresDetalle.length == 1 ? 'col-12' : 'col-6'"
+                v-for="(colaborador, index) in this.colaboradoresDetalle">
                 <div class="card" style="width: 100%">
                     <div class="card-body">
                         <div class="mb-3 flex flex-column">
                             <div class="align-items-center">
-                                <i
-                                    class="pi pi-user mr-2 ml-1"
-                                    style="font-size: 1rem"
-                                ></i>
+                                <i class="pi pi-user mr-2 ml-1" style="font-size: 1rem"></i>
                                 {{ colaborador.first_name }}
                                 {{ colaborador.last_name }}
                                 ( NP: {{ colaborador.user_id }} )
                             </div>
                         </div>
                         <div class="mb-3 flex flex-column">
-                            <label for="input1" class="form-label"
-                                >Motivo de desvinculación</label
-                            >
-                            <Dropdown
-                                :options="this.terminos"
-                                option-label="name"
-                                filter
-                                :class="`w-full`"
-                                v-model="this.formData['motivo' + index]"
-                                placeholder="Seleccione"
-                                @change="handleDropdownChange(index, $event)"
-                                required
-                            >
+                            <label for="input1" class="form-label">Motivo de desvinculación</label>
+                            <Dropdown :options="this.terminos" option-label="name" filter :class="`w-full`"
+                                v-model="this.formData['motivo' + index]" placeholder="Seleccione"
+                                @change="handleDropdownChange(index, $event)" required>
                                 <template #option="slotProps">
-                                    <div
-                                        class="flex align-items-center dropdown-option"
-                                    >
+                                    <div class="flex align-items-center dropdown-option">
                                         <div>
                                             {{ slotProps.option.name }}
                                         </div>
@@ -56,190 +32,93 @@
                             </Dropdown>
                         </div>
                         <div class="mb-3 flex flex-column">
-                            <label for="input1" class="form-label"
-                                >Fecha a desvincular</label
-                            >
-                            <Calendar
-                                showIcon
-                                class="w-full"
-                                locale="es"
-                                v-model="
-                                    this.formData[
-                                        'fecha_desvinculacion' + index
-                                    ]
-                                "
-                                dateFormat="dd/mm/yy"
-                                required
-                            />
+                            <label for="input1" class="form-label">Fecha a desvincular</label>
+                            <Calendar showIcon class="w-full" locale="es" v-model="this.formData[
+                                'fecha_desvinculacion' + index
+                                ]
+                                " dateFormat="dd/mm/yy" required />
                         </div>
-                        <div
-                            class="mb-3 flex flex-column border p-2"
-                            :id="'carta_firmada' + index"
-                        >
-                            <label for="input1" class="form-label"
-                                >Carta firmada o comprobante de envio por correo
-                                certificado</label
-                            >
-                            <input
-                                type="file"
-                                multiple
-                                @change="
-                                    handleFileChange(
-                                        $event,
-                                        index,
-                                        'carta_firmada'
-                                    )
-                                "
-                                required
-                            />
+                        <div class="mb-3 flex flex-column border p-2" :id="'carta_firmada' + index">
+                            <label for="input1" class="form-label">Carta firmada o comprobante de envio por correo
+                                certificado</label>
+                            <input type="file" multiple @change="
+                                handleFileChange(
+                                    $event,
+                                    index,
+                                    'carta_firmada'
+                                )
+                                " required />
                         </div>
-                        <div
-                            class="mb-3 flex flex-column border p-2"
-                            :id="'cese_dt' + index"
-                        >
-                            <label for="input1" class="form-label"
-                                >CESE DT</label
-                            >
-                            <input
-                                type="file"
-                                multiple
-                                @change="
-                                    handleFileChange($event, index, 'cese_dt')
-                                "
-                                required
-                            />
+                        <div class="mb-3 flex flex-column border p-2" :id="'cese_dt' + index">
+                            <label for="input1" class="form-label">CESE DT</label>
+                            <input type="file" multiple @change="
+                                handleFileChange($event, index, 'cese_dt')
+                                " required />
                         </div>
-                        <div
-                            class="mb-3 flex flex-column border p-2"
-                            :id="'cese_afc' + index"
-                        >
-                            <label for="input1" class="form-label"
-                                >CESE AFC</label
-                            >
-                            <input
-                                required
-                                type="file"
-                                multiple
-                                @change="
-                                    handleFileChange($event, index, 'cese_afc')
-                                "
-                            />
+                        <div class="mb-3 flex flex-column border p-2" :id="'cese_afc' + index">
+                            <label for="input1" class="form-label">CESE AFC</label>
+                            <input required type="file" multiple @change="
+                                handleFileChange($event, index, 'cese_afc')
+                                " />
                         </div>
                         <!-- ocultos -->
-                        <div
-                            class="mb-3 flex flex-column border p-2 d-none"
-                            :id="'aporte_empleador' + index"
-                        >
-                            <label for="input1" class="form-label"
-                                >Aporte empleador AFC</label
-                            >
-                            <input
-                                type="file"
-                                multiple
-                                @change="
-                                    handleFileChange(
-                                        $event,
-                                        index,
-                                        'aporte_empleador'
-                                    )
-                                "
-                            />
+                        <div class="mb-3 flex flex-column border p-2 d-none" :id="'aporte_empleador' + index">
+                            <label for="input1" class="form-label">Aporte empleador AFC</label>
+                            <input type="file" multiple @change="
+                                handleFileChange(
+                                    $event,
+                                    index,
+                                    'aporte_empleador'
+                                )
+                                " />
                         </div>
-                        <div
-                            class="mb-3 flex flex-column border p-2 d-none"
-                            :id="'cert_defuncion' + index"
-                        >
-                            <label for="input1" class="form-label"
-                                >CERTIFICADO DE DEFUNCIÓN</label
-                            >
-                            <input
-                                type="file"
-                                multiple
-                                @change="
-                                    handleFileChange(
-                                        $event,
-                                        index,
-                                        'cert_defuncion'
-                                    )
-                                "
-                            />
+                        <div class="mb-3 flex flex-column border p-2 d-none" :id="'cert_defuncion' + index">
+                            <label for="input1" class="form-label">CERTIFICADO DE DEFUNCIÓN</label>
+                            <input type="file" multiple @change="
+                                handleFileChange(
+                                    $event,
+                                    index,
+                                    'cert_defuncion'
+                                )
+                                " />
                         </div>
-                        <div
-                            class="mb-3 flex flex-column border p-2 d-none"
-                            :id="'boleta_funebre' + index"
-                        >
-                            <label for="input1" class="form-label"
-                                >Boleta o comprobante de gastos funebres</label
-                            >
-                            <input
-                                type="file"
-                                multiple
-                                @change="
-                                    handleFileChange(
-                                        $event,
-                                        index,
-                                        'boleta_funebre'
-                                    )
-                                "
-                            />
+                        <div class="mb-3 flex flex-column border p-2 d-none" :id="'boleta_funebre' + index">
+                            <label for="input1" class="form-label">Boleta o comprobante de gastos funebres</label>
+                            <input type="file" multiple @change="
+                                handleFileChange(
+                                    $event,
+                                    index,
+                                    'boleta_funebre'
+                                )
+                                " />
                         </div>
-                        <div
-                            class="mb-3 flex flex-column border p-2 d-none"
-                            :id="'info_bancaria' + index"
-                        >
-                            <label for="input1" class="form-label"
-                                >Información bancaria del beneficiario</label
-                            >
-                            <input
-                                type="file"
-                                multiple
-                                @change="
-                                    handleFileChange(
-                                        $event,
-                                        index,
-                                        'info_bancaria'
-                                    )
-                                "
-                            />
+                        <div class="mb-3 flex flex-column border p-2 d-none" :id="'info_bancaria' + index">
+                            <label for="input1" class="form-label">Información bancaria del beneficiario</label>
+                            <input type="file" multiple @change="
+                                handleFileChange(
+                                    $event,
+                                    index,
+                                    'info_bancaria'
+                                )
+                                " />
                         </div>
-                        <div
-                            class="mb-3 flex flex-column border p-2 d-none"
-                            :id="'convenio_practica' + index"
-                        >
-                            <label for="input1" class="form-label"
-                                >Convenio de práctica</label
-                            >
-                            <input
-                                type="file"
-                                multiple
-                                @change="
-                                    handleFileChange(
-                                        $event,
-                                        index,
-                                        'convenio_practica'
-                                    )
-                                "
-                            />
+                        <div class="mb-3 flex flex-column border p-2 d-none" :id="'convenio_practica' + index">
+                            <label for="input1" class="form-label">Convenio de práctica</label>
+                            <input type="file" multiple @change="
+                                handleFileChange(
+                                    $event,
+                                    index,
+                                    'convenio_practica'
+                                )
+                                " />
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="w-full flex justify-content-end p-2">
-                <Button
-                    class="h-2rem m-1"
-                    label="Cancelar"
-                    severity="danger"
-                    icon="pi pi-times"
-                    @click="showModal"
-                />
-                <Button
-                    class="h-2rem m-1"
-                    label="Guardar"
-                    severity="success"
-                    icon="pi pi-check"
-                    type="submit"
-                />
+                <Button class="h-2rem m-1" label="Cancelar" severity="danger" icon="pi pi-times" @click="showModal" />
+                <Button class="h-2rem m-1" label="Guardar" severity="success" icon="pi pi-check" type="submit" />
             </div>
         </form>
     </Dialog>
@@ -263,7 +142,7 @@ export default {
             formData: this.$inertia.form({}),
         };
     },
-    mounted() {},
+    mounted() { },
     watch: {
         visible: function (newValue, oldValue) {
             if (newValue == 1) {
@@ -285,6 +164,14 @@ export default {
                     this.formData["rut_empresa" + index] = colaborador.rut;
                     this.formData["centro_costo" + index] =
                         colaborador.centro_costo;
+                    this.formData["full_ceco" + index] =
+                        colaborador.full_ceco;
+                    this.formData["rut_empresa" + index] =
+                        colaborador.rut;
+                    this.formData["razon_social" + index] =
+                        colaborador.razon_social;
+                    this.formData["fecha_ingreso" + index] =
+                        colaborador.fecha_ingreso;
                     /* archivos */
                     this.formData["carta_firmada" + index] = null;
                     this.formData["cese_dt" + index] = null;
@@ -382,26 +269,26 @@ export default {
 
             if (external_code == "24") {
                 $("#carta_firmada" + index).addClass("d-none");
-                $("#carta_firmada" + index +  " input[type='file']").attr("required", false);
-                
-                $("#cese_dt" + index ).addClass("d-none");
+                $("#carta_firmada" + index + " input[type='file']").attr("required", false);
+
+                $("#cese_dt" + index).addClass("d-none");
                 $("#cese_dt" + index + " input[type='file']").attr("required", false);
-                
+
                 $("#cese_afc" + index).addClass("d-none");
                 $("#cese_afc" + index + " input[type='file']").attr("required", false);
-               
+
                 $("#convenio_practica" + index).removeClass("d-none");
                 $("#convenio_practica" + index + " input[type='file']").attr("required", true);
             } else {
                 $("#carta_firmada" + index).removeClass("d-none");
-                $("#carta_firmada" + index +  " input[type='file']").attr("required", true);
-                
-                $("#cese_dt" + index ).removeClass("d-none");
+                $("#carta_firmada" + index + " input[type='file']").attr("required", true);
+
+                $("#cese_dt" + index).removeClass("d-none");
                 $("#cese_dt" + index + " input[type='file']").attr("required", true);
-                
+
                 $("#cese_afc" + index).removeClass("d-none");
                 $("#cese_afc" + index + " input[type='file']").attr("required", true);
-                
+
                 $("#convenio_practica" + index).addClass("d-none");
                 $("#convenio_practica" + index + " input[type='file']").attr("required", false);
             }

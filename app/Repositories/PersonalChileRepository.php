@@ -143,14 +143,14 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
     public function getColaboradoresObra($correo)
     {
         $query_obra = "
-        with cecos_lider as( 
+         with cecos_lider as( 
             select 
                 sap_maestro_empresa_dep_un_cc.external_code_cc,
                 sap_maestro_empresa_dep_un_cc.nombre_cc,
                 correo as correo_lider
             from
                 flesan_rrhh.tabla_encargados_cc
-            join sap_maestro_empresa_dep_un_cc on
+            join flesan_rrhh.sap_maestro_empresa_dep_un_cc on
                 (sap_maestro_empresa_dep_un_cc.external_code_empresa || '-' || sap_maestro_empresa_dep_un_cc.nombre_empresa = tabla_encargados_cc.sociedad
                     and sap_maestro_empresa_dep_un_cc.external_code_cc || '-' || sap_maestro_empresa_dep_un_cc.nombre_cc = tabla_encargados_cc.centro_coto)
             left join PUBLIC.maestro_rut on
@@ -158,6 +158,7 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
             where
                 correo is not null)
         select 
+        to_timestamp(CAST(c.fecha_ingreso AS BIGINT) / 1000)::date AS fecha_ingreso,
             c.user_id,
             c.np_lider,
             c.first_name,
@@ -195,6 +196,7 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
         and cl.correo_lider = :correo_lider
         and smc.planta_noplanta = 'NP'
         group by 
+        c.fecha_ingreso,
             c.user_id,
             c.np_lider,
             c.first_name,
@@ -219,7 +221,7 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
             c.nombre_departamento,
             c.division,
             c.nombre_division
-            ORDER BY first_name ASC;        
+            ORDER BY first_name ASC;         
         ";
 
         $colaboradores = DB::connection('dw_chile')->select(DB::raw($query_obra), [
