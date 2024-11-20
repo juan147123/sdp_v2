@@ -29,7 +29,9 @@ class SolicitudColaboradorRepository extends BaseRepository implements
     {
         return $this->model->whereIn('id', $request->ids)->update([
             'aprobado_administrador_obra' => $request->status,
-            "comentario_admin_obra" => $request->comentario_admin_obra
+            "comentario_admin_obra" => $request->comentario_admin_obra,
+            "user_aprobate_admin_obra" => Auth::user()->name,
+            "date_aprobate_admin_obra" => now()->toDateString(),
         ]);
     }
 
@@ -37,7 +39,9 @@ class SolicitudColaboradorRepository extends BaseRepository implements
     {
         return $this->model->whereIn('id', $request->ids)->update([
             'aprobado_visitador_obra' => $request->status,
-            "comentario_visitador" => $request->comentario_visitador
+            "comentario_visitador" => $request->comentario_visitador,
+            "user_aprobate_visi_obra" => Auth::user()->name,
+            "date_aprobate_visi_obra" => now()->toDateString(),
         ]);
     }
 
@@ -46,7 +50,9 @@ class SolicitudColaboradorRepository extends BaseRepository implements
         return $this->model->whereIn('id', $request->ids)->update([
             'aprobado_rrhh' => $request->status,
             "comentario_rrhh" =>
-            $request->comentario_rrhh
+            $request->comentario_rrhh,
+            "user_aprobate_rrhh_obra" => Auth::user()->name,
+            "date_aprobate_rrhh_obra" => now()->toDateString(),
         ]);
     }
 

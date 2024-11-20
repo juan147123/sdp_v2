@@ -62,8 +62,8 @@
                             <Column headerStyle="width: 3rem;background-color:black;" :selectionMode="this.solicitud_selected
                                 .status == 3 ? 'multiple' : ''">
                                 <template #body="{ data }">
-                                    <Checkbox v-model="colaboradoresSeleccionados" :value="data" :disabled="data.estadorrhh.id == 6 ||
-                                        data.estadorrhh.id == 7
+                                    <Checkbox v-model="colaboradoresSeleccionados" :value="data" :disabled="data.estadorrhh?.id == 6 ||
+                                        data.estadorrhh?.id == 7
                                         " />
                                 </template>
                             </Column>

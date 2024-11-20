@@ -60,8 +60,15 @@ class SolicitudColaborador extends Model
         'aprobado_rrhh',
         'comentario_visitador',
         'full_ceco',
-        'fecha_ingreso'
+        'fecha_ingreso',
+        'user_aprobate_admin_obra',
+        'date_aprobate_admin_obra',
+        'user_aprobate_visi_obra',
+        'date_aprobate_visi_obra',
+        'user_aprobate_rrhh_obra',
+        'date_aprobate_rrhh_obra'
     ];
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
