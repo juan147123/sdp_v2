@@ -26,6 +26,7 @@ import SpeedDial from 'primevue/speeddial';
 import Tag from 'primevue/tag';
 import Avatar from 'primevue/avatar';
 import Menu from 'primevue/menu';
+import ConfirmPopup from 'primevue/confirmpopup';
 
 export default {
     Button,
@@ -55,5 +56,6 @@ export default {
     SpeedDial,
     Tag,
     Avatar,
-    Menu
+    Menu,
+    ConfirmPopup
 }

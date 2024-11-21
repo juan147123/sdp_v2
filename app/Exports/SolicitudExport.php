@@ -40,10 +40,11 @@ class SolicitudExport implements FromCollection, WithHeadings, WithMapping, With
             'FECHA APROBACIÓN 1',
             'APROBADOR 2',
             'FECHA APROBACIÓN 2',
+            'RUT EMPRESA',
             'EMPRESA',
             'NP',
             'NOMBRE',
-            'CC',
+            'CENTRO DE COSTO',
             'FECHA DE INGRESO',
             'FECHA DE TERMINO',
             'COD. CAUSAL',
@@ -68,8 +69,9 @@ class SolicitudExport implements FromCollection, WithHeadings, WithMapping, With
             'solicitud_colaborador.date_aprobate_admin_obra',
             'solicitud_colaborador.user_aprobate_visi_obra',
             'solicitud_colaborador.date_aprobate_visi_obra',
-            'solicitudes.razon_social',
             'solicitudes.rut_empresa',
+            'solicitudes.razon_social',
+            'solicitud_colaborador.user_id',
             'solicitud_colaborador.nombre_completo',
             'solicitud_colaborador.full_ceco',
             'solicitud_colaborador.fecha_ingreso',
@@ -81,6 +83,7 @@ class SolicitudExport implements FromCollection, WithHeadings, WithMapping, With
             ->leftJoin('solicitud_colaborador', 'solicitudes.id', '=', 'solicitud_colaborador.id_solicitud')
             ->leftJoin('sap_maestro_causales_terminos', 'solicitud_colaborador.motivo', '=', 'sap_maestro_causales_terminos.externalcode')
             ->whereBetween('solicitudes.created_at', [$this->fecha_inicio, $this->fecha_fin])
+            ->where('solicitudes.status',4)
             ->get();
     }
 
@@ -99,8 +102,9 @@ class SolicitudExport implements FromCollection, WithHeadings, WithMapping, With
             $row->date_aprobate_admin_obra ? Carbon::parse($row->date_aprobate_admin_obra)->format('d/m/Y') : '',  // Fecha Aprobación 1
             $row->user_aprobate_visi_obra,  // Aprobador 2
             $row->date_aprobate_visi_obra ? Carbon::parse($row->date_aprobate_visi_obra)->format('d/m/Y') : '',  // Fecha Aprobación 2
-            $row->razon_social,  // Empresa
             $row->rut_empresa,  // NP
+            $row->razon_social,  // Empresa
+            $row->user_id,  // Empresa
             $row->nombre_completo,  // Nombre
             $row->full_ceco,  // CC
             $row->fecha_ingreso ? Carbon::parse($row->fecha_ingreso)->format('d/m/Y') : '',  // Fecha de Ingreso
@@ -122,26 +126,27 @@ class SolicitudExport implements FromCollection, WithHeadings, WithMapping, With
     public function styles(Worksheet $sheet)
     {
         // Establecer el ancho de las columnas
-        $sheet->getColumnDimension('A')->setWidth(20);
-        $sheet->getColumnDimension('B')->setWidth(30);
-        $sheet->getColumnDimension('C')->setWidth(20);
+        $sheet->getColumnDimension('A')->setWidth(25);
+        $sheet->getColumnDimension('B')->setWidth(35);
+        $sheet->getColumnDimension('C')->setWidth(35);
         $sheet->getColumnDimension('D')->setWidth(20);
-        $sheet->getColumnDimension('E')->setWidth(20);
+        $sheet->getColumnDimension('E')->setWidth(35);
         $sheet->getColumnDimension('F')->setWidth(20);
-        $sheet->getColumnDimension('G')->setWidth(30);
-        $sheet->getColumnDimension('H')->setWidth(20);
-        $sheet->getColumnDimension('I')->setWidth(30);
-        $sheet->getColumnDimension('J')->setWidth(20);
-        $sheet->getColumnDimension('K')->setWidth(20);
+        $sheet->getColumnDimension('G')->setWidth(35);
+        $sheet->getColumnDimension('H')->setWidth(35);
+        $sheet->getColumnDimension('I')->setWidth(17);
+        $sheet->getColumnDimension('J')->setWidth(40);
+        $sheet->getColumnDimension('K')->setWidth(35);
         $sheet->getColumnDimension('L')->setWidth(20);
         $sheet->getColumnDimension('M')->setWidth(20);
-        $sheet->getColumnDimension('N')->setWidth(30);
-        $sheet->getColumnDimension('O')->setWidth(20);
-        $sheet->getColumnDimension('P')->setWidth(20);
+        $sheet->getColumnDimension('N')->setWidth(10);
+        $sheet->getColumnDimension('O')->setWidth(35);
+        $sheet->getColumnDimension('P')->setWidth(25);
         $sheet->getColumnDimension('Q')->setWidth(20);
+        $sheet->getColumnDimension('R')->setWidth(20);
 
         // Establecer estilo de cabecera (azul y texto blanco)
-        $sheet->getStyle('A1:Q1')->applyFromArray([
+        $sheet->getStyle('A1:R1')->applyFromArray([
             'font' => [
                 'bold' => true,
                 'color' => ['argb' => 'FFFFFF'],
@@ -157,7 +162,7 @@ class SolicitudExport implements FromCollection, WithHeadings, WithMapping, With
         ]);
 
         // Establecer bordes para todas las celdas
-        $sheet->getStyle('A1:Q' . $sheet->getHighestRow())->applyFromArray([
+        $sheet->getStyle('A1:R' . $sheet->getHighestRow())->applyFromArray([
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,

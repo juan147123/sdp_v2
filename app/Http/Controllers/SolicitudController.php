@@ -274,8 +274,6 @@ class SolicitudController extends Controller
         $requestData = $request->all();
         $old_solicitud = $this->repository->findById($request->id_solicitud0);
 
-        $archivos1 = $request->file("carta_firmada1");
-
         $groupedIds = [];
         foreach ($requestData as $key => $value) {
 

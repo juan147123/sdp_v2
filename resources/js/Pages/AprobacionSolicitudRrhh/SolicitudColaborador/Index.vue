@@ -188,7 +188,6 @@ export default {
         setLocaleES();
     },
     data() {
-        var self = this;
         return {
             items: [
                 {

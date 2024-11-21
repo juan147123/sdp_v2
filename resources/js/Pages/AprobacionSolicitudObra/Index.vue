@@ -13,7 +13,7 @@
                                 <span class="info-box-text color-custom-pendiente">PENDIENTES</span>
                                 <span class="info-box-number">{{
                                     conteoSolicitudes.PENDIENTE
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
                     </div>
@@ -25,7 +25,7 @@
                                 <span class="info-box-text color-custom-aprobado">APROBADOS</span>
                                 <span class="info-box-number">{{
                                     conteoSolicitudes.APROBADO
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                                 <span class="info-box-text color-custom-rechazado">RECHAZADOS</span>
                                 <span class="info-box-number">{{
                                     conteoSolicitudes.RECHAZADO
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
                     </div>
@@ -369,6 +369,11 @@ export default {
             ].map((o) => {
                 return { estado: o };
             });
+
+            // Asegurar que todos los estados deseados estén presentes
+            this.setDAtaDashboard();
+        },
+        setDAtaDashboard() {
             const estadoCount = this.dataTable.data.reduce((acc, s) => {
                 const descripcion =
                     s.estado && s.estado.descripcion
@@ -377,7 +382,6 @@ export default {
                 acc[descripcion] = (acc[descripcion] || 0) + 1;
                 return acc;
             }, {});
-            // Asegurar que todos los estados deseados estén presentes
             const estadosDeseados = [
                 "CREADO",
                 "PENDIENTE",
@@ -406,7 +410,7 @@ export default {
                     this.conteoSolicitudes["PENDIENTE"] =
                         (estadoCount[
                             "PENDIENTE APROBAR POR ADMINISTRADOR DE OBRA"
-                        ] || 0) ;
+                        ] || 0);
                 } else {
                     // Para otros estados, asignar el valor directamente
                     this.conteoSolicitudes[estado] = estadoCount[estado] || 0;
@@ -417,6 +421,7 @@ export default {
             return dateFormatChange(data);
         },
         ChangeView(data) {
+            this.setDAtaDashboard();
             this.details = !this.details;
             this.solicitud_selected = data ? data : [];
         },

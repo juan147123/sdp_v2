@@ -366,6 +366,9 @@ export default {
                 return { estado: o };
             });
 
+          this.setDashboard();
+        },
+        setDashboard(){
             const estadoCount = this.dataTable.data.reduce((acc, s) => {
                 const descripcion =
                     s.estado && s.estado.descripcion
@@ -414,6 +417,7 @@ export default {
             return dateFormatChange(data);
         },
         ChangeView(data) {
+            this.setDashboard();
             this.details = !this.details;
             this.solicitud_selected = data ? data : [];
         },
