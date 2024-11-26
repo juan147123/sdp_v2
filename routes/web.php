@@ -5,6 +5,7 @@ use App\Http\Controllers\{
     ArchivosController,
     SolicitudController,
     AuthController,
+    CalendarController,
     ColaboradoresChileController,
     ColaboradoresPeruController,
     ConfiguracionController,
@@ -133,4 +134,13 @@ Route::middleware([
 
     // EXPORTAR
     Route::get('/exportar-solicitudes/{fecha_inicio}/{fecha_fin}', [SolicitudController::class, 'export']);
+
+
+
+    //CALENDAR
+    Route::get('redirectpage/calendar', [CalendarController::class, 'redirectPage'])->name('redirect.calendar');
+    Route::get('list/calendar', [CalendarController::class, 'listAll'])->name('list.calendar');
+    Route::post('create/calendar', [CalendarController::class, 'create'])->name('create.calendar');
+    Route::post('update/calendar', [CalendarController::class, 'update'])->name('update.calendar');
+
 });

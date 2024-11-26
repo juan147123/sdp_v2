@@ -184,7 +184,6 @@ export default {
                 });
             });
             this.$inertia.form(this.formData);
-            console.log(this.formData);
         },
         onClickCleanFormUnico() {
             $("#motivoForm").val("").trigger("change");

@@ -322,7 +322,7 @@ class SolicitudController extends Controller
             $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos7, "info_bancaria", "Información bancaria del beneficiario");
             $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos8, "convenio_practica", "Convenio de práctica");
         }
-        $this->repository->update($old_solicitud->id, ["status" => 1]);
+        $this->repository->update($old_solicitud->id, ["status" => 2]);
 
         return redirect($request->pathname0);
     }
