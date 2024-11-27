@@ -198,7 +198,7 @@
                                 ? 'active'
                                 : '') + ' d-flex align-items-center'
                                 " @click="setPreloader()">
-                                <i class="fas fa-file icon-menu"></i>
+                                <i class="fas fa-calendar"></i>
                                 <strong>Calendario
                                 </strong>
                             </a>

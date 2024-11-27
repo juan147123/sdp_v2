@@ -302,3 +302,31 @@ ul.p-carousel-indicators{
 .p-button-label{
   font-weight: 100 !important;
 }
+
+/* calendar */
+.custom-calendar {
+  font-family: 'Roboto', sans-serif; /* Cambia la fuente */
+  background-color: #f9f9f9; /* Fondo más moderno */
+  border-radius: 8px; /* Bordes redondeados */
+  padding: 10px;
+}
+
+.custom-calendar .fc-toolbar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.custom-calendar .fc-daygrid-event {
+  background-color: #4caf50; /* Verde moderno */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+.fc-day-today {
+  background-color: #e0e0e0 !important; /* Fondo gris */
+  color: black; /* Asegura que el texto sea visible */
+  border-radius: 4px; /* Opcional: bordes redondeados */
+}
+

@@ -1,179 +1,140 @@
 <template>
-    <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
+    <Preloader v-if="isLoadingForm" :mensaje="mensaje" />
     <AppLayout>
-        <breadcrumbs :modules="breadcrumbs" />
-        <div class="box m-1 mt-5 bg-white p-3 border-round">
-            <div class="container-fluid">
-                <div class="box-body">
-                    <DataTable dataKey="id" :value="dataTable.data" :rows="dataTable.rows" showGridlines paginator
-                        :paginatorTemplate="dataTable.paginatorTemplate" :currentPageReportTemplate="dataTable.currentPageReportTemplate
-                            " :rowsPerPageOptions="dataTable.rowsPerPageOptions" sortMode="single"
-                        :globalFilterFields="dataTable.globalFilterFields" v-model:filters="dataTable.filters"
-                        filterDisplay="menu" FilterMatchMode>
-                        <template #header>
-                            <div class="flex justify-content-between align-items-center">
-                                <Button label="Nuevo" @click="modalvisible = true" size="small" style="
-                                                font-size: 0.9rem;
-                                                height: 30px;
-                                            " icon="pi pi-plus" severity="success" />
-                                <InputText placeholder="Buscador general" v-model="dataTable.filters['global'].value
-                                    " style="font-size: 0.9rem; height: 30px" />
+        <div class="calendar-container flex">
+            <div class="form-container m-2 pl-5 pr-5 pt-2 card w-50">
+                <div class="flex gap-3">
+                    <div class="p-field flex flex-column">
+                        <label for="startDate">Fecha de inicio</label>
+                        <input id="startDate" type="date" class="p-inputtext p-component" v-model="startDate" />
+                    </div>
+                    <div class="p-field flex flex-column">
+                        <label for="endDate">Fecha de fin</label>
+                        <input id="endDate" type="date" class="p-inputtext p-component" v-model="endDate" />
+                    </div>
+                </div>
+                <div class="p-field flex flex-column">
+                    <label for="weekNumber">Número de semana</label>
+                    <div class="flex gap-2">
+                        <input id="weekNumber" type="number" class="p-inputtext p-component" v-model="weekNumber"
+                            min="1" max="52" />
+                        <button class="p-button p-component p-button-success" @click="validateAndAddEvent">
+                            Validar y Registrar
+                        </button>
+                    </div>
+                </div>
+                <div class="mt-3 scrollable-list">
+                    <span>Semanas</span>
+                    <hr />
+                    <div class="mb-3" v-for="event in this.events_month" :key="event.start + event.end">
+                        <div class="flex flex-column">
+                            <div>
+                                <i class="pi pi-calendar"></i> {{ event.title }}
                             </div>
-                        </template>
-                        <template #empty>
-                            <div class="w-full flex justify-content-center">
-                                <span>No hay datos que mostrar</span>
+                            <div class="ml-2">
+                                Del {{ event.start }} al {{ event.end }}
                             </div>
-                        </template>
-                        <Column field="fecha_inicio" headerStyle="background-color:black; color:white" sortable
-                            header="FECHA DE INICIO">
-                        </Column>
-                        <Column field="fecha_fin" headerStyle="background-color:black; color:white" sortable
-                            header="FECHA DE FIN"></Column>
-                        <Column field="semana" headerStyle="background-color:black; color:white" sortable
-                            header="NR° DE SEMANA"></Column>
-                        <Column :field="null" header="ACCIONES" headerStyle="background-color:black; color:white"
-                            style="text-align: center">
-                            <template #body="{ data }">
-                                <Button icon="pi pi-pencil" class="ml-2" style="
-                                            font-size: 0.9rem;
-                                            height: 30px;
-                                            width: 2rem !important;
-                                            height: 2rem !important;
-                                        " severity="info" v-tooltip.top="'editar'" />
-                                <Button icon="pi pi-trash" class="ml-2" style="
-                                            font-size: 0.9rem;
-                                            height: 30px;
-                                            width: 2rem !important;
-                                            height: 2rem !important;
-                                        " severity="danger" v-tooltip.top="'eliminar'" />
-
-                            </template>
-                        </Column>
-
-                    </DataTable>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <FullCalendar class="card m-2 custom-calendar w-full" :options="calendarOptions" />
         </div>
-        <Dialog v-model:visible="modalvisible" modal :header="this.formData.id == 0 ? 'REGISTRAR' : 'EDITAR'"
-            :style="{ width: '25rem' }">
-            <div class="mb-3 flex flex-column">
-                <label for="input1" class="form-label">Fecha de inicio</label>
-                <Calendar showIcon class="w-full" locale="es" v-model="this.formData.fecha_inicio" dateFormat="dd/mm/yy"
-                    required />
-            </div>
-            <div class="mb-3 flex flex-column">
-                <label for="input1" class="form-label">Fecha de fín</label>
-                <Calendar showIcon class="w-full" locale="es" v-model="this.formData.fecha_fin" dateFormat="dd/mm/yy"
-                    required />
-            </div>
-            <div class="mb-3 flex flex-column">
-                <label for="input1" class="form-label">Número de semana</label>
-                <input class="form-control" v-model="this.formData.semana" required />
-            </div>
-            <div class="flex justify-content-end gap-2">
-                <Button type="button" label="Cancelar" severity="danger" @click="closeModal"></Button>
-                <Button type="button" label="Guardar" severity="success" @click=""></Button>
-            </div>
-        </Dialog>
     </AppLayout>
 </template>
+
 <script>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import breadcrumbs from "@/Components/Breadcrumbs.vue";
 import Preloader from "@/Components/Preloader.vue";
-import PrimeVueComponents from "../../../js/primevue.js";
-import { FilterMatchMode } from "primevue/api";
-import { rutaBase, dateFormatChange } from "../../../Utils/utils.js";
+import FullCalendar from "@fullcalendar/vue3";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import esLocale from "@fullcalendar/core/locales/es";
 
 export default {
     components: {
         AppLayout,
-        breadcrumbs,
         Preloader,
-        ...PrimeVueComponents,
-
+        FullCalendar,
     },
     data() {
-        var self = this;
         return {
-            breadcrumbs: [
-                {
-                    label: "Calendario",
-                    url: "redirectpage/calendar",
-                    icon: "fa fa-calendar",
-                },
-            ],
             mensaje: "",
             isLoadingForm: false,
-            dataTable: {
-                rows: 10,
-                data: [],
-                rowsPerPageOptions: [10, 20, 50, 100],
-                paginatorTemplate:
-                    "RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink",
-                currentPageReportTemplate:
-                    "Página {currentPage} de {totalPages}",
-                filters: {
-                    global: {
-                        value: null,
-                        matchMode: FilterMatchMode.CONTAINS,
-                    },
-                    fecha_inicio: {
-                        value: null,
-                        matchMode: FilterMatchMode.CONTAINS,
-                    },
-                    fecha_fin: {
-                        value: null,
-                        matchMode: FilterMatchMode.CONTAINS,
-                    },
-                    semana: {
-                        value: null,
-                        matchMode: FilterMatchMode.CONTAINS,
-                    },
-                },
-                globalFilterFields: [
-                    "fecha_inicio",
-                    "fecha_fin",
-                    "semana",
-                ],
+            startDate: "",
+            endDate: "",
+            weekNumber: null,
+            events_month: [],
+            calendarOptions: {
+                plugins: [dayGridPlugin, interactionPlugin],
+                initialView: "dayGridMonth",
+                locale: esLocale,
+                themeSystem: "bootstrap",
+                events: [], // Lista de eventos existentes
+                datesSet: this.handleDatesSet,
             },
-            modalvisible: false,
-            formData: this.$inertia.form(
-                {
-                    id: 0,
-                    fecha_inicio: "",
-                    fecha_fin: "",
-                    semana: ""
-                }
-            )
         };
     },
-    mounted() {
-        this.getData();
-    },
     methods: {
-        async getData() {
-            self = this;
-
-            this.mensaje = "Cargando datos espere ...";
-            this.isLoadingForm = true;
-            await axios
-                .get(rutaBase + "/list/calendar")
-                .then(async (response) => {
-                    if (response.status == 200) {
-                        this.dataTable.data = response.data;
-                    }
-
-                    this.mensaje = "";
-                    this.isLoadingForm = false;
-                });
+        getWeekNumber(date) {
+            const d = new Date(date);
+            const oneJan = new Date(d.getFullYear(), 0, 1);
+            const numberOfDays = Math.floor((d - oneJan) / (24 * 60 * 60 * 1000));
+            return Math.ceil((d.getDay() + 1 + numberOfDays) / 7);
         },
-        closeModal() {
-            this.modalvisible = false
-            this.formData.reset();
-        }
-    },
-}
+        handleDatesSet({ start }) {
+            const visibleYear = start.getFullYear();
+            const visibleMonth = start.getMonth();
 
+            // Filtrar eventos para el mes visible
+            this.events_month = this.calendarOptions.events.filter((event) => {
+                const eventStart = new Date(event.start);
+                const eventEnd = new Date(event.end);
+
+                return (
+                    eventStart.getFullYear() === visibleYear &&
+                    eventEnd.getFullYear() === visibleYear &&
+                    eventStart.getMonth() === visibleMonth &&
+                    eventEnd.getMonth() === visibleMonth
+                );
+            });
+
+            console.log("Eventos del mes visible:", this.events_month);
+        },
+        validateAndAddEvent() {
+            const overlappingEvent = this.calendarOptions.events.find(
+                (event) =>
+                    new Date(this.startDate) <= new Date(event.end) &&
+                    new Date(this.endDate) >= new Date(event.start)
+            );
+
+            /*   if (overlappingEvent) {
+                  this.mensaje = "Ya existe un evento registrado en este rango de fechas.";
+                  return;
+              }
+   */
+            this.calendarOptions.events.push({
+                title: `Semana N° ${this.weekNumber}`,
+                start: this.startDate,
+                end: this.endDate,
+            });
+
+            this.mensaje = "Evento registrado correctamente.";
+        },
+    },
+};
 </script>
+
+<style scoped>
+.scrollable-list {
+    height: 450px;
+    /* Altura máxima del listado */
+    overflow-y: auto;
+    /* Permite el desplazamiento vertical */
+    border: 1px solid #ccc;
+    /* Borde para delimitar el área */
+    padding: 10px;
+    background-color: #f9f9f9;
+    /* Fondo para destacar */
+}
+</style>
