@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\Calendar;
 use App\Models\Solicitud;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -62,6 +63,9 @@ class SolicitudExport implements FromCollection, WithHeadings, WithMapping, With
      */
     public function collection()
     {
+
+        $calendarios = Calendar::get();
+
         return Solicitud::select(
             'solicitudes.codigo',
             'solicitudes.user_created_name',
@@ -83,7 +87,7 @@ class SolicitudExport implements FromCollection, WithHeadings, WithMapping, With
             ->leftJoin('solicitud_colaborador', 'solicitudes.id', '=', 'solicitud_colaborador.id_solicitud')
             ->leftJoin('sap_maestro_causales_terminos', 'solicitud_colaborador.motivo', '=', 'sap_maestro_causales_terminos.externalcode')
             ->whereBetween('solicitudes.created_at', [$this->fecha_inicio, $this->fecha_fin])
-            ->where('solicitudes.status',4)
+            ->where('solicitudes.status', 4)
             ->get();
     }
 
@@ -95,25 +99,42 @@ class SolicitudExport implements FromCollection, WithHeadings, WithMapping, With
      */
     public function map($row): array
     {
+
+        $calendarios = Calendar::where('enable', 1)->get();
+
+
+        $mes_de_proceso = 'no registrado';
+        foreach ($calendarios as $calendario) {
+            $start = Carbon::parse($calendario->start);
+            $end = Carbon::parse($calendario->end);
+
+
+            if ($row->date_aprobate_rrhh_obra && Carbon::parse($row->date_aprobate_rrhh_obra)->between($start, $end)) {
+                $mes_de_proceso = preg_replace('/\D/', '', $calendario->title);
+
+                break;
+            }
+        }
+
         return [
-            $row->codigo,  // Numero de Solicitud
-            $row->user_created_name,  // Solicitante
-            $row->user_aprobate_admin_obra,  // Aprobador 1
-            $row->date_aprobate_admin_obra ? Carbon::parse($row->date_aprobate_admin_obra)->format('d/m/Y') : '',  // Fecha Aprobación 1
-            $row->user_aprobate_visi_obra,  // Aprobador 2
-            $row->date_aprobate_visi_obra ? Carbon::parse($row->date_aprobate_visi_obra)->format('d/m/Y') : '',  // Fecha Aprobación 2
-            $row->rut_empresa,  // NP
-            $row->razon_social,  // Empresa
-            $row->user_id,  // Empresa
-            $row->nombre_completo,  // Nombre
-            $row->full_ceco,  // CC
-            $row->fecha_ingreso ? Carbon::parse($row->fecha_ingreso)->format('d/m/Y') : '',  // Fecha de Ingreso
-            $row->fecha_desvinculacion ? Carbon::parse($row->fecha_desvinculacion)->format('d/m/Y') : '',  // Fecha de Termino
-            $row->motivo,  // Cod. Causal
-            $row->name,  // Causal
-            $row->date_aprobate_rrhh_obra ? Carbon::parse($row->date_aprobate_rrhh_obra)->format('d/m/Y') : '',  // Fecha Aprobación RRHH
-            ucfirst(strtolower(Carbon::parse($row->date_aprobate_rrhh_obra)->locale('es')->isoFormat('MMMM'))),  // Mes de Proceso en Español
-            $row->date_aprobate_rrhh_obra ? Carbon::parse($row->date_aprobate_rrhh_obra)->weekOfMonth : '',  // Semana del mes de Proceso
+            $row->codigo,
+            $row->user_created_name,
+            $row->user_aprobate_admin_obra,
+            $row->date_aprobate_admin_obra ? Carbon::parse($row->date_aprobate_admin_obra)->format('d/m/Y') : '',
+            $row->user_aprobate_visi_obra,
+            $row->date_aprobate_visi_obra ? Carbon::parse($row->date_aprobate_visi_obra)->format('d/m/Y') : '',
+            $row->rut_empresa,
+            $row->razon_social,
+            $row->user_id,
+            $row->nombre_completo,
+            $row->full_ceco,
+            $row->fecha_ingreso ? Carbon::parse($row->fecha_ingreso)->format('d/m/Y') : '',
+            $row->fecha_desvinculacion ? Carbon::parse($row->fecha_desvinculacion)->format('d/m/Y') : '',
+            $row->motivo,
+            $row->name,
+            $row->date_aprobate_rrhh_obra ? Carbon::parse($row->date_aprobate_rrhh_obra)->format('d/m/Y') : '',
+            ucfirst(strtolower(Carbon::parse($row->date_aprobate_rrhh_obra)->locale('es')->isoFormat('MMMM'))),
+            $mes_de_proceso,
         ];
     }
 
@@ -125,7 +146,7 @@ class SolicitudExport implements FromCollection, WithHeadings, WithMapping, With
      */
     public function styles(Worksheet $sheet)
     {
-        // Establecer el ancho de las columnas
+
         $sheet->getColumnDimension('A')->setWidth(25);
         $sheet->getColumnDimension('B')->setWidth(35);
         $sheet->getColumnDimension('C')->setWidth(35);
@@ -145,7 +166,7 @@ class SolicitudExport implements FromCollection, WithHeadings, WithMapping, With
         $sheet->getColumnDimension('Q')->setWidth(20);
         $sheet->getColumnDimension('R')->setWidth(20);
 
-        // Establecer estilo de cabecera (azul y texto blanco)
+
         $sheet->getStyle('A1:R1')->applyFromArray([
             'font' => [
                 'bold' => true,
@@ -157,11 +178,11 @@ class SolicitudExport implements FromCollection, WithHeadings, WithMapping, With
             ],
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startColor' => ['argb' => '0000FF'], // Azul
+                'startColor' => ['argb' => '0000FF'],
             ],
         ]);
 
-        // Establecer bordes para todas las celdas
+
         $sheet->getStyle('A1:R' . $sheet->getHighestRow())->applyFromArray([
             'borders' => [
                 'allBorders' => [

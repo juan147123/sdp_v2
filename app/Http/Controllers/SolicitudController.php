@@ -385,6 +385,8 @@ class SolicitudController extends Controller
     public function export($fecha_inicio, $fecha_fin)
     {
         // Asegúrate de que las fechas estén en el formato correcto (Y-m-d)
+
+        
         return Excel::download(new SolicitudExport($fecha_inicio, $fecha_fin ,$this->repository), 'solicitudes_'.$fecha_inicio.'_a_'.$fecha_fin.'.xlsx');
     }
 }
