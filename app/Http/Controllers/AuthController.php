@@ -48,9 +48,6 @@ class AuthController extends Controller
     {
         $user = Socialite::driver('google')->user();
         $email = $user->getEmail();
-
-        // if ($email == 'serodriguez@flesan.com.pe') {
-        //     $email = 'dcollas@flesan.com.pe';
         if ($email == 'jmestanza@flesan.com.pe') {
             // $email = 'fabian.castro@flesan.cl'; // -->solicitante DMOPR12118GG
             // $email = 'fernando.david@flesan.cl'; // -->administrador DMOPR12118GG
@@ -61,21 +58,26 @@ class AuthController extends Controller
             // $email = 'cmachado@flesan.cl'; //  --> administrador DMRM1052DEM
             // $email = 'sebastian.valck@flesan.cl'; //  --> visitador DMRM1052DEM
 
+
+
+            // $email = 'ricardo.medel@flesan.cl'; //  --> solicitante CFMCFM020014 
+            // $email = 'cristian.paniagua@flesan.cl'; //  --> administrador CFMCFM020014 
+            // $email = 'jlabarca@flesan.cl'; //  --> visitador CFMCFM020014 
+            
+            
+            // $email = 'mario.ponce@dvc.cl'; //  --> solicitante DVCR80010 
+            // $email = 'emanriquez@dvc.cl'; //  --> administrador DVCR80010 
+            // $email = 'mperez@dvc.cl'; //  --> visitador DVCR80010 
+            
+
+            // $email = 'carolina.carreno@flesan.cl'; //  --> visitador CFMCFM020014 
             $email = 'catalina.fuentes@flesan.cl'; // --> adminsitrador rrhh
 
         }
 
 
-        if ($email == 'bruno.cuevas@flesan.cl') {
-            $email = 'marcos.gallardo@flesan.cl';
-        }
 
         /*DMOPR12118GG  */
-
-
-        if ($email == 'gabriel.fernandez@flesan.cl') {  //solicitante DMOPR12118GG 
-            $email = 'fabian.castro@flesan.cl';
-        }
 
 
         if ($email == 'cecilia.silva@flesan.cl') {  //solicitante DMOPR12118GG 
@@ -83,34 +85,37 @@ class AuthController extends Controller
         }
 
 
-        if ($email == 'carolina.carreno@flesan.cl') {  //administrador de Obra DMOPR12118GG 
+        if ($email == 'david.vilugron@flesan.cl') {  //administrador de Obra DMOPR12118GG 
             $email = 'fernando.david@flesan.cl';
         }
 
-        if ($email == 'carolina.zavala@flesan.cl') {  //visitador de obra DMOPR12118GG 
+        if ($email == 'carolina.carreno@flesan.cl') {  //visitador de obra DMOPR12118GG 
             $email = 'cristian.donoso@flesan.cl';
         }
 
 
+        /*CFMCFM020014   */
 
 
-        /* DMRM1052DEM */
-
-        if ($email == 'cristobal.figueroa@flesan.cl') {  //SOLICITANTE de Obra DMRM1052DEM  
-            $email = 'andres.bravo@flesan.cl';
+        if ($email == 'cristobal.figueroa@flesan.cl	') {  //solicitante CFMCFM020014 
+            $email = 'ricardo.medel@flesan.cl';
         }
 
-        if ($email == 'nicolas.toro@flesan.cl') {  //administrador de Obra DMRM1052DEM  
-            $email = 'cmachado@flesan.cl';
+
+        if ($email == '	nicolas.toro@flesan.cl') {  //administrador de Obra CFMCFM020014 
+            $email = 'cristian.paniagua@flesan.cl';
         }
 
-        if ($email == 'david.vilugron@flesan.cl') {  //visitador de Obra DMRM1052DEM  
-            $email = 'sebastian.valck@flesan.cl';
+        /* DVCR80010 */
+
+        if ($email == '	lorena.faray@flesan.cl') {  //solicitante de obra DVCR80010 
+            $email = 'mario.ponce@dvc.cl';
         }
-        /*  if ($email == 'alejandro.candia@flesan.cl') {  //visitador de Obra DMRM1052DEM  
-            $email = 'fernanda.stanic@flesan.cl';
+
+        if ($email == 'maria.cayuqueo@flesan.cl') {  //solicitante de obra DVCR80010 
+            $email = 'emanriquez@dvc.cl';
         }
- */
+
 
         /* APROBADORES RRHH */
         if ($email == 'catalina.fuentes@flesan.cl') { // aprobador rrhh

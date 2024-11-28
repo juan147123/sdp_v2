@@ -76,9 +76,8 @@ class SolicitudController extends Controller
         if (!in_array('SUPERAD', session('objeto_permitido'))) {
             $aprobador = $this->personalChileRepository->getAprobadorObraCL(Auth::user()->username);
             $centros_permitidos = array("centro_costo" => explode(',', trim($aprobador->cc, '{}')));
-            if (Auth::user()->username == 'julian.lopez@flesan.cl') {
-                $centros_permitidos['centro_costo'][] = 'CFMR10005CFM';
-                $centros_permitidos['centro_costo'][] = 'DMOPR12118GG';
+            if (Auth::user()->username == 'cristian.donoso@flesan.cl') {
+                $centros_permitidos['centro_costo'][] = 'CFMCFM020014';
             }
         }
 
@@ -109,7 +108,8 @@ class SolicitudController extends Controller
             $aprobador = $this->personalChileRepository->getVisitadorObraCL(Auth::user()->username);
             $centros_permitidos = array("centro_costo" => explode(',', trim($aprobador->cc, '{}')));
             if (Auth::user()->username == 'cristian.donoso@flesan.cl') {
-                $centros_permitidos['centro_costo'][] = 'CFMR10005CFM';
+                $centros_permitidos['centro_costo'][] = 'CFMCFM020014';
+                $centros_permitidos['centro_costo'][] = 'DVCR80010';
             }
         }
         $result = $this->repository->all(['*'], [
@@ -386,7 +386,7 @@ class SolicitudController extends Controller
     {
         // Asegúrate de que las fechas estén en el formato correcto (Y-m-d)
 
-        
+
         return Excel::download(new SolicitudExport($fecha_inicio, $fecha_fin ,$this->repository), 'solicitudes_'.$fecha_inicio.'_a_'.$fecha_fin.'.xlsx');
     }
 }
