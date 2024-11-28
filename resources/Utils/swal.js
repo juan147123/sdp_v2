@@ -164,6 +164,19 @@ export function setSwal(options) {
                 }
             });
             break;
+        case "deleteCalendar":
+            Swal.fire({
+                text: "¿Desea eliminar el evento?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar",
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    await options.callback();
+                }
+            });
+            break;
         case "checkPendienteEntregado":
             Swal.fire({
                 title: "¿Desea registrar?",

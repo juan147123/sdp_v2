@@ -11,3 +11,5 @@ export const MENSAJE_SOLICITUD_EXISTE = "Ya se encuentra registrado dentro de un
 export const MENSAJE_MAX = "Solo se pueden registrar 15 colaboradores como máximo.";
 export const MENSAJE_APROBADO = "Se aprobó con éxito el registro";
 export const MENSAJE_DESAPROBADO = "Se desaprobó con éxito el registro";
+export const MENSAJE_EXISTE_CALENDAR = "Ya existe un registro en la semana seleccionada";
+export const DATOS_INCOMPLETOS = "Debe llenar todos los campos";

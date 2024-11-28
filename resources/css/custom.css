@@ -330,3 +330,7 @@ ul.p-carousel-indicators{
   border-radius: 4px; /* Opcional: bordes redondeados */
 }
 
+/* Estilo para los eventos del calendario */
+.fc-event {
+  cursor: pointer; /* Cambia el cursor cuando pasa por encima del evento */
+}

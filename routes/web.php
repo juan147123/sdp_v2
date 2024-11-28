@@ -141,6 +141,7 @@ Route::middleware([
     Route::get('redirectpage/calendar', [CalendarController::class, 'redirectPage'])->name('redirect.calendar');
     Route::get('list/calendar', [CalendarController::class, 'listAll'])->name('list.calendar');
     Route::post('create/calendar', [CalendarController::class, 'create'])->name('create.calendar');
-    Route::post('update/calendar', [CalendarController::class, 'update'])->name('update.calendar');
+    Route::put('update/calendar/{id}', [CalendarController::class, 'update'])->name('update.calendar');
+    Route::delete('delete/calendar/{id}', [CalendarController::class, 'delete'])->name('delete.calendar');
 
 });
