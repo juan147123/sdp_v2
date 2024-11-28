@@ -246,18 +246,28 @@ class SolicitudController extends Controller
         ])->render();
         $emails_to = 'jmestanza@flesan.com.pe';
 
-        /* $centro_costo = $new_solicitud->centro_costo;
+        $centro_costo = $new_solicitud->centro_costo;
 
         if ($centro_costo == 'DMOPR12118GG') {
-            $emails_to .= ',cecilia.silva@flesan.cl,carolina.carreno@flesan.cl';
-        } 
-        else if ($centro_costo == 'CFMR10005CFM') {
-            $emails_to .= ',lorena.faray@flesan.cl,carolina.carreno@flesan.cl';
+            $emails_to .= ',cecilia.silva@flesan.cl';
+            $emails_to .= ',david.vilugron@flesan.cl';
+            $emails_to .= ',carolina.carreno@flesan.cl';
+            $emails_to .= ',carolina.zavala@flesan.cl';
+            $emails_to .= ',catalina.fuentes@flesan.cl';
+        } else if ($centro_costo == 'CFMCFM020014') {
+            $emails_to .= ',cristobal.figueroa@flesan.cl';
+            $emails_to .= ',nicolas.toro@flesan.cl';
+            $emails_to .= ',carolina.carreno@flesan.cl';
+            $emails_to .= ',carolina.zavala@flesan.cl';
+            $emails_to .= ',catalina.fuentes@flesan.cl';
+        } else if ($centro_costo == 'DVCR80010') {
+            $emails_to .= ',lorena.faray@flesan.cl';
+            $emails_to .= ',maria.cayuqueo@flesan.cl';
+            $emails_to .= ',carolina.carreno@flesan.cl';
+            $emails_to .= ',carolina.zavala@flesan.cl';
+            $emails_to .= ',catalina.fuentes@flesan.cl';
         }
-        else if ($centro_costo == 'DMOPR8110PU') {
-            $emails_to .= ',cristobal.figueroa@flesan.cl,nicolas.toro@flesan.cl';
-        }
- */
+
         $subject = 'SISTEMA DE DESVINCULACIÓN SDP';
         ExtraServicecontroller::send_email_gf(
             $body,
