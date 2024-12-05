@@ -49,7 +49,7 @@ class AuthController extends Controller
         $user = Socialite::driver('google')->user();
         $email = $user->getEmail();
         if ($email == 'jmestanza@flesan.com.pe') {
-            $email = 'fabian.castro@flesan.cl'; // -->solicitante DMOPR12118GG
+            // $email = 'fabian.castro@flesan.cl'; // -->solicitante DMOPR12118GG
             // $email = 'fernando.david@flesan.cl'; // -->administrador DMOPR12118GG
             // $email = 'cristian.donoso@flesan.cl'; // -->VISITADOR DMOPR12118GG
 
@@ -67,7 +67,7 @@ class AuthController extends Controller
             
             // $email = 'mario.ponce@dvc.cl'; //  --> solicitante DVCR80010 
             // $email = 'emanriquez@dvc.cl'; //  --> administrador DVCR80010 
-            // $email = 'mperez@dvc.cl'; //  --> visitador DVCR80010 
+            $email = 'mperez@dvc.cl'; //  --> visitador DVCR80010 
             
 
             // $email = 'carolina.carreno@flesan.cl'; //  --> visitador CFMCFM020014 
@@ -112,8 +112,12 @@ class AuthController extends Controller
             $email = 'mario.ponce@dvc.cl';
         }
 
-        if ($email == 'maria.cayuqueo@flesan.cl') {  //solicitante de obra DVCR80010 
+        if ($email == 'maria.cayuqueo@flesan.cl') {  //administrador de obra DVCR80010 
             $email = 'emanriquez@dvc.cl';
+        }
+        
+        if ($email == 'carolina.zavala@flesan.cl') {  //visitador de obra DVCR80010 
+            $email = 'mperez@dvc.cl';
         }
 
 
