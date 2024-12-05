@@ -102,11 +102,11 @@
                                 :showFilterMatchModes="false">
                                 <template #body="{ data }">
                                     <Tag :value="data.estado.id == 3
-                                            ? 'APROBADO'
-                                            : data.estado.descripcion
+                                        ? 'APROBADO'
+                                        : data.estado.descripcion
                                         " :severity="data.estado.id == 3
-                                                ? 'success'
-                                                : data.estado.color
+                                            ? 'success'
+                                            : data.estado.color
                                             " />
                                 </template>
                                 <template #filter="{ filterModel }">
@@ -120,8 +120,16 @@
                                 headerStyle="background-color:black; color:white" sortable style="text-align: center"
                                 :showFilterMatchModes="false">
                                 <template #body="{ data }">
-                                    <Button icon="pi pi-users" class="ml-2" style="font-size: 0.9rem; height: 30px"
-                                        severity="info" @click="ChangeView(data)" v-tooltip.top="'colaboradores'" />
+                                    <Button icon="pi pi-users" class="ml-2" style="font-size: 0.9rem; height: 30px;  width: 2rem !important;
+                                            height: 2rem !important;" severity="info" @click="ChangeView(data)"
+                                        v-tooltip.top="'colaboradores'" />
+                                    <Button icon="pi pi-folder" class="ml-2" style="
+                                            font-size: 0.9rem;
+                                            height: 30px;
+                                            width: 2rem !important;
+                                            height: 2rem !important;
+                                        " severity="info" @click="setImagenes(data.archivos)"
+                                        v-tooltip.top="'Variables'" />
                                 </template>
                             </Column>
                         </DataTable>
@@ -131,6 +139,8 @@
         </div>
         <SolicitudesColaborador @ChangeView="this.ChangeView" @getData="this.getData"
             :solicitud_selected="solicitud_selected" :details="this.details" />
+        <Modal :archivosList="this.archivosList" :visible="this.visible" @setImagenes="this.setImagenes" />
+
     </AppLayout>
 </template>
 <script>
@@ -144,6 +154,8 @@ import setLocaleES from "../../primevue.config.js";
 import dayjs from "dayjs";
 import { FilterMatchMode } from "primevue/api";
 import PrimeVueComponents from "../../../js/primevue.js";
+import Modal from "./SolicitudColaborador/Components/Modal.vue";
+
 
 export default {
     components: {
@@ -151,6 +163,7 @@ export default {
         breadcrumbs,
         SolicitudesColaborador,
         Preloader,
+        Modal,
         ...PrimeVueComponents,
     },
     setup() {
@@ -230,6 +243,8 @@ export default {
                 comentario: [],
             },
             details: false,
+            visible: false,
+            archivosList:[],
         };
     },
     async mounted() {
@@ -237,6 +252,10 @@ export default {
         this.initializeDropdownsData();
     },
     methods: {
+        setImagenes(data) {
+            this.archivosList = data ;
+            this.visible = !this.visible;
+        },
         async updateStatus(id, status, id_solicitud) {
             this.form.id = id;
             this.form.status = status;
@@ -366,9 +385,9 @@ export default {
                 return { estado: o };
             });
 
-          this.setDashboard();
+            this.setDashboard();
         },
-        setDashboard(){
+        setDashboard() {
             const estadoCount = this.dataTable.data.reduce((acc, s) => {
                 const descripcion =
                     s.estado && s.estado.descripcion

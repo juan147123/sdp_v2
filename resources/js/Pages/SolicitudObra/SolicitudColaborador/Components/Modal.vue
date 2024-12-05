@@ -1,6 +1,6 @@
 <template>
     <Dialog
-        header="Registrar solicitud"
+        header="Archivos"
         :visible="visible"
         :closable="false"
         :draggable="false"

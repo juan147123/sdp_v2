@@ -271,7 +271,7 @@ export default {
             breadcrumbs: [
                 {
                     label: "Colaboradores",
-                    url: "redirectpage/colaboradores/pe",
+                    url: "/redirectpage/obra/colaboradores/cl",
                     icon: "fa fa-users",
                 },
             ],

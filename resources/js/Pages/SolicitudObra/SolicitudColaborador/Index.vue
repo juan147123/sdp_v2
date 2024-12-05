@@ -286,16 +286,16 @@
 
                         <div class="flex flex-column pt-4">
                             <div
-                                class="mb-3 p-text-secondary text-center"
+                                class="mb-3 p-text-secondary text-left"
                                 style="font-size: 14px"
                             >
-                                ¿Desea retornar al flujo inicial a este
+                                ¿Desea cancelar la solicitud y enviar al flujo inicial a este
                                 colaborador?
                             </div>
                             <div class="flex justify-content-end gap-2">
                                 <Button
                                     type="button"
-                                    label="Retornar"
+                                    label="Cancelar Solicitud"
                                     severity="info"
                                     @click="desactivarSolicitudcolaborador()"
                                     class="h-2rem"

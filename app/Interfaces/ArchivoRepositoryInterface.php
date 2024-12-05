@@ -4,5 +4,5 @@ namespace App\Interfaces;
 
 interface ArchivoRepositoryInterface extends EloquentRepositoryInterface
 {
-    public function uploadFile($archivo,$id,$new_solicitud,$origen,$titulo);
+    public function uploadFile($archivo,$id,$new_solicitud,$origen,$titulo,$id_solicitud);
 }

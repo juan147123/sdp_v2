@@ -13,7 +13,7 @@
                                 <span class="info-box-text color-custom-pendiente">PENDIENTES</span>
                                 <span class="info-box-number">{{
                                     conteoSolicitudes.PENDIENTE
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -25,7 +25,7 @@
                                 <span class="info-box-text color-custom-aprobado">APROBADOS</span>
                                 <span class="info-box-number">{{
                                     conteoSolicitudes.APROBADO
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                                 <span class="info-box-text color-custom-rechazado">RECHAZADOS</span>
                                 <span class="info-box-number">{{
                                     conteoSolicitudes.RECHAZADO
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -136,8 +136,16 @@
                                 headerStyle="background-color:black; color:white" sortable style="text-align: center"
                                 :showFilterMatchModes="false">
                                 <template #body="{ data }">
-                                    <Button icon="pi pi-users" class="ml-2" style="font-size: 0.9rem; height: 30px"
-                                        severity="info" @click="ChangeView(data)" v-tooltip.top="'colaboradores'" />
+                                    <Button icon="pi pi-users" class="ml-2" style="font-size: 0.9rem; height: 30px; width: 2rem !important;
+                                            height: 2rem !important;" severity="info" @click="ChangeView(data)"
+                                        v-tooltip.top="'colaboradores'" />
+                                    <Button icon="pi pi-folder" class="ml-2" style="
+                                            font-size: 0.9rem;
+                                            height: 30px;
+                                            width: 2rem !important;
+                                            height: 2rem !important;
+                                        " severity="info" @click="setImagenes(data.archivos)"
+                                        v-tooltip.top="'Variables'" />
                                 </template>
                             </Column>
                         </DataTable>
@@ -147,6 +155,7 @@
         </div>
         <SolicitudesColaborador @ChangeView="this.ChangeView" @getData="this.getData"
             :solicitud_selected="solicitud_selected" :details="this.details" />
+            <Modal :archivosList="this.archivosList" :visible="this.visible" @setImagenes="this.setImagenes" />
     </AppLayout>
 </template>
 <script>
@@ -161,12 +170,17 @@ import dayjs from "dayjs";
 import { FilterMatchMode } from "primevue/api";
 import PrimeVueComponents from "../../../js/primevue.js";
 import ConfirmExportData from "./SolicitudColaborador/Components/ConfirmExportData.vue";
+import Modal from "./SolicitudColaborador/Components/Modal.vue";
+
+
+
 export default {
     components: {
         AppLayout,
         breadcrumbs,
         SolicitudesColaborador,
         Preloader,
+        Modal,
         ConfirmExportData,
         ...PrimeVueComponents,
     },
@@ -178,7 +192,7 @@ export default {
             breadcrumbs: [
                 {
                     label: "Solicitudes",
-                    url: "/redirectpage/solicitud/aprobar",
+                    url: "/redirectpage/solicitud/rrhh",
                     icon: "fa fa-book",
                 },
             ],
@@ -247,6 +261,8 @@ export default {
                 comentario: [],
             },
             details: false,
+            visible: false,
+            archivosList:[],
         };
     },
     async mounted() {
@@ -254,6 +270,10 @@ export default {
         this.initializeDropdownsData();
     },
     methods: {
+        setImagenes(data) {
+            this.archivosList = data ;
+            this.visible = !this.visible;
+        },
         async updateStatus(id, status, id_solicitud) {
             this.form.id = id;
             this.form.status = status;

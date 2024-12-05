@@ -84,6 +84,7 @@ class SolicitudController extends Controller
         //CFMR10005CFM
         $result = $this->repository->all(['*'], [
             'estado',
+            'archivos',
             'solicitudColaborador',
             'solicitudColaborador.archivos',
             'solicitudColaborador.estado',
@@ -114,6 +115,7 @@ class SolicitudController extends Controller
         }
         $result = $this->repository->all(['*'], [
             'estado',
+            'archivos',
             'solicitudColaborador',
             'solicitudColaborador.archivos',
             'solicitudColaborador.estado',
@@ -132,6 +134,7 @@ class SolicitudController extends Controller
     {
         return $this->repository->all(['*'], [
             'estado',
+            'archivos',
             'solicitudColaborador',
             'solicitudColaborador.estado',
             'solicitudColaborador.archivos',
@@ -157,15 +160,15 @@ class SolicitudController extends Controller
     {
         $solicitud_detail = $this->buildSolicitudDetail($request->all(), $new_solicitud);
         $newSolicitudDetail =  $this->repositorySolicitudDetalle->create($solicitud_detail);
-        return $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $request->file('filesForm'), '', '');
+        return $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $request->file('filesForm'), '', '', null);
     }
 
-    private function buildSolicitud($npLider, $userCreated,$request)
+    private function buildSolicitud($npLider, $userCreated, $request)
     {
         return [
             'np_lider' => $npLider,
             'user_created' => $userCreated,
-            'user_created_name' =>strtoupper(Auth::user()->name),
+            'user_created_name' => strtoupper(Auth::user()->name),
             'centro_costo' => $request->centro_costo0,
             'full_ceco' => $request->full_ceco0,
             'rut_empresa' => $request->rut_empresa0,
@@ -192,6 +195,9 @@ class SolicitudController extends Controller
         $new_solicitud = $this->createSolicitudMultiple($request);
         $requestData = $request->all();
         $groupedIds = [];
+
+        $archivos_variante = $request->file("variable0");
+        $this->saveDocumentLocal(null, $new_solicitud,  $archivos_variante, "variable", "Variable", $new_solicitud->id);
 
         foreach ($requestData as $key => $value) {
 
@@ -226,15 +232,16 @@ class SolicitudController extends Controller
 
             $newSolicitudDetail =  $this->repositorySolicitudDetalle->create($data);
 
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos1, "carta_firmada", "Carta firmada o comprobante de envio por correo certificado");
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos2, "cese_dt", "CESE DT");
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos3, "cese_afc", "CESE AFC");
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos4, "aporte_empleador", "Aporte empleador AFC");
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos5, "cert_defuncion", "Certificado de defunción");
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos6, "boleta_funebre", "Boleta o comprobante de gastos funebres");
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos7, "info_bancaria", "Información bancaria del beneficiario");
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos8, "convenio_practica", "Convenio de práctica");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos1, "carta_firmada", "Carta firmada o comprobante de envio por correo certificado", null);
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos2, "cese_dt", "CESE DT", null);
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos3, "cese_afc", "CESE AFC", null);
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos4, "aporte_empleador", "Aporte empleador AFC", null);
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos5, "cert_defuncion", "Certificado de defunción", null);
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos6, "boleta_funebre", "Boleta o comprobante de gastos funebres", null);
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos7, "info_bancaria", "Información bancaria del beneficiario", null);
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos8, "convenio_practica", "Convenio de práctica", null);
         }
+
 
 
         $body = View::make('emails.NuevaSolicitud', [
@@ -248,7 +255,7 @@ class SolicitudController extends Controller
 
         $centro_costo = $new_solicitud->centro_costo;
 
-        if ($centro_costo == 'DMOPR12118GG') {
+        /*   if ($centro_costo == 'DMOPR12118GG') {
             $emails_to .= ',cecilia.silva@flesan.cl';
             $emails_to .= ',david.vilugron@flesan.cl';
             $emails_to .= ',carolina.carreno@flesan.cl';
@@ -266,7 +273,7 @@ class SolicitudController extends Controller
             $emails_to .= ',carolina.carreno@flesan.cl';
             $emails_to .= ',carolina.zavala@flesan.cl';
             $emails_to .= ',catalina.fuentes@flesan.cl';
-        }
+        } */
 
         $subject = 'SISTEMA DE DESVINCULACIÓN SDP';
         ExtraServicecontroller::send_email_gf(
@@ -283,6 +290,8 @@ class SolicitudController extends Controller
 
         $requestData = $request->all();
         $old_solicitud = $this->repository->findById($request->id_solicitud0);
+        $archivos_variante = $request->file("variable0");
+        $this->saveDocumentLocal(null, $old_solicitud,  $archivos_variante, "variable", "Variable", $old_solicitud->id);
 
         $groupedIds = [];
         foreach ($requestData as $key => $value) {
@@ -323,27 +332,41 @@ class SolicitudController extends Controller
 
             $newSolicitudDetail =  $this->repositorySolicitudDetalle->update($request->{"id$index"}, $data);
 
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos1, "carta_firmada", "Carta firmada o comprobante de envio por correo certificado");
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos2, "cese_dt", "CESE DT");
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos3, "cese_afc", "CESE AFC");
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos4, "aporte_empleador", "Aporte empleador AFC");
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos5, "cert_defuncion", "Certificado de defunción");
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos6, "boleta_funebre", "Boleta o comprobante de gastos funebres");
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos7, "info_bancaria", "Información bancaria del beneficiario");
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos8, "convenio_practica", "Convenio de práctica");
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos1, "carta_firmada", "Carta firmada o comprobante de envio por correo certificado", null);
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos2, "cese_dt", "CESE DT", null);
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos3, "cese_afc", "CESE AFC", null);
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos4, "aporte_empleador", "Aporte empleador AFC", null);
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos5, "cert_defuncion", "Certificado de defunción", null);
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos6, "boleta_funebre", "Boleta o comprobante de gastos funebres", null);
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos7, "info_bancaria", "Información bancaria del beneficiario", null);
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos8, "convenio_practica", "Convenio de práctica", null);
         }
-        $this->repository->update($old_solicitud->id, ["status" => 2]);
+
+
+        $admin = $request->aprobado_administrador_obra0;
+        $visi = $request->aprobado_visitador_obra0;
+        $rrhh = $request->aprobado_rrhh0;
+        $status_soli = 1;
+        
+        if ($admin == 7 || $admin == null) {
+            $status_soli = 1;
+        } else if (($visi == 7 || $visi == null) && $admin != null) {
+            $status_soli = 2;
+        } else if (($rrhh == 7 || $rrhh == null) && $visi != null) {
+            $status_soli = 3;
+        }
+        $this->repository->update($old_solicitud->id, ["status" => $status_soli]);
 
         return redirect($request->pathname0);
     }
 
 
 
-    public function saveDocumentLocal($id, $new_solicitud, $archivos, $origen, $titulo)
+    public function saveDocumentLocal($id, $new_solicitud, $archivos, $origen, $titulo, $id_solicitud)
     {
         try {
             if ($archivos) {
-                $documents =  $this->archivoRepository->uploadFile($archivos, $id, $new_solicitud, $origen, $titulo);
+                $documents =  $this->archivoRepository->uploadFile($archivos, $id, $new_solicitud, $origen, $titulo, $id_solicitud);
                 foreach ($documents as $document) {
                     $this->archivoRepository->create($document);
                 }
@@ -379,6 +402,7 @@ class SolicitudController extends Controller
 
         $result = $this->repository->all(['*'], [
             'estado',
+            'archivos',
             'solicitudColaborador',
             'solicitudColaborador.archivos',
             'solicitudColaborador.estado',
@@ -397,6 +421,6 @@ class SolicitudController extends Controller
         // Asegúrate de que las fechas estén en el formato correcto (Y-m-d)
 
 
-        return Excel::download(new SolicitudExport($fecha_inicio, $fecha_fin ,$this->repository), 'solicitudes_'.$fecha_inicio.'_a_'.$fecha_fin.'.xlsx');
+        return Excel::download(new SolicitudExport($fecha_inicio, $fecha_fin, $this->repository), 'solicitudes_' . $fecha_inicio . '_a_' . $fecha_fin . '.xlsx');
     }
 }

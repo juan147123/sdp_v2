@@ -53,6 +53,10 @@ class Solicitud extends Model
         return $this->belongsTo('App\Models\Estados', 'status', 'id');
     }
 
+    public function archivos()
+    {
+        return $this->hasMany('App\Models\Archivos', 'id_solicitud');
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

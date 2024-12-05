@@ -168,6 +168,13 @@
                                             width: 2rem !important;
                                             height: 2rem !important;
                                         " severity="info" @click="ChangeView(data)" v-tooltip.top="'colaboradores'" />
+                                    <Button icon="pi pi-folder" class="ml-2" style="
+                                            font-size: 0.9rem;
+                                            height: 30px;
+                                            width: 2rem !important;
+                                            height: 2rem !important;
+                                        " severity="info" @click="setImagenes(data.archivos)"
+                                        v-tooltip.top="'Variables'" />
 
                                     <Button v-if="data.status == 5" icon="pi pi-pencil " class="ml-2" style="
                                             width: 2rem !important;
@@ -193,8 +200,12 @@
 
         <SolicitudesColaborador @ChangeView="this.ChangeView" @getData="this.getData"
             :solicitud_selected="solicitud_selected" :details="this.details" />
+
         <FormularioMultiple :terminos="this.terminos" :visiblemultiple="this.visiblemultiple"
             :colaboradoresDetalle="colaboradoresDetalle" @showModal="showModal" @getData="getData" />
+
+        <Modal :archivosList="this.archivosList" :visible="this.visible" @setImagenes="this.setImagenes" />
+
         <!-- <ModalEdit :visiblemultiple="this.visiblemultiple" /> -->
     </AppLayout>
 </template>
@@ -210,7 +221,7 @@ import dayjs from "dayjs";
 import { FilterMatchMode } from "primevue/api";
 import PrimeVueComponents from "../../../js/primevue.js";
 import FormularioMultiple from "./SolicitudColaborador/Components/FormularioMultipleEdit.vue";
-import ModalEdit from "./SolicitudColaborador/Components/ModalEdit.vue";
+import Modal from "./SolicitudColaborador/Components/Modal.vue";
 
 export default {
     components: {
@@ -219,6 +230,7 @@ export default {
         SolicitudesColaborador,
         Preloader,
         FormularioMultiple,
+        Modal,
         ...PrimeVueComponents,
     },
     setup() {
@@ -229,12 +241,14 @@ export default {
             breadcrumbs: [
                 {
                     label: "Solicitudes",
-                    url: "/redirectpage/solicitud",
+                    url: "/redirectpage/solicitud/obra",
                     icon: "fa fa-book",
                 },
             ],
             mensaje: "",
             isLoadingForm: false,
+            visible: false,
+            archivosList: [],
             table: [],
             tableDetalle: [],
             part: 0,
@@ -308,6 +322,10 @@ export default {
         this.initializeDropdownsData();
     },
     methods: {
+        setImagenes(data) {
+            this.archivosList = data;
+            this.visible = !this.visible;
+        },
         countStatus(colaboradores) {
             return colaboradores.filter(
                 (colaborador) => colaborador.aprobado_administrador_obra === 7 ||
@@ -545,16 +563,11 @@ export default {
         },
         setDataModalMultiple(data) {
             this.getMotivos();
-            this.colaboradoresDetalle = data.solicitud_colaborador;
+            this.colaboradoresDetalle = data;
             this.visiblemultiple = true;
         },
         showModal() {
             this.visiblemultiple = !this.visiblemultiple;
-            if (this.visible == true) {
-                this.getMotivos();
-            } else {
-                this.colaboradoresDetalle = [];
-            }
         },
     },
 };

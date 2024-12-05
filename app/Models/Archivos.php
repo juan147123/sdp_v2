@@ -34,7 +34,8 @@ class Archivos extends Model
         'carpeta',
         'uuid',
         'origen',
-        'titulo'
+        'titulo',
+        'id_solicitud'
     ];
 
     /**
@@ -43,6 +44,11 @@ class Archivos extends Model
     public function solicitudColaborador()
     {
         return $this->belongsTo('App\Models\SolicitudColaborador', 'id_solicitud_colaborador');
+    }
+    
+    public function solicitud()
+    {
+        return $this->belongsTo('App\Models\Solicitud', 'id_solicitud');
     }
     
     protected static function boot()
