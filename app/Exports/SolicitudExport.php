@@ -64,39 +64,40 @@ class SolicitudExport implements FromCollection, WithHeadings, WithMapping, With
     public function collection()
     {
         $calendarios = Calendar::get();
-
+    
         return Solicitud::select(
-            'solicitudes.codigo',
-            'solicitudes.user_created_name',
-            'solicitud_colaborador.user_aprobate_admin_obra',
-            'solicitud_colaborador.date_aprobate_admin_obra',
-            'solicitud_colaborador.user_aprobate_visi_obra',
-            'solicitud_colaborador.date_aprobate_visi_obra',
-            'solicitudes.rut_empresa',
-            'solicitudes.razon_social',
-            'solicitud_colaborador.user_id',
-            'solicitud_colaborador.nombre_completo',
-            'solicitud_colaborador.full_ceco',
-            'solicitud_colaborador.fecha_ingreso',
-            'solicitud_colaborador.fecha_desvinculacion',
-            'solicitud_colaborador.motivo',
-            'sap_maestro_causales_terminos.name',
-            'solicitud_colaborador.date_aprobate_rrhh_obra',
-            'solicitud_colaborador.aprobado_rrhh' // Asegúrate de incluir el campo aprobado_rrhh
-        )
+                'solicitudes.codigo',
+                'solicitudes.user_created_name',
+                'solicitud_colaborador.user_aprobate_admin_obra',
+                'solicitud_colaborador.date_aprobate_admin_obra',
+                'solicitud_colaborador.user_aprobate_visi_obra',
+                'solicitud_colaborador.date_aprobate_visi_obra',
+                'solicitudes.rut_empresa',
+                'solicitudes.razon_social',
+                'solicitud_colaborador.user_id',
+                'solicitud_colaborador.nombre_completo',
+                'solicitud_colaborador.full_ceco',
+                'solicitud_colaborador.fecha_ingreso',
+                'solicitud_colaborador.fecha_desvinculacion',
+                'solicitud_colaborador.motivo',
+                'sap_maestro_causales_terminos.name',
+                'solicitud_colaborador.date_aprobate_rrhh_obra',
+                'solicitud_colaborador.aprobado_rrhh' // Asegúrate de incluir el campo aprobado_rrhh
+            )
             ->leftJoin('solicitud_colaborador', 'solicitudes.id', '=', 'solicitud_colaborador.id_solicitud')
             ->leftJoin('sap_maestro_causales_terminos', 'solicitud_colaborador.motivo', '=', 'sap_maestro_causales_terminos.externalcode')
             ->whereBetween('solicitudes.created_at', [$this->fecha_inicio, $this->fecha_fin])
             ->where('solicitudes.status', 4)
             ->get()
             ->map(function ($solicitud) {
-                // Filtra solo las solicitudes donde 'aprobado_rrhh' sea igual a 7
-                if ($solicitud->solicitud_colaborador->aprobado_rrhh == 7) {
+                // Verifica si 'solicitud_colaborador' no es nulo y luego verifica 'aprobado_rrhh'
+                if ($solicitud->solicitud_colaborador && $solicitud->solicitud_colaborador->aprobado_rrhh == 7) {
                     return $solicitud;
                 }
             })
             ->filter(); // Filtra los valores nulos que se hayan producido en el map
     }
+    
 
 
     /**
