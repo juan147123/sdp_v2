@@ -122,9 +122,9 @@ class AuthController extends Controller
 
 
         /* APROBADORES RRHH */
-        if ($email == 'catalina.fuentes@flesan.cl') { // aprobador rrhh
+        /* if ($email == 'catalina.fuentes@flesan.cl') { // aprobador rrhh
             $email = 'catalina.fuentes@flesan.cl';
-        }
+        } */
 
 
         $extension_correo = substr($email, -2);
