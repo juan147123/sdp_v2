@@ -63,7 +63,6 @@ class SolicitudExport implements FromCollection, WithHeadings, WithMapping, With
      */
     public function collection()
     {
-
         $calendarios = Calendar::get();
 
         return Solicitud::select(
@@ -83,14 +82,22 @@ class SolicitudExport implements FromCollection, WithHeadings, WithMapping, With
             'solicitud_colaborador.motivo',
             'sap_maestro_causales_terminos.name',
             'solicitud_colaborador.date_aprobate_rrhh_obra',
+            'solicitud_colaborador.aprobado_rrhh' // Asegúrate de incluir el campo aprobado_rrhh
         )
             ->leftJoin('solicitud_colaborador', 'solicitudes.id', '=', 'solicitud_colaborador.id_solicitud')
             ->leftJoin('sap_maestro_causales_terminos', 'solicitud_colaborador.motivo', '=', 'sap_maestro_causales_terminos.externalcode')
             ->whereBetween('solicitudes.created_at', [$this->fecha_inicio, $this->fecha_fin])
             ->where('solicitudes.status', 4)
-            ->where('solicitud_colaborador.aprobado_rrhh', 7)
-            ->get();
+            ->get()
+            ->map(function ($solicitud) {
+                // Filtra solo las solicitudes donde 'aprobado_rrhh' sea igual a 7
+                if ($solicitud->solicitud_colaborador->aprobado_rrhh == 7) {
+                    return $solicitud;
+                }
+            })
+            ->filter(); // Filtra los valores nulos que se hayan producido en el map
     }
+
 
     /**
      * Mapea los datos para cada fila de exportación.
