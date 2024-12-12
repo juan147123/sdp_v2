@@ -88,6 +88,7 @@ class SolicitudExport implements FromCollection, WithHeadings, WithMapping, With
             ->leftJoin('sap_maestro_causales_terminos', 'solicitud_colaborador.motivo', '=', 'sap_maestro_causales_terminos.externalcode')
             ->whereBetween('solicitudes.created_at', [$this->fecha_inicio, $this->fecha_fin])
             ->where('solicitudes.status', 4)
+            ->where('solicitud_colaborador.aprobado_rrhh', 7)
             ->get();
     }
 
