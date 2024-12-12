@@ -54,7 +54,7 @@ class AuthController extends Controller
             // $email = 'cristian.donoso@flesan.cl'; // -->VISITADOR DMOPR12118GG
 
 
-            $email = 'andres.bravo@flesan.cl'; //-->solicitante DMRM1052DEM
+            // $email = 'andres.bravo@flesan.cl'; //-->solicitante DMRM1052DEM
             // $email = 'cmachado@flesan.cl'; //  --> administrador DMRM1052DEM
             // $email = 'sebastian.valck@flesan.cl'; //  --> visitador DMRM1052DEM
 
@@ -71,7 +71,7 @@ class AuthController extends Controller
             
 
             // $email = 'carolina.carreno@flesan.cl'; //  --> visitador CFMCFM020014 
-            // $email = 'catalina.fuentes@flesan.cl'; // --> adminsitrador rrhh
+            $email = 'catalina.fuentes@flesan.cl'; // --> adminsitrador rrhh
 
         }
 
