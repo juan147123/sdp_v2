@@ -82,15 +82,15 @@ class SolicitudExport implements FromCollection, WithHeadings, WithMapping, With
                 'solicitud_colaborador.motivo',
                 'sap_maestro_causales_terminos.name',
                 'solicitud_colaborador.date_aprobate_rrhh_obra',
-                'solicitud_colaborador.aprobado_rrhh' // Asegúrate de incluir el campo aprobado_rrhh
+                'solicitud_colaborador.aprobado_rrhh'
             )
             ->leftJoin('solicitud_colaborador', 'solicitudes.id', '=', 'solicitud_colaborador.id_solicitud')
             ->leftJoin('sap_maestro_causales_terminos', 'solicitud_colaborador.motivo', '=', 'sap_maestro_causales_terminos.externalcode')
-            ->whereBetween('solicitudes.created_at', [$this->fecha_inicio, $this->fecha_fin])
+            ->whereBetween('solicitud_colaborador.date_aprobate_rrhh_obra', [$this->fecha_inicio, $this->fecha_fin])
             ->where('solicitudes.status', 4)
             ->where('solicitud_colaborador.aprobado_rrhh', 6)
             ->orderBy('solicitud_colaborador.id','asc')
-            ->get();// Filtra los valores nulos que se hayan producido en el map
+            ->get();
     }
     
 
