@@ -123,10 +123,4 @@ class SolicitudColaborador extends Model
     {
         return $this->belongsTo('App\Models\Estados', 'aprobado_rrhh', 'id');
     }
-
-    protected static function boot()
-    {
-        parent::boot();
-        static::addGlobalScope(new EnableScope);
-    }
 }

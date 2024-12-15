@@ -88,14 +88,9 @@ class SolicitudExport implements FromCollection, WithHeadings, WithMapping, With
             ->leftJoin('sap_maestro_causales_terminos', 'solicitud_colaborador.motivo', '=', 'sap_maestro_causales_terminos.externalcode')
             ->whereBetween('solicitudes.created_at', [$this->fecha_inicio, $this->fecha_fin])
             ->where('solicitudes.status', 4)
-            ->get()
-            ->map(function ($solicitud) {
-                // Verifica si 'solicitud_colaborador' no es nulo y luego verifica 'aprobado_rrhh'
-                if ($solicitud->solicitud_colaborador && $solicitud->solicitud_colaborador->aprobado_rrhh == 7) {
-                    return $solicitud;
-                }
-            })
-            ->filter(); // Filtra los valores nulos que se hayan producido en el map
+            ->where('solicitud_colaborador.aprobado_rrhh', 6)
+            ->orderBy('solicitud_colaborador.id','asc')
+            ->get();// Filtra los valores nulos que se hayan producido en el map
     }
     
 
