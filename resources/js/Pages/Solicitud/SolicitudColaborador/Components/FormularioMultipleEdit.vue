@@ -1,15 +1,18 @@
 <template>
     <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
     <Dialog
-        header="Registrar solicitud"
-        :visible="visible"
+        header="Editar solicitud"
+        :visible="visiblemultiple"
         :closable="false"
         :draggable="false"
         pt:mask:class="backdrop-blur-sm"
         maximizable
         modal
         :style="{
-            width: colaboradoresDetalle.length === 1 ? '50rem' : '70rem',
+            width:
+                colaboradoresDetalle?.solicitud_colaborador2?.length === 1
+                    ? '50rem'
+                    : '70rem',
         }"
     >
         <form @submit.prevent="submit">
@@ -17,21 +20,69 @@
                 class="m-2 p-2 flex flex-column border p-2"
                 :id="'variable' + 0"
             >
+                <span class="text-danger" style="font-size: 13px"
+                    >Si es necesario corregir un documento de variable,
+                    elimínelo y adjúntelo nuevamente.</span
+                >
+                <div
+                    v-for="(
+                        archivo, indexarchivo
+                    ) in colaboradoresDetalle?.archivos"
+                    class="m-1 p-1 border"
+                    style="font-size: 12px"
+                    :id="indexarchivo + 'archivo_variable' + indexarchivo"
+                >
+                    <div class="">
+                        <div class="flex text-align-center">
+                            <i class="pi pi-file-o"></i>
+                            <strong>{{
+                                this.setOrigen(archivo.origen)
+                            }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="ml-2">
+                        <div class="text-left">
+                            <span>{{ archivo.name }}</span>
+                        </div>
+                        <div>
+                            <a :href="this.ruta + archivo.path" target="_blank">
+                                <i class="pi pi-download text-success mr-1">
+                                </i>
+                            </a>
+                            <i
+                                class="pi pi-trash text-danger"
+                                style="cursor: pointer"
+                                @click="
+                                    deleteData(
+                                        indexarchivo +
+                                            'archivo_variable' +
+                                            indexarchivo,
+                                        archivo.id
+                                    )
+                                "
+                            ></i>
+                        </div>
+                    </div>
+                </div>
                 <label for="input1" class="form-label">Variable</label>
                 <input
                     type="file"
                     class="w-50"
                     multiple
                     @change="handleFileChange($event, 0, 'variable')"
-                    required
+                    :required="colaboradoresDetalle?.archivos.length == 0"
                 />
             </div>
             <div class="grid">
                 <div
                     :class="
-                        colaboradoresDetalle.length == 1 ? 'col-12' : 'col-6'
+                        colaboradoresDetalle.solicitud_colaborador2.length == 1
+                            ? 'col-12'
+                            : 'col-6'
                     "
-                    v-for="(colaborador, index) in this.colaboradoresDetalle"
+                    v-for="(colaborador, index) in this.colaboradoresDetalle
+                        .solicitud_colaborador2"
                 >
                     <div class="card" style="width: 100%">
                         <div class="card-body">
@@ -41,8 +92,7 @@
                                         class="pi pi-user mr-2 ml-1"
                                         style="font-size: 1rem"
                                     ></i>
-                                    {{ colaborador.first_name }}
-                                    {{ colaborador.last_name }}
+                                    {{ colaborador.nombre_completo }}
                                     ( NP: {{ colaborador.user_id }} )
                                 </div>
                             </div>
@@ -55,6 +105,7 @@
                                     option-label="name"
                                     filter
                                     :class="`w-full`"
+                                    option-value="externalcode"
                                     v-model="this.formData['motivo' + index]"
                                     placeholder="Seleccione"
                                     @change="
@@ -90,6 +141,66 @@
                                     required
                                 />
                             </div>
+                            <div>
+                                <div class="flex flex-column mb-3">
+                                    <label for="input1" class="form-label"
+                                        >Archivos adjuntos
+                                    </label>
+                                    <span
+                                        class="text-danger"
+                                        style="font-size: 13px"
+                                        >Si es necesario corregir un documento,
+                                        elimínelo y adjúntelo nuevamente.</span
+                                    >
+                                </div>
+                                <div
+                                    v-for="(
+                                        archivo, indexarchivo
+                                    ) in colaborador.archivos"
+                                    class="m-1 p-1 border"
+                                    style="font-size: 12px"
+                                    :id="index + 'archivo' + indexarchivo"
+                                >
+                                    <div class="">
+                                        <div class="flex text-align-center">
+                                            <i class="pi pi-file-o"></i>
+                                            <strong>{{
+                                                this.setOrigen(archivo.origen)
+                                            }}</strong>
+                                        </div>
+                                    </div>
+
+                                    <div class="ml-2">
+                                        <div class="text-left">
+                                            <span>{{ archivo.name }}</span>
+                                        </div>
+                                        <div>
+                                            <a
+                                                :href="this.ruta + archivo.path"
+                                                target="_blank"
+                                            >
+                                                <i
+                                                    class="pi pi-download text-success mr-1"
+                                                >
+                                                </i>
+                                            </a>
+                                            <i
+                                                class="pi pi-trash text-danger"
+                                                style="cursor: pointer"
+                                                @click="
+                                                    deleteData(
+                                                        index +
+                                                            'archivo' +
+                                                            indexarchivo,
+                                                        archivo.id
+                                                    )
+                                                "
+                                            ></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div
                                 class="mb-3 flex flex-column border p-2"
                                 :id="'carta_firmada' + index"
@@ -100,7 +211,6 @@
                                 >
                                 <input
                                     type="file"
-                                    multiple
                                     @change="
                                         handleFileChange(
                                             $event,
@@ -108,7 +218,6 @@
                                             'carta_firmada'
                                         )
                                     "
-                                    required
                                 />
                             </div>
                             <div
@@ -120,7 +229,6 @@
                                 >
                                 <input
                                     type="file"
-                                    multiple
                                     @change="
                                         handleFileChange(
                                             $event,
@@ -128,7 +236,6 @@
                                             'cese_dt'
                                         )
                                     "
-                                    required
                                 />
                             </div>
                             <div
@@ -139,9 +246,7 @@
                                     >CESE AFC</label
                                 >
                                 <input
-                                    required
                                     type="file"
-                                    multiple
                                     @change="
                                         handleFileChange(
                                             $event,
@@ -161,7 +266,6 @@
                                 >
                                 <input
                                     type="file"
-                                    multiple
                                     @change="
                                         handleFileChange(
                                             $event,
@@ -180,7 +284,6 @@
                                 >
                                 <input
                                     type="file"
-                                    multiple
                                     @change="
                                         handleFileChange(
                                             $event,
@@ -200,7 +303,6 @@
                                 >
                                 <input
                                     type="file"
-                                    multiple
                                     @change="
                                         handleFileChange(
                                             $event,
@@ -220,7 +322,6 @@
                                 >
                                 <input
                                     type="file"
-                                    multiple
                                     @change="
                                         handleFileChange(
                                             $event,
@@ -239,7 +340,6 @@
                                 >
                                 <input
                                     type="file"
-                                    multiple
                                     @change="
                                         handleFileChange(
                                             $event,
@@ -252,33 +352,35 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="w-full flex justify-content-end p-2">
-                <Button
-                    class="h-2rem m-1"
-                    label="Cancelar"
-                    severity="danger"
-                    icon="pi pi-times"
-                    @click="showModal"
-                />
-                <Button
-                    class="h-2rem m-1"
-                    label="Guardar"
-                    severity="success"
-                    icon="pi pi-check"
-                    type="submit"
-                />
+
+                <div class="w-full flex justify-content-end p-2">
+                    <Button
+                        class="h-2rem m-1"
+                        label="Cancelar"
+                        severity="danger"
+                        icon="pi pi-times"
+                        @click="showModal"
+                    />
+                    <Button
+                        class="h-2rem m-1"
+                        label="Guardar"
+                        severity="success"
+                        icon="pi pi-check"
+                        type="submit"
+                    />
+                </div>
             </div>
         </form>
     </Dialog>
 </template>
 <script>
 import Preloader from "@/Components/Preloader.vue";
-import { rutaBase, pathName } from "../../../../Utils/utils.js";
-import PrimeVueComponents from "../../../../js/primevue.js";
-import * as mensajes from "../../../../Utils/message.js";
+import { rutaBase, pathName } from "../../../../../Utils/utils.js";
+import PrimeVueComponents from "../../../../primevue.js";
+import * as mensajes from "../../../../../Utils/message.js";
+import { setSwal } from "../../../../../Utils/swal.js";
 export default {
-    props: ["terminos", "colaboradoresDetalle", "visible"],
+    props: ["terminos", "colaboradoresDetalle", "visiblemultiple"],
     emits: ["onClickClean", "showModal", "getData"],
     components: {
         Preloader,
@@ -289,11 +391,12 @@ export default {
             mensaje: "",
             isLoadingForm: false,
             formData: this.$inertia.form({}),
+            ruta: rutaBase,
         };
     },
     mounted() {},
     watch: {
-        visible: function (newValue, oldValue) {
+        visiblemultiple: function (newValue, oldValue) {
             if (newValue == 1) {
                 this.armarVModel();
             }
@@ -301,36 +404,51 @@ export default {
     },
     methods: {
         armarVModel() {
-            this.colaboradoresDetalle.forEach((colaborador, index) => {
-                const keys = Object.keys(colaborador);
-                keys.forEach((key) => {
-                    this.formData["user_id" + index] = colaborador.user_id;
-                    this.formData["nombre_completo" + index] =
-                        colaborador.first_name + " " + colaborador.last_name;
-                    this.formData["motivo" + index] = "";
-                    this.formData["fecha_desvinculacion" + index] = new Date();
-                    this.formData["redireccion" + index] = "";
-                    this.formData["rut_empresa" + index] = colaborador.rut;
-                    this.formData["centro_costo" + index] =
-                        colaborador.centro_costo;
-                    this.formData["full_ceco" + index] = colaborador.full_ceco;
-                    this.formData["rut_empresa" + index] = colaborador.rut;
-                    this.formData["razon_social" + index] =
-                        colaborador.razon_social;
-                    this.formData["fecha_ingreso" + index] =
-                        colaborador.fecha_ingreso;
-                    /* archivos */
-                    this.formData["carta_firmada" + index] = null;
-                    this.formData["cese_dt" + index] = null;
-                    this.formData["cese_afc" + index] = null;
-                    this.formData["aporte_empleador" + index] = null;
-                    this.formData["cert_defuncion" + index] = null;
-                    this.formData["boleta_funebre" + index] = null;
-                    this.formData["info_bancaria" + index] = null;
-                    this.formData["pathname" + index] = pathName;
-                });
-            });
-            this.$inertia.form(this.formData);
+            this.colaboradoresDetalle.solicitud_colaborador2.forEach(
+                (colaborador, index) => {
+                    const keys = Object.keys(colaborador);
+                    keys.forEach((key) => {
+                        this.formData["id" + index] = colaborador.id;
+                        this.formData["id_solicitud" + index] =
+                            colaborador.id_solicitud;
+                        this.formData["user_id" + index] = colaborador.user_id;
+                        this.formData["nombre_completo" + index] =
+                            colaborador.nombre_completo;
+                        this.formData["motivo" + index] = colaborador.motivo;
+                        this.formData["fecha_desvinculacion" + index] =
+                            new Date(colaborador.fecha_desvinculacion);
+                        this.formData["redireccion" + index] = "";
+                        this.formData["rut_empresa" + index] =
+                            colaborador.rut_empresa;
+                        this.formData["centro_costo" + index] =
+                            colaborador.centro_costo;
+                        /* archivos */
+                        this.formData["carta_firmada" + index] = null;
+                        this.formData["cese_dt" + index] = null;
+                        this.formData["cese_afc" + index] = null;
+                        this.formData["aporte_empleador" + index] = null;
+                        this.formData["cert_defuncion" + index] = null;
+                        this.formData["boleta_funebre" + index] = null;
+                        this.formData["info_bancaria" + index] = null;
+                        this.formData["pathname" + index] = pathName;
+                        this.formData["aprobado_administrador_obra" + index] =
+                            colaborador.aprobado_administrador_obra == 7
+                                ? null
+                                : colaborador.aprobado_administrador_obra;
+                        this.formData["aprobado_visitador_obra" + index] =
+                            colaborador.aprobado_visitador_obra == 7
+                                ? null
+                                : colaborador.aprobado_visitador_obra;
+                        this.formData["aprobado_rrhh" + index] =
+                            colaborador.aprobado_rrhh == 7
+                                ? null
+                                : colaborador.aprobado_rrhh;
+                    });
+                    setTimeout(() => {
+                        this.handleDropdownChange(index, null);
+                    }, 500);
+                }
+            );
         },
         onClickCleanFormUnico() {
             $("#motivoForm").val("").trigger("change");
@@ -344,9 +462,8 @@ export default {
             this.isLoadingForm = true;
             this.mensaje =
                 "registrando la solicitud, esto demorara según la cantidad y tamaño de los archivos";
-            this.formData["obra"] = 1;
             this.$inertia.post(
-                rutaBase + "/create/solicitud/multiple",
+                rutaBase + "/update/solicitud/multiple",
                 this.formData,
                 {
                     onFinish: () => {
@@ -359,7 +476,7 @@ export default {
                             position: "top-right",
                             summary: "Notificación",
                             detail: mensajes.MENSAJE_EXITO,
-                            life: 6000,
+                            life: 3000,
                         });
                     },
                 }
@@ -379,89 +496,38 @@ export default {
             this.$emit("onClickClean");
         },
         handleDropdownChange(index, value) {
-            let external_code = this.formData["motivo" + index].externalcode;
+            let external_code = this.formData["motivo" + index];
+
             if (external_code == "03") {
                 $("#cert_defuncion" + index).removeClass("d-none");
-                $("#cert_defuncion" + index + " input[type='file']").attr(
-                    "required",
-                    true
-                );
+
                 $("#boleta_funebre" + index).removeClass("d-none");
-                $("#boleta_funebre" + index + " input[type='file']").attr(
-                    "required",
-                    true
-                );
+
                 $("#info_bancaria" + index).removeClass("d-none");
-                $("#info_bancaria" + index + " input[type='file']").attr(
-                    "required",
-                    true
-                );
             } else {
                 $("#cert_defuncion" + index).addClass("d-none");
-                $("#cert_defuncion" + index + " input[type='file']").attr(
-                    "required",
-                    false
-                );
+
                 $("#boleta_funebre" + index).addClass("d-none");
-                $("#boleta_funebre" + index + " input[type='file']").attr(
-                    "required",
-                    false
-                );
+
                 $("#info_bancaria" + index).addClass("d-none");
-                $("#info_bancaria" + index + " input[type='file']").attr(
-                    "required",
-                    false
-                );
             }
 
             if (external_code == "24") {
                 $("#carta_firmada" + index).addClass("d-none");
-                $("#carta_firmada" + index + " input[type='file']").attr(
-                    "required",
-                    false
-                );
 
                 $("#cese_dt" + index).addClass("d-none");
-                $("#cese_dt" + index + " input[type='file']").attr(
-                    "required",
-                    false
-                );
 
                 $("#cese_afc" + index).addClass("d-none");
-                $("#cese_afc" + index + " input[type='file']").attr(
-                    "required",
-                    false
-                );
 
                 $("#convenio_practica" + index).removeClass("d-none");
-                $("#convenio_practica" + index + " input[type='file']").attr(
-                    "required",
-                    true
-                );
             } else {
                 $("#carta_firmada" + index).removeClass("d-none");
-                $("#carta_firmada" + index + " input[type='file']").attr(
-                    "required",
-                    true
-                );
 
                 $("#cese_dt" + index).removeClass("d-none");
-                $("#cese_dt" + index + " input[type='file']").attr(
-                    "required",
-                    true
-                );
 
                 $("#cese_afc" + index).removeClass("d-none");
-                $("#cese_afc" + index + " input[type='file']").attr(
-                    "required",
-                    true
-                );
 
                 $("#convenio_practica" + index).addClass("d-none");
-                $("#convenio_practica" + index + " input[type='file']").attr(
-                    "required",
-                    false
-                );
             }
 
             if (
@@ -470,22 +536,68 @@ export default {
                 external_code == "19"
             ) {
                 $("#aporte_empleador" + index).removeClass("d-none");
-                $("#aporte_empleador" + index + " input[type='file']").attr(
-                    "required",
-                    true
-                );
             } else {
                 $("#aporte_empleador" + index).addClass("d-none");
-                $("#aporte_empleador" + index + " input[type='file']").attr(
-                    "required",
-                    false
-                );
             }
         },
         handleFileChange(event, index, column) {
             const file = event.target.files[0];
             if (file) {
                 this.formData[column + index] = [file];
+            }
+        },
+        setOrigen(origen) {
+            var origen_detail = "";
+            switch (origen) {
+                case "carta_firmada":
+                    origen_detail = "Carta firmada";
+                    break;
+                case "cese_dt":
+                    origen_detail = "CESE DT";
+                    break;
+                case "cese_afc":
+                    origen_detail = "CESE AFC";
+                    break;
+                case "convenio_practica":
+                    origen_detail =
+                        "Carta firmada o comprobante de envio por correo certificado";
+                    break;
+                case "aporte_empleador":
+                    origen_detail = "Aporte empleador AFC";
+                    break;
+                case "cert_defuncion":
+                    origen_detail = "CERTIFICADO DE DEFUNCIÓN";
+                    break;
+                case "boleta_funebre":
+                    origen_detail = "Boleta o comprobante de gastos funebres";
+                    break;
+                case "info_bancaria":
+                    origen_detail = "Información bancaria del beneficiario";
+                    break;
+                default:
+                    origen_detail = "Descripción no disponible";
+                    break;
+            }
+            return origen_detail;
+        },
+        deleteData(id, idFile) {
+            setSwal({
+                value: "deleteForm",
+                callback: async () => {
+                    await this.deleteFile(id, idFile);
+                    this.getData();
+                },
+            });
+        },
+        async deleteFile(id, idFile) {
+            let file = document.getElementById(id);
+            if (file) {
+                try {
+                    await axios.put(`${this.ruta}/archivos/delete/${idFile}`);
+                    file.remove();
+                } catch (error) {
+                    console.error("Error al eliminar el archivo:", error);
+                }
             }
         },
     },

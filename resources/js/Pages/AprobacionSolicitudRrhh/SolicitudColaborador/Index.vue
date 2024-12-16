@@ -430,8 +430,9 @@ export default {
         solicitud_selected: function (newValue, oldValue) {
             if (newValue) {
                 var data = this.solicitud_selected.solicitud_colaborador;
+                this.dataTable.data = data;
 
-                if (data != undefined) {
+               /*  if (data != undefined) {
                     var filterdata = [];
                     data.forEach((colaborador) => {
                         if (colaborador.estadovisitador) {
@@ -440,8 +441,7 @@ export default {
                             }
                         }
                     });
-                    this.dataTable.data = filterdata;
-                }
+                } */
             }
         },
     },

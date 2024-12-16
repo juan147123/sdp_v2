@@ -76,6 +76,7 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
         c.np_lider,
         c.first_name,
         c.last_name,
+        c.first_name || ' ' || c.last_name AS full_name,
         c.national_id,
         c.correo_flesan,
         c.correo_gmail,      
@@ -90,11 +91,14 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
         c.empresa,
         c.centro_costo,
         c.nombre_centro_costo,
+         c.centro_costo || ' ' || c.nombre_centro_costo AS full_ceco,
         c.departamento,
         m.nombre_cc,
         m.nombre_un AS unidad_negocio,
         m.external_code_un AS id_unidad_negocio,
+        m.external_code_un || ' ' || m.nombre_un AS full_unidad,
         c.nombre_departamento,
+        c.departamento || ' ' || c.nombre_departamento AS full_dep,
         c.division,
         c.nombre_division
         FROM colaboradores c

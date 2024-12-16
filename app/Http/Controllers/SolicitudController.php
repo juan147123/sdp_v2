@@ -189,7 +189,8 @@ class SolicitudController extends Controller
             'full_ceco' => $request->full_ceco0,
             'rut_empresa' => $request->rut_empresa0,
             'razon_social' => $request->razon_social0,
-            'obra' => session('obra') == null ? 0 : session('obra'),
+            'obra' => $request->obra,
+            'status' => $request->obra == 0 ? 3 : 1,
         ];
     }
     private function buildSolicitudDetail($solicitudcolaborador, $new_solicitud)
@@ -271,7 +272,7 @@ class SolicitudController extends Controller
 
         $centro_costo = $new_solicitud->centro_costo;
 
-          if ($centro_costo == 'DMOPR12118GG') {
+        if ($centro_costo == 'DMOPR12118GG') {
             $emails_to .= ',cecilia.silva@flesan.cl';
             $emails_to .= ',david.vilugron@flesan.cl';
             $emails_to .= ',carolina.carreno@flesan.cl';
@@ -363,13 +364,17 @@ class SolicitudController extends Controller
         $visi = $request->aprobado_visitador_obra0;
         $rrhh = $request->aprobado_rrhh0;
         $status_soli = 1;
-        
-        if ($admin == 7 || $admin == null) {
-            $status_soli = 1;
-        } else if (($visi == 7 || $visi == null) && $admin != null) {
-            $status_soli = 2;
-        } else if (($rrhh == 7 || $rrhh == null) && $visi != null) {
+
+        if ($old_solicitud->obra == 0) {
             $status_soli = 3;
+        } else {
+            if ($admin == 7 || $admin == null) {
+                $status_soli = 1;
+            } else if (($visi == 7 || $visi == null) && $admin != null) {
+                $status_soli = 2;
+            } else if (($rrhh == 7 || $rrhh == null) && $visi != null) {
+                $status_soli = 3;
+            }
         }
         $this->repository->update($old_solicitud->id, ["status" => $status_soli]);
 

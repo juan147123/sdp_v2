@@ -148,6 +148,7 @@
                                     </MultiSelect>
                                 </template>
                             </Column>
+
                             <Column
                                 field="created_at"
                                 header="Fecha de creación"
@@ -162,6 +163,19 @@
                                             dateFormatChangeApi(data.created_at)
                                         }}
                                     </div>
+                                </template>
+                            </Column>
+
+                            <Column
+                                field="obra"
+                                header="Origen"
+                                headerStyle="background-color:black; color:white"
+                                sortable
+                                filterField="obra"
+                                :showFilterMatchModes="false"
+                            >
+                                <template #body="{ data }"> 
+                                    {{data.obra == 0?"PLANTA":"OBRA"}}
                                 </template>
                             </Column>
                             <Column
@@ -466,11 +480,9 @@ export default {
                     this.dataTable.data = response.data;
                     if (this.details == true) {
                         let oldId = self.solicitud_selected.id;
-                        console.log(oldId)
                         let newselected = self.dataTable.data.find(
                             (item) => item.id === oldId
                         );
-                        console.log(newselected)
                         this.solicitud_selected = newselected;
                         if (newselected) {
                             // Si el elemento existe, asignarlo a solicitud_selected

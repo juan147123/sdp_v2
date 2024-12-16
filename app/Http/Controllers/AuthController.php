@@ -71,7 +71,8 @@ class AuthController extends Controller
 
 
             // $email = 'carolina.carreno@flesan.cl'; //  --> visitador CFMCFM020014 
-            $email = 'catalina.fuentes@flesan.cl'; // --> adminsitrador rrhh
+            $email = 'carolina.zavala@flesan.cl'; //  --> visitador CFMCFM020014 
+            // $email = 'catalina.fuentes@flesan.cl'; // --> adminsitrador rrhh
 
         }
 
@@ -116,10 +117,10 @@ class AuthController extends Controller
         if ($email == 'maria.cayuqueo@flesan.cl') {  //administrador de obra DVCR80010 
             $email = 'emanriquez@dvc.cl';
         }
-
+        /* 
         if ($email == 'carolina.zavala@flesan.cl') {  //visitador de obra DVCR80010 
             $email = 'mperez@dvc.cl';
-        }
+        } */
 
 
         /* APROBADORES RRHH */
@@ -173,11 +174,11 @@ class AuthController extends Controller
             if ($usuario_bd && env("ADMINISTRADOR_AREA") == $usuario_bd->rol) array_push($permisos, 'ADMAREA');
             if ($usuario_bd && env("SUPER_ADMINISTRADOR") == $usuario_bd->rol) array_push($permisos, 'SUPERAD');
 
-            /*            $personalCl = $this->repositoryPersonalCL->getNpLiderByEmail($usuario_mail);
+            $personalCl = $this->repositoryPersonalCL->getNpLiderByEmail($usuario_mail);
             $personalPe = $this->repositoryPersonalPE->UserFindByEmail($usuario_mail);
 
             if ($personalCl) array_push($permisos, 'LIDERCL');
-            if ($personalPe) array_push($permisos, 'LIDERPE'); */
+            if ($personalPe) array_push($permisos, 'LIDERPE');
 
             $liderObracl = $this->repositoryPersonalCL->getLiderObraCl($usuario_mail);
             if ($liderObracl) array_push($permisos, 'LIDEROBRACL');
