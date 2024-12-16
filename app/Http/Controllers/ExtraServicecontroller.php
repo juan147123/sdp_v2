@@ -25,6 +25,7 @@ class ExtraServicecontroller extends Controller
 
     public static function send_email_gf($body, $subject, $emails_to)
     {
+        return 1;
         $URL_API = 'https://api.grupoflesan.com/api/';
         $token = self::get_token_api_gf();
         $headers = [

@@ -68,6 +68,6 @@ class Solicitud extends Model
 
     public function solicitudColaborador2()
     {
-        return $this->hasMany('App\Models\SolicitudColaborador', 'id_solicitud')->where('status', '!=', 6);
+        return $this->hasMany('App\Models\SolicitudColaborador', 'id_solicitud')->where('enable', 1);
     }
 }

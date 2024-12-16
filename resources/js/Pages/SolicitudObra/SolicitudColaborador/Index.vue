@@ -380,7 +380,7 @@ export default {
             ],
             dataTable: {
                 rows: 10,
-                data: self.solicitud_selected.solicitud_colaborador,
+                data: self.solicitud_selected.solicitud_colaborador2,
                 rowsPerPageOptions: [10, 20, 50, 100],
                 paginatorTemplate:
                     "RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink",
@@ -438,7 +438,7 @@ export default {
         solicitud_selected: function (newValue, oldValue) {
             if (newValue) {
                 this.dataTable.data =
-                    this.solicitud_selected.solicitud_colaborador;
+                    this.solicitud_selected.solicitud_colaborador2;
             }
         },
     },

@@ -58,7 +58,7 @@ class SolicitudController extends Controller
         if (in_array('LIDERCL', session('objeto_permitido')) || in_array('LIDERPE', session('objeto_permitido')) || in_array('LIDEROBRACL', session('objeto_permitido'))) {
             $list = $this->listSolicitudesLider(['user_created' => strtoupper(Auth::user()->username), "enable" => 1]);
         } else {
-            $list = $this->listSolicitudesLider(["enable" => 1]);
+            $list = $this->listSolicitudesLiderAll(["enable" => 1]);
         }
         return $list;
     }
@@ -131,6 +131,22 @@ class SolicitudController extends Controller
 
     // LISTADO DE SOLICITUDES POR LIDER
     public function listSolicitudesLider($conditionals)
+    {
+        return $this->repository->all(['*'], [
+            'estado',
+            'archivos',
+            'solicitudColaborador2',
+            'solicitudColaborador2.estado',
+            'solicitudColaborador2.archivos',
+            'solicitudColaborador2.SapMaestroCausalesTerminos',
+            'solicitudColaborador2.checkAreaColaboradores',
+            'solicitudColaborador2.estadoadmin',
+            'solicitudColaborador2.estadovisitador',
+            'solicitudColaborador2.estadorrhh',
+        ], $conditionals);
+    }
+
+    public function listSolicitudesLiderAll($conditionals)
     {
         return $this->repository->all(['*'], [
             'estado',
@@ -411,7 +427,7 @@ class SolicitudController extends Controller
             'solicitudColaborador.estadorrhh',
             'solicitudColaborador.SapMaestroCausalesTerminos',
             'solicitudColaborador.checkAreaColaboradores'
-        ])->whereIn('estado.id', [3, 4, 5])->where("enable", 1);
+        ])->whereIn('estado.id', [3, 4])->where("enable", 1);
 
         return $result->values();
     }

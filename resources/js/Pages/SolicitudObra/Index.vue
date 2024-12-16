@@ -7,61 +7,86 @@
                 <div class="row">
                     <div class="col-lg-3 col-12">
                         <div class="info-box">
-                            <span class="info-box-icon bg-color-custom-pendiente elevation-1"><i
-                                    class="fas fa-bookmark"></i></span>
+                            <span
+                                class="info-box-icon bg-color-custom-pendiente elevation-1"
+                                ><i class="fas fa-bookmark"></i
+                            ></span>
                             <div class="info-box-content">
-                                <span class="info-box-text color-custom-pendiente">PENDIENTE ADMINISTRADOR</span>
+                                <span
+                                    class="info-box-text color-custom-pendiente"
+                                    >PENDIENTE ADMINISTRADOR</span
+                                >
                                 <span class="info-box-number">{{
                                     conteoSolicitudes.PENDIENTE_ADMIN
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-12">
                         <div class="info-box">
-                            <span class="info-box-icon bg-color-custom-pendiente elevation-1"><i
-                                    class="fas fa-bookmark"></i></span>
+                            <span
+                                class="info-box-icon bg-color-custom-pendiente elevation-1"
+                                ><i class="fas fa-bookmark"></i
+                            ></span>
                             <div class="info-box-content">
-                                <span class="info-box-text color-custom-pendiente">PENDIENTE VISITADOR</span>
+                                <span
+                                    class="info-box-text color-custom-pendiente"
+                                    >PENDIENTE VISITADOR</span
+                                >
                                 <span class="info-box-number">{{
                                     conteoSolicitudes.PENDIENTE_VISI
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-12">
                         <div class="info-box">
-                            <span class="info-box-icon bg-color-custom-pendiente elevation-1"><i
-                                    class="fas fa-bookmark"></i></span>
+                            <span
+                                class="info-box-icon bg-color-custom-pendiente elevation-1"
+                                ><i class="fas fa-bookmark"></i
+                            ></span>
                             <div class="info-box-content">
-                                <span class="info-box-text color-custom-pendiente">PENDIENTE RRHH</span>
+                                <span
+                                    class="info-box-text color-custom-pendiente"
+                                    >PENDIENTE RRHH</span
+                                >
                                 <span class="info-box-number">{{
                                     conteoSolicitudes.PENDIENTE_RRHH
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-12">
                         <div class="info-box">
-                            <span class="info-box-icon bg-color-custom-aprobado elevation-1"><i
-                                    class="fas fa-check-circle"></i></span>
+                            <span
+                                class="info-box-icon bg-color-custom-aprobado elevation-1"
+                                ><i class="fas fa-check-circle"></i
+                            ></span>
                             <div class="info-box-content">
-                                <span class="info-box-text color-custom-aprobado">APROBADOS</span>
+                                <span
+                                    class="info-box-text color-custom-aprobado"
+                                    >APROBADOS</span
+                                >
                                 <span class="info-box-number">{{
                                     conteoSolicitudes.APROBADO
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-12">
                         <div class="info-box">
-                            <span class="info-box-icon bg-color-custom-rechazado elevation-1"><i
-                                    class="fas fa-times-circle"></i></span>
+                            <span
+                                class="info-box-icon bg-color-custom-rechazado elevation-1"
+                                ><i class="fas fa-times-circle"></i
+                            ></span>
                             <div class="info-box-content">
-                                <span class="info-box-text color-custom-rechazado">RECHAZADOS</span>
+                                <span
+                                    class="info-box-text color-custom-rechazado"
+                                    >RECHAZADOS</span
+                                >
                                 <span class="info-box-number">{{
                                     conteoSolicitudes.RECHAZADO
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -71,15 +96,34 @@
             <div class="box m-1 mt-5 bg-white p-3 border-round">
                 <div class="container-fluid">
                     <div class="box-body">
-                        <DataTable dataKey="id" :value="dataTable.data" :rows="dataTable.rows" showGridlines paginator
-                            :paginatorTemplate="dataTable.paginatorTemplate" :currentPageReportTemplate="dataTable.currentPageReportTemplate
-                                " :rowsPerPageOptions="dataTable.rowsPerPageOptions" sortMode="single"
-                            :globalFilterFields="dataTable.globalFilterFields" v-model:filters="dataTable.filters"
-                            filterDisplay="menu" FilterMatchMode>
+                        <DataTable
+                            dataKey="id"
+                            :value="dataTable.data"
+                            :rows="dataTable.rows"
+                            showGridlines
+                            paginator
+                            :paginatorTemplate="dataTable.paginatorTemplate"
+                            :currentPageReportTemplate="
+                                dataTable.currentPageReportTemplate
+                            "
+                            :rowsPerPageOptions="dataTable.rowsPerPageOptions"
+                            sortMode="single"
+                            :globalFilterFields="dataTable.globalFilterFields"
+                            v-model:filters="dataTable.filters"
+                            filterDisplay="menu"
+                            FilterMatchMode
+                        >
                             <template #header>
-                                <div class="flex justify-content-end align-items-center">
-                                    <InputText placeholder="Buscador general" v-model="dataTable.filters['global'].value
-                                        " style="font-size: 0.9rem; height: 30px" />
+                                <div
+                                    class="flex justify-content-end align-items-center"
+                                >
+                                    <InputText
+                                        placeholder="Buscador general"
+                                        v-model="
+                                            dataTable.filters['global'].value
+                                        "
+                                        style="font-size: 0.9rem; height: 30px"
+                                    />
                                 </div>
                             </template>
                             <template #empty>
@@ -87,33 +131,65 @@
                                     <span>No hay datos que mostrar</span>
                                 </div>
                             </template>
-                            <Column field="codigo" header="Código de solicitud"
-                                headerStyle="background-color:black; color:white" sortable filterField="codigo"
-                                :showFilterMatchModes="false">
+                            <Column
+                                field="codigo"
+                                header="Código de solicitud"
+                                headerStyle="background-color:black; color:white"
+                                sortable
+                                filterField="codigo"
+                                :showFilterMatchModes="false"
+                            >
                                 <template #filter="{ filterModel }">
-                                    <MultiSelect v-model="filterModel.value" :options="filtersDropdownData.codigo"
-                                        placeholder="Cualquiera" class="p-column-filter" optionLabel="codigo"
-                                        optionValue="codigo">
+                                    <MultiSelect
+                                        v-model="filterModel.value"
+                                        :options="filtersDropdownData.codigo"
+                                        placeholder="Cualquiera"
+                                        class="p-column-filter"
+                                        optionLabel="codigo"
+                                        optionValue="codigo"
+                                    >
                                     </MultiSelect>
                                 </template>
                             </Column>
-                            <Column field="user_created" header="Solicitante"
-                                headerStyle="background-color:black; color:white" sortable filterField="user_id"
-                                :showFilterMatchModes="false">
+                            <Column
+                                field="user_created"
+                                header="Solicitante"
+                                headerStyle="background-color:black; color:white"
+                                sortable
+                                filterField="user_id"
+                                :showFilterMatchModes="false"
+                            >
                             </Column>
-                            <Column field="centro_costo" header="Centro de costo"
-                                headerStyle="background-color:black; color:white" sortable filterField="centro_costo"
-                                :showFilterMatchModes="false">
+                            <Column
+                                field="centro_costo"
+                                header="Centro de costo"
+                                headerStyle="background-color:black; color:white"
+                                sortable
+                                filterField="centro_costo"
+                                :showFilterMatchModes="false"
+                            >
                                 <template #filter="{ filterModel }">
-                                    <MultiSelect v-model="filterModel.value" :options="filtersDropdownData.centro_costo
-                                        " placeholder="Cualquiera" class="p-column-filter" optionLabel="centro_costo"
-                                        optionValue="centro_costo">
+                                    <MultiSelect
+                                        v-model="filterModel.value"
+                                        :options="
+                                            filtersDropdownData.centro_costo
+                                        "
+                                        placeholder="Cualquiera"
+                                        class="p-column-filter"
+                                        optionLabel="centro_costo"
+                                        optionValue="centro_costo"
+                                    >
                                     </MultiSelect>
                                 </template>
                             </Column>
-                            <Column field="created_at" header="Fecha de creación"
-                                headerStyle="background-color:black; color:white" sortable filterField="created_at"
-                                :showFilterMatchModes="false">
+                            <Column
+                                field="created_at"
+                                header="Fecha de creación"
+                                headerStyle="background-color:black; color:white"
+                                sortable
+                                filterField="created_at"
+                                :showFilterMatchModes="false"
+                            >
                                 <template #body="{ data }">
                                     <div>
                                         {{
@@ -122,28 +198,45 @@
                                     </div>
                                 </template>
                             </Column>
-                            <Column field="estado.descripcion" filterField="estado" header="Estado"
-                                headerStyle="background-color:black; color:white" style="text-align: center" sortable
-                                :showFilterMatchModes="false">
+                            <Column
+                                field="estado.descripcion"
+                                filterField="estado"
+                                header="Estado"
+                                headerStyle="background-color:black; color:white"
+                                style="text-align: center"
+                                sortable
+                                :showFilterMatchModes="false"
+                            >
                                 <template #body="{ data }">
                                     <div class="flex flex-column">
-                                        <Tag style="font-size: 10px" :value="data.estado.descripcion"
-                                            :severity="data.estado.color" />
+                                        <Tag
+                                            style="font-size: 10px"
+                                            :value="data.estado.descripcion"
+                                            :severity="data.estado.color"
+                                        />
 
-                                        <Tag v-if="
-                                            this.countStatus(
-                                                data.solicitud_colaborador
-                                            ) > 0
-                                        " style="font-size: 10px" class="mt-1 flex flex-column" severity="danger">
-                                            <div v-for="(
+                                        <Tag
+                                            v-if="
+                                                this.countStatus(
+                                                    data.solicitud_colaborador2
+                                                ) > 0
+                                            "
+                                            style="font-size: 10px"
+                                            class="mt-1 flex flex-column"
+                                            severity="danger"
+                                        >
+                                            <div
+                                                v-for="(
                                                     value, key
                                                 ) in Object.entries(
-                                                        setStatusRechazado(
-                                                            data.solicitud_colaborador
-                                                        )
-                                                    ).filter(
-                                                        ([_, value]) => value > 0
-                                                    )" :key="key">
+                                                    setStatusRechazado(
+                                                        data.solicitud_colaborador2
+                                                    )
+                                                ).filter(
+                                                    ([_, value]) => value > 0
+                                                )"
+                                                :key="key"
+                                            >
                                                 Rechazado por {{ value[0] }} ({{
                                                     value[1]
                                                 }})
@@ -152,44 +245,82 @@
                                     </div>
                                 </template>
                                 <template #filter="{ filterModel }">
-                                    <MultiSelect v-model="filterModel.value" :options="filtersDropdownData.estado"
-                                        placeholder="Cualquiera" class="p-column-filter"
-                                        optionLabel="estado.descripcion" optionValue="estado">
+                                    <MultiSelect
+                                        v-model="filterModel.value"
+                                        :options="filtersDropdownData.estado"
+                                        placeholder="Cualquiera"
+                                        class="p-column-filter"
+                                        optionLabel="estado.descripcion"
+                                        optionValue="estado"
+                                    >
                                     </MultiSelect>
                                 </template>
                             </Column>
-                            <Column :field="null" filterField="user_id" header="Colaboradores"
-                                headerStyle="background-color:black; color:white" sortable style="text-align: center"
-                                :showFilterMatchModes="false">
+                            <Column
+                                :field="null"
+                                filterField="user_id"
+                                header="Colaboradores"
+                                headerStyle="background-color:black; color:white"
+                                sortable
+                                style="text-align: center"
+                                :showFilterMatchModes="false"
+                            >
                                 <template #body="{ data }">
-                                    <Button icon="pi pi-users" class="ml-2" style="
+                                    <Button
+                                        icon="pi pi-users"
+                                        class="ml-2"
+                                        style="
                                             font-size: 0.9rem;
                                             height: 30px;
                                             width: 2rem !important;
                                             height: 2rem !important;
-                                        " severity="info" @click="ChangeView(data)" v-tooltip.top="'colaboradores'" />
-                                    <Button icon="pi pi-folder" class="ml-2" style="
+                                        "
+                                        severity="info"
+                                        @click="ChangeView(data)"
+                                        v-tooltip.top="'colaboradores'"
+                                    />
+                                    <Button
+                                        icon="pi pi-folder"
+                                        class="ml-2"
+                                        style="
                                             font-size: 0.9rem;
                                             height: 30px;
                                             width: 2rem !important;
                                             height: 2rem !important;
-                                        " severity="info" @click="setImagenes(data.archivos)"
-                                        v-tooltip.top="'Variables'" />
+                                        "
+                                        severity="info"
+                                        @click="setImagenes(data.archivos)"
+                                        v-tooltip.top="'Variables'"
+                                    />
 
-                                    <Button v-if="data.status == 5" icon="pi pi-pencil " class="ml-2" style="
+                                    <Button
+                                        v-if="data.status == 5"
+                                        icon="pi pi-pencil "
+                                        class="ml-2"
+                                        style="
                                             width: 2rem !important;
                                             height: 2rem !important;
-                                        " severity="secondary" @click="setDataModalMultiple(data)" />
+                                        "
+                                        severity="secondary"
+                                        @click="setDataModalMultiple(data)"
+                                    />
 
-                                    <Button v-if="
-                                        setAlertButton(
-                                            data.solicitud_colaborador
-                                        ) == true
-                                    " icon="pi pi-exclamation-triangle " class="ml-2" style="
+                                    <Button
+                                        v-if="
+                                            setAlertButton(
+                                                data.solicitud_colaborador2
+                                            ) == true
+                                        "
+                                        icon="pi pi-exclamation-triangle "
+                                        class="ml-2"
+                                        style="
                                             width: 2rem !important;
                                             height: 2rem !important;
-                                        " severity="warning" v-tooltip.top="'observaciones'"
-                                        @click="ChangeView(data)" />
+                                        "
+                                        severity="warning"
+                                        v-tooltip.top="'observaciones'"
+                                        @click="ChangeView(data)"
+                                    />
                                 </template>
                             </Column>
                         </DataTable>
@@ -198,13 +329,26 @@
             </div>
         </div>
 
-        <SolicitudesColaborador @ChangeView="this.ChangeView" @getData="this.getData"
-            :solicitud_selected="solicitud_selected" :details="this.details" />
+        <SolicitudesColaborador
+            @ChangeView="this.ChangeView"
+            @getData="this.getData"
+            :solicitud_selected="solicitud_selected"
+            :details="this.details"
+        />
 
-        <FormularioMultiple :terminos="this.terminos" :visiblemultiple="this.visiblemultiple"
-            :colaboradoresDetalle="colaboradoresDetalle" @showModal="showModal" @getData="getData" />
+        <FormularioMultiple
+            :terminos="this.terminos"
+            :visiblemultiple="this.visiblemultiple"
+            :colaboradoresDetalle="colaboradoresDetalle"
+            @showModal="showModal"
+            @getData="getData"
+        />
 
-        <Modal :archivosList="this.archivosList" :visible="this.visible" @setImagenes="this.setImagenes" />
+        <Modal
+            :archivosList="this.archivosList"
+            :visible="this.visible"
+            @setImagenes="this.setImagenes"
+        />
 
         <!-- <ModalEdit :visiblemultiple="this.visiblemultiple" /> -->
     </AppLayout>
@@ -328,7 +472,8 @@ export default {
         },
         countStatus(colaboradores) {
             return colaboradores.filter(
-                (colaborador) => colaborador.aprobado_administrador_obra === 7 ||
+                (colaborador) =>
+                    colaborador.aprobado_administrador_obra === 7 ||
                     colaborador.aprobado_visitador_obra === 7 ||
                     colaborador.aprobado_rrhh === 7
             ).length;
@@ -430,6 +575,14 @@ export default {
                             );
                             this.solicitud_selected = newselected;
                         }
+                        if (this.visiblemultiple == true) {
+                            let oldId = self.colaboradoresDetalle.id;
+                            let newselected = self.dataTable.data.find(
+                                (item) => item.id === oldId
+                            );
+                            this.colaboradoresDetalle = newselected;
+                        }
+                        this.setdataDashboard();
                     }
                     this.mensaje = "";
                     this.isLoadingForm = false;
@@ -468,7 +621,9 @@ export default {
             ].map((o) => {
                 return { estado: o };
             });
-
+            this.setdataDashboard();
+        },
+        setdataDashboard() {
             const estadoCount = this.dataTable.data.reduce((acc, s) => {
                 const descripcion =
                     s.estado && s.estado.descripcion
@@ -487,7 +642,6 @@ export default {
                 "RECHAZADO",
             ];
             this.conteoSolicitudes = {};
-            console.log(estadoCount)
             estadosDeseados.forEach((estado) => {
                 if (estado === "APROBADO") {
                     // Sumar todas las variantes de "APROBADO"
@@ -507,17 +661,17 @@ export default {
                 } else if (estado === "PENDIENTE_ADMIN") {
                     // Sumar todas las variantes de "RECHAZADO"
                     this.conteoSolicitudes["PENDIENTE_ADMIN"] =
-                        (estadoCount[
+                        estadoCount[
                             "PENDIENTE APROBAR POR ADMINISTRADOR DE OBRA"
-                        ] || 0);
+                        ] || 0;
                 } else if (estado === "PENDIENTE_VISI") {
                     this.conteoSolicitudes["PENDIENTE_VISI"] =
-                        (estadoCount[
+                        estadoCount[
                             "PENDIENTE APROBAR POR DE VISITADOR DE OBRA"
-                        ] || 0);
+                        ] || 0;
                 } else if (estado === "PENDIENTE_RRHH") {
                     this.conteoSolicitudes["PENDIENTE_RRHH"] =
-                        (estadoCount["PENDIENTE APROBAR POR RRHH"] || 0);
+                        estadoCount["PENDIENTE APROBAR POR RRHH"] || 0;
                 } else {
                     // Para otros estados, asignar el valor directamente
                     this.conteoSolicitudes[estado] = estadoCount[estado] || 0;

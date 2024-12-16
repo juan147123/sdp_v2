@@ -488,9 +488,13 @@ export default {
             });
         },
         async updateAll(status, comentario_visitador) {
-            const ids = this.colaboradoresSeleccionados.map(
-                (colaborador) => colaborador.id
-            );
+            const ids = this.colaboradoresSeleccionados
+            .filter(
+                (colaborador) =>
+                colaborador.aprobado_visitador_obra === null
+            )
+            .map((colaborador) => colaborador.id);
+
             this.isLoadingForm = true;
             this.mensaje = "espere mientras se efectuan los cambios....";
             await axios

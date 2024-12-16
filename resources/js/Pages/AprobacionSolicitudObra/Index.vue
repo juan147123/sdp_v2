@@ -333,12 +333,11 @@ export default {
                     if (response.status == 200) {
                         this.dataTable.data = response.data;
                         if (this.details == true) {
-                            let oldId = this.solicitud_selected.id;
-
-                            let newselected = this.dataTable.data.find(
+                            let oldId = self.solicitud_selected.id;
+                            let newselected = self.dataTable.data.find(
                                 (item) => item.id === oldId
                             );
-
+                            this.solicitud_selected = newselected;
                             if (newselected) {
                                 // Si el elemento existe, asignarlo a solicitud_selected
                                 this.solicitud_selected = newselected;

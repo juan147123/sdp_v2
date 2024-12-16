@@ -96,7 +96,7 @@ class SolicitudColaboradorController extends Controller
 
         $this->sendMailStatus($solicitud, $solicitud_colaborador, $request->status, "visitador de obra");
 
-        $this->updateStatusSolicitudVisitador($request, 3);
+        $this->updateStatusSolicitudVisitador($request, null);
 
         //enviar correos de estado
         return $update;
@@ -120,7 +120,7 @@ class SolicitudColaboradorController extends Controller
 
         $this->sendMailStatus($solicitud, $solicitud_colaborador, $request->status, "administrador de rrhh");
 
-        $this->updateStatusSolicitudRrhh($request, 4);
+        $this->updateStatusSolicitudRrhh($request, null);
         //enviar correo desaprobacion con comentario
         return $update;
     }
@@ -202,7 +202,7 @@ class SolicitudColaboradorController extends Controller
             $request->id_solicitud,
             6
         );
-
+  
         if ($solicitudes == 0) {
             $nuevoStatus = ($solicitudes_aprobadas != 0) ? 4 : 5;
             $this->repositorySolicitud->update($request->id_solicitud, ["status" => $nuevoStatus]);
