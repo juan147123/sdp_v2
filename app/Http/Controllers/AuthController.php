@@ -49,8 +49,8 @@ class AuthController extends Controller
         $user = Socialite::driver('google')->user();
         $email = $user->getEmail();
         if ($email == 'jmestanza@flesan.com.pe') {
-            $email = 'fabian.castro@flesan.cl'; // -->solicitante DMOPR12118GG
-            // $email = 'fernando.david@flesan.cl'; // -->administrador DMOPR12118GG
+            // $email = 'fabian.castro@flesan.cl'; // -->solicitante DMOPR12118GG
+            $email = 'fernando.david@flesan.cl'; // -->administrador DMOPR12118GG
             // $email = 'cristian.donoso@flesan.cl'; // -->VISITADOR DMOPR12118GG
 
 
