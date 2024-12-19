@@ -82,7 +82,7 @@ class AuthController extends Controller
         /*DMOPR12118GG  */
 
 
-        if ($email == 'cecilia.silva@flesan.cl') {  //solicitante DMOPR12118GG 
+        if ($email == 'maria.cayuqueo@flesan.cl') {  //solicitante DMOPR12118GG 
             $email = 'fabian.castro@flesan.cl';
         }
 
@@ -91,7 +91,7 @@ class AuthController extends Controller
             $email = 'fernando.david@flesan.cl';
         }
 
-        if ($email == 'carolina.carreno@flesan.cl') {  //visitador de obra DMOPR12118GG 
+        if ($email == 'carolina.zavala@flesan.cl') {  //visitador de obra DMOPR12118GG 
             $email = 'cristian.donoso@flesan.cl';
         }
 
@@ -99,35 +99,28 @@ class AuthController extends Controller
         /*CFMCFM020014   */
 
 
-        if ($email == 'cristobal.figueroa@flesan.cl') {  //solicitante CFMCFM020014 
-            $email = 'ricardo.medel@flesan.cl';
-        }
+//         if ($email == 'cristobal.figueroa@flesan.cl') {  //solicitante CFMCFM020014 
+//             $email = 'ricardo.medel@flesan.cl';
+//         }
 
+// /* 
+//            if ($email == 'nicolas.toro@flesan.cl') {  //administrador de Obra CFMCFM020014 
+//             $email = 'cristian.paniagua@flesan.cl';
+//         } */
 
-        /*    if ($email == 'nicolas.toro@flesan.cl') {  //administrador de Obra CFMCFM020014 
-            $email = 'cristian.paniagua@flesan.cl';
-        }
- */
-        /* DVCR80010 */
+//         /* DVCR80010 */
 
-        if ($email == 'nicolas.toro@flesan.cl') {  //solicitante de obra DVCR80010 
-            $email = 'mario.ponce@dvc.cl';
-        }
+//         if ($email == 'nicolas.toro@flesan.cl') {  //solicitante de obra DVCR80010 
+//             $email = 'mario.ponce@dvc.cl';
+//         }
 
-        if ($email == 'maria.cayuqueo@flesan.cl') {  //administrador de obra DVCR80010 
-            $email = 'emanriquez@dvc.cl';
-        }
-        /* 
-        if ($email == 'carolina.zavala@flesan.cl') {  //visitador de obra DVCR80010 
-            $email = 'mperez@dvc.cl';
-        } */
-
-
-        /* APROBADORES RRHH */
-        /* if ($email == 'catalina.fuentes@flesan.cl') { // aprobador rrhh
-            $email = 'catalina.fuentes@flesan.cl';
-        } */
-
+//         if ($email == 'maria.cayuqueo@flesan.cl') {  //administrador de obra DVCR80010 
+//             $email = 'emanriquez@dvc.cl';
+//         }
+        
+//         if ($email == 'carolina.zavala@flesan.cl') {  //visitador de obra DVCR80010 
+//             $email = 'mperez@dvc.cl';
+//         }
 
         $extension_correo = substr($email, -2);
         $pais = "PE";
