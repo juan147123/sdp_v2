@@ -79,12 +79,16 @@ class AuthController extends Controller
 
 
 
+        if ($email == 'jcmlmph@gmail.com') {  //solicitante DMOPR12118GG 
+            $email = 'fernando.david@flesan.cl';
+        }
+
         /*DMOPR12118GG  */
 
 
         if ($email == 'maria.cayuqueo@flesan.cl') {  //solicitante DMOPR12118GG 
             $email = 'fabian.castro@flesan.cl';
-        }
+        }    
 
 
         if ($email == 'david.vilugron@flesan.cl') {  //administrador de Obra DMOPR12118GG 
