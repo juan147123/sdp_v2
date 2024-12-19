@@ -79,6 +79,9 @@ class SolicitudController extends Controller
             if (Auth::user()->username == 'cristian.donoso@flesan.cl') {
                 $centros_permitidos['centro_costo'][] = 'CFMCFM020014';
             }
+            if (Auth::user()->username == 'jorge.stuardo@dvc.cl') {
+                $centros_permitidos['centro_costo'][] = 'DMOPR12118GG';
+            }
         }
 
         //CFMR10005CFM
