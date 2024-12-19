@@ -113,7 +113,7 @@ class SolicitudController extends Controller
                 $centros_permitidos['centro_costo'][] = 'DVCR80010';
             }
             if (Auth::user()->username == 'jorge.stuardo@dvc.cl') {
-                $centros_permitidos['centro_costo'][] = 'DMRM1052DEM';
+                $centros_permitidos['centro_costo'][] = 'DMOPR12118GG';
             }
         }
         $result = $this->repository->all(['*'], [
