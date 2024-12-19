@@ -79,53 +79,22 @@ class AuthController extends Controller
 
 
 
-
-        if ($email == 'jcmlmph@gmail.com') {  //solicitante DMOPR12118GG 
-            $email = 'fernando.david@flesan.cl';
-        }
-
-        /*DMOPR12118GG  */
-
-
         if ($email == 'maria.cayuqueo@flesan.cl') {  //solicitante DMOPR12118GG 
             $email = 'fabian.castro@flesan.cl';
+            // $email = 'andres.bravo@flesan.cl';
+            // $email = 'ricardo.medel@flesan.cl';
+            // $email = 'mario.ponce@dvc.cl';
         }    
 
 
         if ($email == 'david.vilugron@flesan.cl') {  //administrador de Obra DMOPR12118GG 
-            $email = 'fernando.david@flesan.cl';
-        }
-
-        if ($email == 'carolina.zavala@flesan.cl') {  //visitador de obra DMOPR12118GG 
             $email = 'cristian.donoso@flesan.cl';
         }
 
+        if ($email == 'carolina.zavala@flesan.cl') {  //visitador de obra DMOPR12118GG 
+            $email = 'jorge.stuardo@dvc.cl';
+        }
 
-        /*CFMCFM020014   */
-
-
-//         if ($email == 'cristobal.figueroa@flesan.cl') {  //solicitante CFMCFM020014 
-//             $email = 'ricardo.medel@flesan.cl';
-//         }
-
-// /* 
-//            if ($email == 'nicolas.toro@flesan.cl') {  //administrador de Obra CFMCFM020014 
-//             $email = 'cristian.paniagua@flesan.cl';
-//         } */
-
-//         /* DVCR80010 */
-
-//         if ($email == 'nicolas.toro@flesan.cl') {  //solicitante de obra DVCR80010 
-//             $email = 'mario.ponce@dvc.cl';
-//         }
-
-//         if ($email == 'maria.cayuqueo@flesan.cl') {  //administrador de obra DVCR80010 
-//             $email = 'emanriquez@dvc.cl';
-//         }
-        
-//         if ($email == 'carolina.zavala@flesan.cl') {  //visitador de obra DVCR80010 
-//             $email = 'mperez@dvc.cl';
-//         }
 
         $extension_correo = substr($email, -2);
         $pais = "PE";
