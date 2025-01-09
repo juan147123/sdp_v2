@@ -208,7 +208,9 @@
                     <li class="toogle-li" v-if="
                         this.$page.props.permisos.includes(
                             this.$env.SUPERAD
-                        )
+                        ) || this.$page.props.permisos.includes(
+                            this.$env.ADMRRHH
+                        ) 
                     ">
                         <a class="no-href" :class="this.route().current(
                             'redirect.configuraciones'

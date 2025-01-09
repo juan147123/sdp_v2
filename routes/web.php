@@ -8,6 +8,7 @@ use App\Http\Controllers\{
     CalendarController,
     ColaboradoresChileController,
     ColaboradoresPeruController,
+    ComentariosController,
     ConfiguracionController,
     SolicitudColaboradorController,
     TerminosController,
@@ -143,5 +144,11 @@ Route::middleware([
     Route::post('create/calendar', [CalendarController::class, 'create'])->name('create.calendar');
     Route::put('update/calendar/{id}', [CalendarController::class, 'update'])->name('update.calendar');
     Route::delete('delete/calendar/{id}', [CalendarController::class, 'delete'])->name('delete.calendar');
+
+    //COMENTARIOS
+    Route::get('list/comentarios', [ComentariosController::class, 'listAll'])->name('list.comentarios');
+    Route::get('list/comentarios/{id}', [ComentariosController::class, 'lisByIdConcat'])->name('list.comentarios.byId');
+    Route::post('create/comentarios', [ComentariosController::class, 'create'])->name('create.comentarios');
+    Route::put('update/comentarios/{id}', [ComentariosController::class, 'update'])->name('update.comentarios');
 
 });

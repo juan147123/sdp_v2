@@ -16,7 +16,9 @@ use App\Interfaces\{
     UsuarioRepositoryInterface,
     UsuarioRolRepositoryInterface,
     ArchivoRepositoryInterface,
-    CalendarRepositoryInterface
+    CalendarRepositoryInterface,
+    CheckColaboradorRepositoryInterface,
+    ComentariosRepositoryInterface
 };
 use App\Repositories\{
     AplicacionUsuarioRepository,
@@ -31,7 +33,9 @@ use App\Repositories\{
     UsuarioRepository,
     UsuarioRolRepository,
     ArchivoRepository,
-    CalendarRepository
+    CalendarRepository,
+    CheckColaboradorRepository,
+    ComentariosRepository
 };
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -56,6 +60,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(EstadosRepositoryInterface::class, EstadosRepository::class);
         $this->app->bind(ArchivoRepositoryInterface::class, ArchivoRepository::class);
         $this->app->bind(CalendarRepositoryInterface::class, CalendarRepository::class);
+        $this->app->bind(CheckColaboradorRepositoryInterface::class, CheckColaboradorRepository::class);
+        $this->app->bind(ComentariosRepositoryInterface::class, ComentariosRepository::class);
     }
 
     /**

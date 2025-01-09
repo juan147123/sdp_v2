@@ -52,7 +52,8 @@ class AuthController extends Controller
             // $email = 'fabian.castro@flesan.cl'; // -->solicitante DMOPR12118GG
             // $email = 'cristian.donoso@flesan.cl'; // -->administrador DMOPR12118GG
             // $email = 'jorge.stuardo@dvc.cl'; // -->VISITADOR DMOPR12118GG
-            $email = 'catalina.fuentes@flesan.cl'; // --> adminsitrador rrhh
+            $email = 'macarena.werner@flesan.cl'; // --> adminsitrador rrhh
+            // $email = 'catalina.fuentes@flesan.cl'; // --> adminsitrador rrhh
             
 
 
@@ -122,9 +123,7 @@ class AuthController extends Controller
         $usuario_seguridad_app = $this->repository->findUserByEmail($usuario_mail);
 
         $np_lider  = $this->getNpLider($usuario_mail);
-        if (!$np_lider) {
-            return $this->redirectToLogin();
-        }
+
         if ($usuario_seguridad_app) {
             Auth::login($usuario_seguridad_app);
             $rol = $this->repositoryRolUsuario->getDataRol($usuario_seguridad_app->id_aplicacion_usuario);

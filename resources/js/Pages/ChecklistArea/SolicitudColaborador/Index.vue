@@ -1,77 +1,116 @@
 <template>
-    <breadcrumbs :modules="breadcrumbs" />
-    <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
-    <div>
-        <i
-            class="fas fa-arrow-left mt-3 ml-2 arrow-back"
-            @click="changeViewDetail"
-        ></i>
-    </div>
-    <div class="d-flex align-items-center justify-content-between ml-2 mt-3">
-        <h5></h5>
-        <h5 class="m-2 bg-white p-2">
-            Solicitud:
-            {{ this.solicitudesColaborador.codigo }}
-        </h5>
-    </div>
-    <div
-        class="text-end m-2"
-    >
-        <div class="btn-group">
-            <button
-                class="btn btn-primary btn-sm dropdown-toggle mb-3"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-                :disabled="this.solicitudesColaborador.status == 3"
-            >
-                Acciones
-            </button>
-            <ul class="dropdown-menu">
-                <li>
-                    <a
-                        @click="updateAllStatus(3)"
-                        class="dropdown-item"
-                        style="cursor: pointer; font-size: 11.5px"
-                        ><i class="fas fa-check text-success"></i> Aprobar
-                        todos</a
-                    >
-                </li>
-                <li>
-                    <a
-                        @click="updateAllStatus(2)"
-                        class="dropdown-item"
-                        style="cursor: pointer; font-size: 11.5px"
-                        ><i class="fas fa-times text-danger"></i>
-                        Desaprobar todos
-                    </a>
-                </li>
-            </ul>
+    <div v-if="this.details != false">
+        <breadcrumbs :modules="breadcrumbs" />
+        <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
+        <div class="mt-4">
+            <Button icon="pi pi-arrow-left" class="ml-2" label="regresar" style="font-size: 0.9rem; height: 30px"
+                severity="danger" @click="ChangeView(null)" />
         </div>
-    </div>
-    <div class="contenedor-solicitud" v-if="this.checkView != true">
-        <div class="box ml-2 mr-2 mt-1">
-            <div class="box-body">
-                <table
-                    class="table text-nowrap table-bordered dt-responsive"
-                    id="tableSolicitudesDetalle"
-                >
-                    <thead class="table-dark">
-                        <tr>
-                            <th>NP Usuario</th>
-                            <th>Nombres y Apellidos</th>
-                            <th>Motivo de desvinculación</th>
-                            <th>Fecha de desvinculación</th>
-                            <th>Correo de redirección</th>
-                            <th>Comentarios</th>
-                            <th>Estado</th>
-                            <th>Checklist</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+        <div class="contenedor-solicitud">
+            <div class="box m-1 mt-3 bg-white p-3 border-round">
+                <div class="container-fluid">
+                    <div class="box-body">
+                        <DataTable dataKey="id" v-model:selection="colaboradoresSeleccionados" :value="dataTable.data"
+                            :rows="dataTable.rows" showGridlines paginator
+                            :paginatorTemplate="dataTable.paginatorTemplate" :currentPageReportTemplate="dataTable.currentPageReportTemplate
+                                " :rowsPerPageOptions="dataTable.rowsPerPageOptions" sortMode="single"
+                            :globalFilterFields="dataTable.globalFilterFields" v-model:filters="dataTable.filters"
+                            filterDisplay="menu" FilterMatchMode>
+                            <template #header>
+                                <div class="flex justify-content-between align-items-center">
+                                    <h5>
+                                        Solicitud:
+                                        {{ this.solicitud_selected.codigo }}
+                                    </h5>
+                                    <div class="flex">
+                                        <InputText placeholder="Buscador general" v-model="dataTable.filters['global']
+                                            .value
+                                            " style="
+                                                font-size: 0.9rem;
+                                                height: 30px;
+                                            " />
+
+                                    </div>
+                                </div>
+                            </template>
+                            <template #empty>
+                                <div class="w-full flex justify-content-center">
+                                    <span>No hay datos que mostrar</span>
+                                </div>
+                            </template>
+                            <Column filterField="user_id" field="user_id" header="NP Usuario"
+                                headerStyle="background-color:black; color:white" sortable
+                                :showFilterMatchModes="false">
+                                <template #filter="{ filterModel }">
+                                    <MultiSelect v-model="filterModel.value" :options="filtersDropdownData.user_id"
+                                        placeholder="Cualquiera" class="p-column-filter" optionLabel="user_id"
+                                        optionValue="user_id" filter>
+                                    </MultiSelect>
+                                </template>
+                            </Column>
+                            <Column filterField="nombre_completo" field="nombre_completo" header="Nombres y apellidos"
+                                headerStyle="background-color:black; color:white" sortable
+                                :showFilterMatchModes="false">
+                                <template #filter="{ filterModel }">
+                                    <MultiSelect v-model="filterModel.value" :options="filtersDropdownData.nombre_completo
+                                        " placeholder="Cualquiera" class="p-column-filter"
+                                        optionLabel="nombre_completo" optionValue="nombre_completo" filter>
+                                    </MultiSelect>
+                                </template>
+                            </Column>
+                            <Column filterField="sap_maestro_causales_terminos"
+                                field="sap_maestro_causales_terminos.name" header="Motivo de desvinculación"
+                                headerStyle="background-color:black; color:white" sortable
+                                :showFilterMatchModes="false">
+                                <template #filter="{ filterModel }">
+                                    <MultiSelect v-model="filterModel.value" :options="filtersDropdownData.sap_maestro_causales_terminos
+                                        " placeholder="Cualquiera" class="p-column-filter"
+                                        optionLabel="sap_maestro_causales_terminos"
+                                        optionValue="sap_maestro_causales_terminos" filter>
+                                    </MultiSelect>
+                                </template>
+                            </Column>
+                            <Column filterField="fecha_desvinculacion" field="fecha_desvinculacion"
+                                header="Fecha a desvincular" headerStyle="background-color:black; color:white" sortable
+                                :showFilterMatchModes="false">
+                                <template #body="{ data }">
+                                    <div>
+                                        {{
+                                            dateFormatChangeApi(
+                                                data.fecha_desvinculacion
+                                            )
+                                        }}
+                                    </div>
+                                </template>
+                            </Column>
+                            <Column filterField="centro_costo" field="centro_costo" header="Centro de costo"
+                                headerStyle="background-color:black; color:white" sortable
+                                :showFilterMatchModes="false">
+                                <template #filter="{ filterModel }">
+                                    <MultiSelect v-model="filterModel.value" :options="filtersDropdownData.centro_costo
+                                        " placeholder="Cualquiera" class="p-column-filter" optionLabel="centro_costo"
+                                        optionValue="centro_costo" filter>
+                                    </MultiSelect>
+                                </template>
+                            </Column>
+
+                            <Column :field="null" header="Acciones" headerStyle="background-color:black; color:white"
+                                :showFilterMatchModes="false">
+                                <template #body="{ data }">
+                                    <div class="text-center">
+                                        <Button label="checklist" icon="pi pi-check-square" @click="showModalCheckList(data)" style="font-size: 0.9rem; height: 30px" severity="danger" />
+                                    </div>
+                                </template>
+                            </Column>
+                        </DataTable>
+                    </div>
+
+                </div>
             </div>
         </div>
+
+        <ModalChecklist :visible="checklistVisible" @showModalCheckList="showModalCheckList"
+            :checkListSelected="checkListSelected" />
     </div>
 </template>
 <script>
@@ -79,33 +118,50 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import breadcrumbs from "@/Components/Breadcrumbs.vue";
 import Preloader from "@/Components/Preloader.vue";
 import { setSwal } from "../../../../Utils/swal";
+import { FilterMatchMode } from "primevue/api";
+import PrimeVueComponents from "../../../../js/primevue.js";
+import setLocaleES from "../../../primevue.config.js";
+import * as mensajes from "../../../../Utils/message.js";
+import { rutaBase, dateFormatChange } from "../../../../Utils/utils.js";
+import ModalChecklist from "../Components/ModalChecklist.vue";
+
 export default {
-    props: [
-        "solicitudesColaborador",
-        "CodigoSolicitud",
-        "idSolicitud",
-        "archivosList",
-    ],
-    emits: ["changeViewDetail", "reloadTable"],
+    props: ["solicitud_selected", "details"],
+    emits: ["ChangeView", "getData"],
     components: {
         AppLayout,
         breadcrumbs,
-       /*  Checklist, */
         Preloader,
+        ModalChecklist,
+        ...PrimeVueComponents,
+    },
+    setup() {
+        setLocaleES();
     },
     data() {
-        var self = this;
         return {
+            items: [
+                {
+                    label: "Vue Website",
+                    icon: "pi pi-external-link",
+                    command: () => { },
+                },
+            ],
+            popaprobals: true,
             checkView: false,
-            checksUsuario: [],
             mensaje: "",
             isLoadingForm: false,
             ids: [],
+            checklistVisible: false,
+            visible: false,
+            optionDropdown: null,
+            archivosList: [],
+            checkListSelected: null,
             form: this.$inertia.form({
                 id: 0,
                 status: 0,
                 id_solicitud: 0,
-                comentario: "",
+                comentario_rrhh: "",
             }),
             breadcrumbs: [
                 {
@@ -119,31 +175,208 @@ export default {
                     icon: "fa fa-users",
                 },
             ],
-            breadcrumbsChecklist: [
-                {
-                    label: "Solicitudes",
-                    url: "/solicitudes",
+            dataTable: {
+                rows: 10,
+                data: [],
+                rowsPerPageOptions: [10, 20, 50, 100],
+                paginatorTemplate:
+                    "RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink",
+                currentPageReportTemplate:
+                    "Página {currentPage} de {totalPages}",
+                filters: {
+                    global: {
+                        value: null,
+                        matchMode: FilterMatchMode.CONTAINS,
+                    },
+                    user_id: {
+                        value: null,
+                        matchMode: FilterMatchMode.CONTAINS,
+                    },
+                    nombre_completo: {
+                        value: null,
+                        matchMode: FilterMatchMode.CONTAINS,
+                    },
+                    sap_maestro_causales_terminos: {
+                        value: null,
+                        matchMode: FilterMatchMode.CONTAINS,
+                    },
+                    centro_costo: {
+                        value: null,
+                        matchMode: FilterMatchMode.CONTAINS,
+                    },
+                    estado: {
+                        value: null,
+                        matchMode: FilterMatchMode.CONTAINS,
+                    },
                 },
-                {
-                    label: "Colaboradores",
-                    url: "",
-                },
-                {
-                    label: "Checklist",
-                    url: "",
-                },
-            ],
+                globalFilterFields: [
+                    "user_id",
+                    "nombre_completo",
+                    "sap_maestro_causales_terminos",
+                    "centro_costo",
+                    "estado",
+                ],
+            },
+            filtersDropdownData: {
+                user_id: [],
+                nombre_completo: [],
+                sap_maestro_causales_terminos: [],
+                centro_costo: [],
+                estado: [],
+            },
+            colaboradoresSeleccionados: [],
         };
     },
-    mounted() {},
+    watch: {
+        details: function (newValue, oldValue) {
+            if (newValue == true) {
+                this.initializeDropdownsData();
+            }
+        },
+        solicitud_selected: function (newValue, oldValue) {
+            if (newValue) {
+                var data = this.solicitud_selected.solicitud_colaborador;
+                this.dataTable.data = data;
+            }
+
+        },
+    },
     methods: {
-        changeViewDetail() {
-            this.$emit("changeViewDetail");
+        showModalCheckList(data) {
+            this.checklistVisible = !this.checklistVisible;
+            if (data) {
+                this.checkListSelected = data.checkList;
+            } else {
+                this.checkListSelected = null;
+            }
         },
-        getChecklist(value) {
-            this.checkView = value;
+        ChangeView(data) {
+            this.popaprobals = true;
+            this.colaboradoresSeleccionados = [];
+            this.$emit("ChangeView", data);
         },
-        async updateStatus(id, status, id_solicitud) {
+
+        getData() {
+            this.$emit("getData");
+        },
+
+        initializeDropdownsData() {
+            this.filtersDropdownData.user_id = [
+                ...new Set(
+                    this.dataTable.data
+                        .filter((s) => s.user_id != "")
+                        .map((s) => s.user_id)
+                ),
+            ].map((o) => {
+                return { user_id: o };
+            });
+
+            this.filtersDropdownData.nombre_completo = [
+                ...new Set(
+                    this.dataTable.data
+                        .filter((s) => s.nombre_completo != "")
+                        .map((s) => s.nombre_completo)
+                ),
+            ].map((o) => {
+                return { nombre_completo: o };
+            });
+
+            this.filtersDropdownData.sap_maestro_causales_terminos = [
+                ...new Map(
+                    this.dataTable.data
+                        .filter(
+                            (s) =>
+                                s.sap_maestro_causales_terminos != "" &&
+                                s.sap_maestro_causales_terminos.name != null
+                        )
+                        .map((s) => [
+                            s.sap_maestro_causales_terminos.name,
+                            s.sap_maestro_causales_terminos,
+                        ])
+                ).values(),
+            ].map((o) => {
+                return { sap_maestro_causales_terminos: o };
+            });
+            this.filtersDropdownData.centro_costo = [
+                ...new Set(
+                    this.dataTable.data
+                        .filter((s) => s.centro_costo != "")
+                        .map((s) => s.centro_costo)
+                ),
+            ].map((o) => {
+                return { centro_costo: o };
+            });
+        },
+        setImagenes(data) {
+            this.visible = !this.visible;
+            this.archivosList = data ? data.archivos : [];
+        },
+        getItemsAll() {
+            return [
+                {
+                    label: "Aprobar solicitudes",
+                    icon: "pi pi-check",
+                    command: () => {
+                        this.updateAllStatus(6, "aprobar");
+                    },
+                },
+                {
+                    label: "Rechazar solicitudes",
+                    icon: "pi pi-times",
+                    command: () => {
+                        this.updateAllStatus(7, "rechazar");
+                    },
+                },
+            ];
+        },
+        getItems(data) {
+            const items = [
+                {
+                    label: "Archivos",
+                    icon: "pi pi-folder",
+                    command: () => {
+                        this.setImagenes(data);
+                    },
+                },
+                {
+                    label: "Aprobar",
+                    icon: "pi pi-check",
+                    command: () => {
+                        this.updateStatus(
+                            data.id,
+                            6,
+                            data.id_solicitud,
+                            "aprobar"
+                        );
+                    },
+                },
+                {
+                    label: "Rechazar",
+                    icon: "pi pi-times",
+                    command: () => {
+                        this.updateStatus(
+                            data.id,
+                            7,
+                            data.id_solicitud,
+                            "rechazar"
+                        );
+                    },
+                },
+            ];
+
+            return items.filter((item) => {
+                if (
+                    (item.label === "Aprobar" || item.label === "Rechazar") &&
+                    data.estadorrhh != null
+                ) {
+                    return false;
+                }
+
+                return true;
+            });
+        },
+
+        async updateStatus(id, status, id_solicitud, mensaje) {
             this.form.id = id;
             this.form.status = status;
             this.form.id_solicitud = id_solicitud;
@@ -151,67 +384,79 @@ export default {
             await new Promise((resolve) => {
                 setSwal({
                     value: "updateStatusInput",
-                    callback: async (comentario) => {
+                    data: status,
+                    mensaje: mensaje,
+                    callback: async (comentario_admin_obra) => {
                         resolve();
-                        this.update(comentario);
+                        this.update(comentario_admin_obra);
                     },
                 });
             });
         },
-
-        update(comentario) {
+        async update(comentario_rrhh) {
+            this.form.comentario_rrhh = comentario_rrhh;
             this.mensaje = "espere mientras se efectuan los cambios....";
             this.isLoadingForm = true;
-            this.form.comentario = comentario;
-            this.form.put(this.route("solicitud.colaborador.update.status"), {
-                onFinish: () => {
-                    this.onFinish();
-                },
-            });
+            await axios
+                .put(
+                    this.route("solicitud.colaborador.update.status.rrhh"),
+                    this.form
+                )
+                .then(async (response) => {
+                    this.getData();
+                    this.mensaje = "";
+                    this.popaprobals = true;
+                    this.isLoadingForm = false;
+                    this.onClickClean();
+                });
         },
 
-        onFinish() {
-            this.$emit("changeViewDetail");
-            this.$emit("reloadTable");
-            this.mensaje = "";
-            this.isLoadingForm = false;
-        },
-        async updateAllStatus(status) {
+        async updateAllStatus(status, mensaje) {
             await new Promise((resolve) => {
                 setSwal({
-                    value: "updateStatus",
-                    callback: async () => {
+                    value: "aprobar_rechazo",
+                    data: status,
+                    mensaje: mensaje,
+                    callback: async (comentario_rrhh) => {
                         resolve();
-                        this.updateAll(status);
+                        this.updateAll(status, comentario_rrhh);
                     },
                 });
             });
         },
-        updateAll(status) {
-            this.mensaje = "espere mientras se efectuan los cambios....";
+        onClickClean() {
+            this.colaboradoresSeleccionados = [];
+        },
+        async updateAll(status, comentario_rrhh) {
+            const ids = this.colaboradoresSeleccionados
+                .filter(
+                    (colaborador) =>
+                        colaborador.aprobado_rrhh === null
+                )
+                .map((colaborador) => colaborador.id);
+            this.form.comentario_rrhh = comentario_rrhh;
             this.isLoadingForm = true;
-
-            this.solicitudesColaborador.solicitud_colaborador.forEach(
-                (solicitudColacorador) => {
-                    if (solicitudColacorador.status == 1) {
-                        this.ids.push(solicitudColacorador.id);
-                    }
-                }
-            );
-
-            this.$inertia.put(
-                this.route("solicitud.colaborador.update.masive"),
-                {
-                    ids: this.ids,
+            this.mensaje = "espere mientras se efectuan los cambios....";
+            await axios
+                .put(this.route("solicitud.colaborador.update.masive.rrhh"), {
+                    ids: ids,
                     status: status,
-                    id_solicitud: this.solicitudesColaborador.id,
-                },
-                {
-                    onFinish: () => {
-                        this.onFinish();
-                    },
-                }
-            );
+                    id_solicitud: this.solicitud_selected.id,
+                    comentario_rrhh: comentario_rrhh,
+                })
+                .then(async (response) => {
+                    this.getData();
+                    this.mensaje = "";
+                    this.popaprobals = true;
+                    this.isLoadingForm = false;
+                    this.onClickClean();
+                });
+        },
+        dateFormatChangeApi(data) {
+            return dateFormatChange(data);
+        },
+        buttonAprobasls() {
+            this.popaprobals = !this.popaprobals;
         },
     },
 };

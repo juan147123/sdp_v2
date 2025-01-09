@@ -315,9 +315,6 @@ import { setSwal } from "../../../../Utils/swal";
 import { FilterMatchMode } from "primevue/api";
 import PrimeVueComponents from "../../../../js/primevue.js";
 import setLocaleES from "../../../primevue.config.js";
-import * as mensajes from "../../../../Utils/message.js";
-import { rutaBase, dateFormatChange } from "../../../../Utils/utils.js";
-import { ref } from "vue";
 
 export default {
     props: ["solicitud_selected", "details"],

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Exports\SolicitudExport;
+use App\Interfaces\CheckColaboradorRepositoryInterface;
+use App\Interfaces\ConfiguracionRepositoryInterface;
 use App\Interfaces\PersonalChileRepositoryInterface;
 use App\Interfaces\SolicitudColaboradorRepositoryInterface;
 use App\Interfaces\SolicitudRepositoryInterface;
@@ -23,6 +25,8 @@ class SolicitudController extends Controller
     private $repositorySolicitudDetalle;
     private $extraService;
     private $personalChileRepository;
+    private $colaboradorCkecklist;
+    private $configuracionAreas;
 
     public function __construct(
         SolicitudRepositoryInterface $repository,
@@ -30,7 +34,9 @@ class SolicitudController extends Controller
         SolicitudColaboradorRepositoryInterface $repositorySolicitudDetalle,
         ExtraServicecontroller $extraService,
         ArchivoRepository $archivoRepository,
-        PersonalChileRepositoryInterface $personalChileRepository
+        PersonalChileRepositoryInterface $personalChileRepository,
+        CheckColaboradorRepositoryInterface $colaboradorCkecklist,
+        ConfiguracionRepositoryInterface $configuracionAreas
     ) {
         $this->repository = $repository;
         $this->repositoryUsuarioRol = $repositoryUsuarioRol;
@@ -38,6 +44,8 @@ class SolicitudController extends Controller
         $this->extraService = $extraService;
         $this->archivoRepository = $archivoRepository;
         $this->personalChileRepository = $personalChileRepository;
+        $this->colaboradorCkecklist = $colaboradorCkecklist;
+        $this->configuracionAreas = $configuracionAreas;
     }
 
     //LISTADO DE SOLICITUDES 
@@ -254,6 +262,8 @@ class SolicitudController extends Controller
 
             $newSolicitudDetail =  $this->repositorySolicitudDetalle->create($data);
 
+            $this->insertCheckList($request, $request->{"user_id$index"}, $newSolicitudDetail->id);
+
             $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos1, "carta_firmada", "Carta firmada o comprobante de envio por correo certificado", null);
             $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos2, "cese_dt", "CESE DT", null);
             $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos3, "cese_afc", "CESE AFC", null);
@@ -263,8 +273,6 @@ class SolicitudController extends Controller
             $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos7, "info_bancaria", "Información bancaria del beneficiario", null);
             $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos8, "convenio_practica", "Convenio de práctica", null);
         }
-
-
 
         $body = View::make('emails.NuevaSolicitud', [
             'data' => [
@@ -448,5 +456,22 @@ class SolicitudController extends Controller
 
 
         return Excel::download(new SolicitudExport($fecha_inicio, $fecha_fin, $this->repository), 'solicitudes_' . $fecha_inicio . '_a_' . $fecha_fin . '.xlsx');
+    }
+
+    public function insertCheckList($request, $colaborador_id, $id_solicitud)
+    {
+        $areas = $this->configuracionAreas->all()
+            ->where("categoria", "area");
+
+        foreach ($areas as $area) {
+            if ($request->obra == 0) {
+                $data = array(
+                    "area_id" => $area->id,
+                    "user_id" => $colaborador_id,
+                    "id_solicitud" => $id_solicitud
+                );
+                $this->colaboradorCkecklist->create($data);
+            }
+        }
     }
 }

@@ -4836,7 +4836,7 @@
 }
 
 .p-divider.p-divider-horizontal:before {
-    border-top: 1px #e7dfdf
+    border-top: solid 1px #C5C5C5
 }
 
 .p-divider.p-divider-horizontal .p-divider-content {
@@ -4849,7 +4849,7 @@
 }
 
 .p-divider.p-divider-vertical:before {
-    border-left: 1px #e7dfdf
+    border-left: solid 1px #C5C5C5
 }
 
 .p-divider.p-divider-vertical .p-divider-content {
