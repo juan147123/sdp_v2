@@ -6,6 +6,7 @@ use App\Http\Controllers\{
     SolicitudController,
     AuthController,
     CalendarController,
+    CheckColaboradorController,
     ColaboradoresChileController,
     ColaboradoresPeruController,
     ComentariosController,
@@ -95,9 +96,9 @@ Route::middleware([
     
     // configuraciones / áreas / checklist
     Route::get('configuraciones/areas', [ConfiguracionController::class, 'listAll'])->name('redirect.configuraciones');
-    Route::post('configuraciones/areas ', [ConfiguracionController::class, 'create'])->name('configuraciones.post');
-    Route::put('configuraciones/areas ', [ConfiguracionController::class, 'update'])->name('configuraciones.update');
-    Route::put('configuraciones/areas/delete ', [ConfiguracionController::class, 'delete'])->name('configuraciones.delete');
+    Route::post('configuraciones/areas', [ConfiguracionController::class, 'create'])->name('configuraciones.post');
+    Route::put('configuraciones/areas/{id}', [ConfiguracionController::class, 'update'])->name('configuraciones.update');
+    Route::put('configuraciones/areas/delete', [ConfiguracionController::class, 'delete'])->name('configuraciones.delete');
     Route::get('configuraciones/area', [ConfiguracionController::class, 'listByIdArea'])->name('list.configuracion.idarea');
     
     //USUARIOS
@@ -150,5 +151,11 @@ Route::middleware([
     Route::get('list/comentarios/{id}', [ComentariosController::class, 'lisByIdConcat'])->name('list.comentarios.byId');
     Route::post('create/comentarios', [ComentariosController::class, 'create'])->name('create.comentarios');
     Route::put('update/comentarios/{id}', [ComentariosController::class, 'update'])->name('update.comentarios');
+  
+    //Ckec_area_colaborador
+    Route::get('list/CheckAreaColaborador', [CheckColaboradorController::class, 'listAll'])->name('list.CheckAreaColaborador');
+    Route::get('list/CheckAreaColaboradorBiSolicitudArea/{id}', [CheckColaboradorController::class, 'listAllBySolicitudArea'])->name('listAllBySolicitudArea.CheckAreaColaborador');
+    Route::post('create/CheckAreaColaborador', [CheckColaboradorController::class, 'create'])->name('create.CheckAreaColaborador');
+    Route::put('update/CheckAreaColaborador/{id}', [CheckColaboradorController::class, 'update'])->name('update.CheckAreaColaborador');
 
 });

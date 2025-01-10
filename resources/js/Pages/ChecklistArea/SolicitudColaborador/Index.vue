@@ -245,7 +245,7 @@ export default {
         showModalCheckList(data) {
             this.checklistVisible = !this.checklistVisible;
             if (data) {
-                this.checkListSelected = data.checkList;
+                this.checkListSelected = data;
             } else {
                 this.checkListSelected = null;
             }
