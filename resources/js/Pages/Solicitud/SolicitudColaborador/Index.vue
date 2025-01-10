@@ -138,7 +138,9 @@
                                 <template #body="{ data }">
                                     <div>
                                         {{
-                                            dateFormatChangeApi(data.fecha_desvinculacion)
+                                            dateFormatChangeApi(
+                                                data.fecha_desvinculacion
+                                            )
                                         }}
                                     </div>
                                 </template>
@@ -217,6 +219,19 @@
                                         </SplitButton>
                                         <Button
                                             v-if="
+                                                this.solicitud_selected.obra ==
+                                                0
+                                            "
+                                            icon="pi pi-check-square"
+                                            @click="showModalCheckList(data)"
+                                            class="ml-2"
+                                            style="
+                                                width: 2rem !important;
+                                                height: 2rem !important;
+                                            "
+                                        />
+                                        <Button
+                                            v-if="
                                                 data.estadoadmin?.id == 7 &&
                                                 data.enable == 1
                                             "
@@ -289,8 +304,8 @@
                                 class="mb-3 p-text-secondary text-left"
                                 style="font-size: 14px"
                             >
-                                ¿Desea cancelar la solicitud y enviar al flujo inicial a este
-                                colaborador?
+                                ¿Desea cancelar la solicitud y enviar al flujo
+                                inicial a este colaborador?
                             </div>
                             <div class="flex justify-content-end gap-2">
                                 <Button
@@ -312,6 +327,11 @@
                 </div>
             </div>
         </div>
+        <ModalChecklist
+            :modalcheckVisible="modalcheckVisible"
+            :solicitudAreaCheck="solicitudAreaCheck"
+            @showModalCheckList="showModalCheckList"
+        />
     </div>
 </template>
 <script>
@@ -324,7 +344,7 @@ import { FilterMatchMode } from "primevue/api";
 import PrimeVueComponents from "../../../../js/primevue.js";
 import setLocaleES from "../../../primevue.config.js";
 import { rutaBase, dateFormatChange } from "../../../../Utils/utils.js";
-
+import ModalChecklist from "./Components/ModalChecklist.vue";
 export default {
     props: ["solicitud_selected", "details"],
     emits: ["ChangeView", "getData"],
@@ -334,6 +354,7 @@ export default {
         Modal,
         Preloader,
         ...PrimeVueComponents,
+        ModalChecklist,
     },
     setup() {
         setLocaleES();
@@ -357,9 +378,11 @@ export default {
             visibleComentarioAdmin: false,
             optionDropdown: null,
             archivosList: [],
+            solicitudAreaCheck: [],
             comentario: "",
             id_deactivate: 0,
             id_data_deactivate: 0,
+            modalcheckVisible: false,
             form: this.$inertia.form({
                 id: 0,
                 status: 0,
@@ -602,6 +625,10 @@ export default {
                 descripcion: descripcion,
                 color: color,
             };
+        },
+        showModalCheckList(data) {
+            this.modalcheckVisible = !this.modalcheckVisible;
+            this.solicitudAreaCheck = data;
         },
     },
 };

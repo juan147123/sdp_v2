@@ -54,19 +54,28 @@ class ConfiguracionRepository extends BaseRepository implements
         $emails_area =  $this->repositoryUsu->findByIdArea($id);
         return $emails_area;
     }
-    
-    public function listByIdArea(){
+
+    public function listByIdArea()
+    {
         $usuario = Auth::user();
         $usuario_area = $this->repositoryUsu->findByEmail(
             strval($usuario->username),
             'checklist'
         );
+        if ($usuario_area) {
 
-        $data = $this->model
-        ->select('id','descripcion','input')
-        ->where('parent_id', $usuario_area->id_area)
-        ->where('enable', 1)
-        ->get();
+
+            $data = $this->model
+                ->select('id', 'descripcion', 'input')
+                ->where('parent_id', $usuario_area->id_area)
+                ->where('enable', 1)
+                ->get();
+        } else {
+            $data = $this->model
+                ->select('id', 'descripcion', 'input')
+                ->where('enable', 1)
+                ->get();
+        }
         return $data;
     }
 }

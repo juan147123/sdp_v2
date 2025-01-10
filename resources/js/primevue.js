@@ -28,13 +28,15 @@ import Avatar from "primevue/avatar";
 import Menu from "primevue/menu";
 import ConfirmPopup from "primevue/confirmpopup";
 
-import Card from 'primevue/card';
+import Card from "primevue/card";
 
 import Divider from "primevue/divider";
 
-import Sidebar from 'primevue/sidebar';
+import Sidebar from "primevue/sidebar";
 
-import ScrollPanel from 'primevue/scrollpanel';
+import ScrollPanel from "primevue/scrollpanel";
+
+import Listbox from "primevue/listbox";
 
 export default {
     Button,
@@ -69,5 +71,6 @@ export default {
     Divider,
     Sidebar,
     ScrollPanel,
-    Card
+    Card,
+    Listbox,
 };

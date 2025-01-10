@@ -351,7 +351,7 @@ export default {
             breadcrumbs: [
                 {
                     label: "Solicitudes",
-                    url: "/redirectpage/solicitud/obra",
+                    url: "/redirectpage/solicitud",
                     icon: "fa fa-book",
                 },
             ],
