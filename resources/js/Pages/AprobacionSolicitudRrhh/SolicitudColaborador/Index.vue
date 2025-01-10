@@ -437,8 +437,11 @@ export default {
                             if (colaborador.estadovisitador.id != 7) {
                                 filterdata.push(colaborador);
                             }
+                        } else if (this.solicitud_selected.obra == 0) {
+                            filterdata.push(colaborador);
                         }
                     });
+                    console.log(filterdata);
                     this.dataTable.data = filterdata;
                 }
             }
@@ -603,6 +606,7 @@ export default {
         },
         async update(comentario_rrhh) {
             this.form.comentario_rrhh = comentario_rrhh;
+            this.form.obra = this.solicitud_selected.obra;
             this.mensaje = "espere mientras se efectuan los cambios....";
             this.isLoadingForm = true;
             await axios
@@ -637,10 +641,7 @@ export default {
         },
         async updateAll(status, comentario_rrhh) {
             const ids = this.colaboradoresSeleccionados
-                .filter(
-                    (colaborador) =>
-                        colaborador.aprobado_rrhh === null
-                )
+                .filter((colaborador) => colaborador.aprobado_rrhh === null)
                 .map((colaborador) => colaborador.id);
             this.form.comentario_rrhh = comentario_rrhh;
             this.isLoadingForm = true;
@@ -651,6 +652,7 @@ export default {
                     status: status,
                     id_solicitud: this.solicitud_selected.id,
                     comentario_rrhh: comentario_rrhh,
+                    obra: this.solicitud_selected.obra,
                 })
                 .then(async (response) => {
                     this.getData();

@@ -86,6 +86,15 @@ class SolicitudColaboradorRepository extends BaseRepository implements
             ->count();
         return $data;
     }
+    public function getSolicitudColaboradorPendinteRrhhPlanta($idSolicitud, $status)
+    {
+        $data = $this->model
+            ->where('aprobado_rrhh', $status)
+            ->where('id_solicitud', $idSolicitud)
+            ->get()
+            ->count();
+        return $data;
+    }
 
     public function CountSolicitudByUserId($user_id)
     {

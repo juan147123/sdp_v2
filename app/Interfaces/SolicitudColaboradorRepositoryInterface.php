@@ -11,4 +11,5 @@ interface SolicitudColaboradorRepositoryInterface extends EloquentRepositoryInte
     public function getSolicitudColaboradorPendinteAdmObr($idSolicitud,$status);
     public function getSolicitudColaboradorPendinteVisiObr($idSolicitud,$status);
     public function getSolicitudColaboradorPendinteRrhh($idSolicitud,$status);
+    public function getSolicitudColaboradorPendinteRrhhPlanta($idSolicitud,$status);
 }

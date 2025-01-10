@@ -187,27 +187,46 @@ class SolicitudColaboradorController extends Controller
 
     public function updateAllStatusAprobadorRrhh(Request $request)
     {
-        $this->repository->updateStatusMasiveRrhh($request);
+        // $this->repository->updateStatusMasiveRrhh($request);
         $this->updateStatusSolicitudRrhh($request, null);
     }
 
     public function updateStatusSolicitudRrhh($request, $status)
     {
-        $solicitudes = $this->repository->getSolicitudColaboradorPendinteRrhh(
-            $request->id_solicitud,
-            $status
-        );
+        if ($request->obra != 0) {
+            $solicitudes = $this->repository->getSolicitudColaboradorPendinteRrhh(
+                $request->id_solicitud,
+                $status
+            );
 
-        $solicitudes_aprobadas = $this->repository->getSolicitudColaboradorPendinteRrhh(
-            $request->id_solicitud,
-            6
-        );
-  
-        if ($solicitudes == 0) {
-            $nuevoStatus = ($solicitudes_aprobadas != 0) ? 4 : 5;
-            $this->repositorySolicitud->update($request->id_solicitud, ["status" => $nuevoStatus]);
-            $solicitud = $this->repositorySolicitud->findById($request->id_solicitud);
-            $this->sendMailStatusMasive($solicitud, $nuevoStatus);
+            $solicitudes_aprobadas = $this->repository->getSolicitudColaboradorPendinteRrhh(
+                $request->id_solicitud,
+                6
+            );
+
+            if ($solicitudes == 0) {
+                $nuevoStatus = ($solicitudes_aprobadas != 0) ? 4 : 5;
+                $this->repositorySolicitud->update($request->id_solicitud, ["status" => $nuevoStatus]);
+                $solicitud = $this->repositorySolicitud->findById($request->id_solicitud);
+                $this->sendMailStatusMasive($solicitud, $nuevoStatus);
+            }
+        }else{
+            $solicitudes = $this->repository->getSolicitudColaboradorPendinteRrhh(
+                $request->id_solicitud,
+                $status
+            );
+
+            $solicitudes_aprobadas = $this->repository->getSolicitudColaboradorPendinteRrhhPlanta(
+                $request->id_solicitud,
+                6
+            );
+
+            if ($solicitudes == 0) {
+                $nuevoStatus = ($solicitudes_aprobadas != 0) ? 4 : 5;
+                $this->repositorySolicitud->update($request->id_solicitud, ["status" => $nuevoStatus]);
+                $solicitud = $this->repositorySolicitud->findById($request->id_solicitud);
+                $this->sendMailStatusMasive($solicitud, $nuevoStatus);
+            }
         }
     }
 
