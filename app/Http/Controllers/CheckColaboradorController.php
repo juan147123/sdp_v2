@@ -32,7 +32,12 @@ class CheckColaboradorController extends Controller
             strval($usuario->username),
             env("ADMINISTRADOR_AREA")
         );
-        return $this->repository->all()->where('area_id',$usuario_area->id_area)->where('id_solicitud',$id_solicitud)->first();
+        return $this->repository->all()->where('area_id', $usuario_area->id_area)->where('id_solicitud', $id_solicitud)->first();
+    }
+    
+    public function listAllByidareaIdsolicitud($id_area, $id_solicitud)
+    {
+        return $this->repository->all()->where('area_id', $id_area)->where('id_solicitud', $id_solicitud)->first();
     }
 
     public function create(Request $request)

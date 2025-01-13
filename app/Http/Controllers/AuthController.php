@@ -53,6 +53,7 @@ class AuthController extends Controller
             // $email = 'cristian.donoso@flesan.cl'; // -->administrador DMOPR12118GG
             // $email = 'jorge.stuardo@dvc.cl'; // -->VISITADOR DMOPR12118GG
             $email = 'macarena.werner@flesan.cl'; // --> adminsitrador rrhh
+            // $email = 'jcmlmph@gmail.com'; // --> adminsitrador rrhh
             // $email = 'catalina.fuentes@flesan.cl'; // --> adminsitrador rrhh
             
 

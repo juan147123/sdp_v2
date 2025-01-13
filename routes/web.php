@@ -157,5 +157,6 @@ Route::middleware([
     Route::get('list/CheckAreaColaboradorBiSolicitudArea/{id}', [CheckColaboradorController::class, 'listAllBySolicitudArea'])->name('listAllBySolicitudArea.CheckAreaColaborador');
     Route::post('create/CheckAreaColaborador', [CheckColaboradorController::class, 'create'])->name('create.CheckAreaColaborador');
     Route::put('update/CheckAreaColaborador/{id}', [CheckColaboradorController::class, 'update'])->name('update.CheckAreaColaborador');
+    Route::get('list/CheckAreaColaboradorByIds/{id_area}/{Id_solicitud}', [CheckColaboradorController::class, 'listAllByidareaIdsolicitud'])->name('listAllByidareaIdsolicitud.CheckAreaColaborador');
 
 });
