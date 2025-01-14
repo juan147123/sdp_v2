@@ -76,7 +76,7 @@ class AuthController extends Controller
 
 
             // $email = 'carolina.carreno@flesan.cl'; //  --> visitador CFMCFM020014 
-            // $email = 'carolina.zavala@flesan.cl'; //  --> visitador CFMCFM020014 
+            $email = 'carolina.zavala@flesan.cl'; //  --> visitador CFMCFM020014 
 
         }
 
