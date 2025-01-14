@@ -150,7 +150,7 @@ export default {
             breadcrumbs: [
                 {
                     label: "Solicitudes",
-                    url: "/redirectpage/solicitud/rrhh",
+                    url: "/solicitudes/area",
                     icon: "fa fa-book",
                 },
             ],
