@@ -54,7 +54,7 @@ class AuthController extends Controller
             // $email = 'jorge.stuardo@dvc.cl'; // -->VISITADOR DMOPR12118GG
             // $email = 'macarena.werner@flesan.cl'; // --> adminsitrador rrhh
             // $email = 'jcmlmph@gmail.com'; // --> adminsitrador rrhh
-            $email = 'catalina.fuentes@flesan.cl'; // --> adminsitrador rrhh
+            $email = 'cesar.munoz@flesan.cl'; // --> adminsitrador rrhh
             // $email = 'david.vilugron@flesan.cl'; // --> adminsitrador rrhh
             
 
@@ -93,11 +93,11 @@ class AuthController extends Controller
        /*  if ($email == 'david.vilugron@flesan.cl') {  //administrador de Obra DMOPR12118GG 
             $email = 'jorge.barrozo@flesan.cl';
         } */
-/* 
-        if ($email == 'carolina.zavala@flesan.cl') {  //visitador de obra DMOPR12118GG 
-            $email = 'macarena.werner@flesan.cl';
+ 
+        if ($email == 'cesar.munoz@flesan.cl') {  //visitador de obra DMOPR12118GG 
+            $email = 'fabian.castro@flesan.cl';
         }
- */
+ 
 
         $extension_correo = substr($email, -2);
         $pais = "PE";
@@ -137,7 +137,6 @@ class AuthController extends Controller
 
 
             $usuario_bd = $this->repositoryUsuario->findByEmail($usuario_mail);
-
             if ($usuario_bd && env("ADMINISTRADOR_RRHH") == $usuario_bd->rol) array_push($permisos, 'ADMRRHH');
             if ($usuario_bd && env("ADMINISTRADOR_AREA") == $usuario_bd->rol) array_push($permisos, 'ADMAREA');
             if ($usuario_bd && env("SUPER_ADMINISTRADOR") == $usuario_bd->rol) array_push($permisos, 'SUPERAD');
