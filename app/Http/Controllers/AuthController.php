@@ -130,6 +130,7 @@ class AuthController extends Controller
             Auth::login($usuario_seguridad_app);
             $rol = $this->repositoryRolUsuario->getDataRol($usuario_seguridad_app->id_aplicacion_usuario);
             $objeto_permitido = explode(",", $rol->objeto_permitido);
+            $this->updateAvatarName($usuario_seguridad_app,$usuario);
             session(['np_lider' => $np_lider]);
             session(['objeto_permitido' => $objeto_permitido]);
             return $this->setRedirect($objeto_permitido);
