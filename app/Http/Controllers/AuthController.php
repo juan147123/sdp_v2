@@ -52,9 +52,9 @@ class AuthController extends Controller
             // $email = 'fabian.castro@flesan.cl'; // -->solicitante DMOPR12118GG
             // $email = 'cristian.donoso@flesan.cl'; // -->administrador DMOPR12118GG
             // $email = 'jorge.stuardo@dvc.cl'; // -->VISITADOR DMOPR12118GG
-            $email = 'macarena.werner@flesan.cl'; // --> adminsitrador rrhh
+            // $email = 'macarena.werner@flesan.cl'; // --> adminsitrador rrhh
             // $email = 'jcmlmph@gmail.com'; // --> adminsitrador rrhh
-            // $email = 'catalina.fuentes@flesan.cl'; // --> adminsitrador rrhh
+            $email = 'catalina.fuentes@flesan.cl'; // --> adminsitrador rrhh
             // $email = 'david.vilugron@flesan.cl'; // --> adminsitrador rrhh
             
 
@@ -82,13 +82,13 @@ class AuthController extends Controller
 
 
 
-        if ($email == 'maria.cayuqueo@flesan.cl') {  //solicitante DMOPR12118GG 
+      /*   if ($email == 'maria.cayuqueo@flesan.cl') {  //solicitante DMOPR12118GG 
             // $email = 'fabian.castro@flesan.cl';
             // $email = 'andres.bravo@flesan.cl';
             $email = 'macarena.werner@flesan.cl';
             // $email = 'mario.ponce@dvc.cl';
         }    
-
+ */
 
        /*  if ($email == 'david.vilugron@flesan.cl') {  //administrador de Obra DMOPR12118GG 
             $email = 'jorge.barrozo@flesan.cl';
@@ -142,11 +142,11 @@ class AuthController extends Controller
             if ($usuario_bd && env("ADMINISTRADOR_AREA") == $usuario_bd->rol) array_push($permisos, 'ADMAREA');
             if ($usuario_bd && env("SUPER_ADMINISTRADOR") == $usuario_bd->rol) array_push($permisos, 'SUPERAD');
 
-            $personalCl = $this->repositoryPersonalCL->getNpLiderByEmail($usuario_mail);
-            $personalPe = $this->repositoryPersonalPE->UserFindByEmail($usuario_mail);
+            // $personalCl = $this->repositoryPersonalCL->getNpLiderByEmail($usuario_mail);
+            // $personalPe = $this->repositoryPersonalPE->UserFindByEmail($usuario_mail);
 
-            if ($personalCl) array_push($permisos, 'LIDERCL');
-            if ($personalPe) array_push($permisos, 'LIDERPE');
+            // if ($personalCl) array_push($permisos, 'LIDERCL');
+            // if ($personalPe) array_push($permisos, 'LIDERPE');
 
             $liderObracl = $this->repositoryPersonalCL->getLiderObraCl($usuario_mail);
             if ($liderObracl) array_push($permisos, 'LIDEROBRACL');
