@@ -251,7 +251,7 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
         $colaborador = DB::connection('dw_chile')->select(DB::raw($query_obra), [
             'correo' => $correo,
         ]);
-        return  $colaborador[0];
+        return  $colaborador;
     }
 
     public function getVisitadorObraCL($correo)
@@ -268,7 +268,7 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
         $colaborador = DB::connection('dw_chile')->select(DB::raw($query_obra), [
             'correo' => $correo,
         ]);
-        return  $colaborador[0];
+        return  $colaborador;
     }
 
 

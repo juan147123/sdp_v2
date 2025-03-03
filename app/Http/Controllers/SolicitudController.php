@@ -83,13 +83,14 @@ class SolicitudController extends Controller
         $centros_permitidos = [];
         if (!in_array('SUPERAD', session('objeto_permitido'))) {
             $aprobador = $this->personalChileRepository->getAprobadorObraCL(Auth::user()->username);
-            $centros_permitidos = array("centro_costo" => explode(',', trim($aprobador->cc, '{}')));
+            if ($aprobador) {
+                $centros_permitidos = array("centro_costo" => explode(',', trim($aprobador[0]->cc, '{}')));
+            }
+
             if (Auth::user()->username == 'dreidy.contreras@dvc.cl') {
                 $centros_permitidos['centro_costo'][] = 'DVCR50012';
             }
         }
-
-        //CFMR10005CFM
         $result = $this->repository->all(['*'], [
             'estado',
             'archivos',
@@ -115,7 +116,10 @@ class SolicitudController extends Controller
         $centros_permitidos = [];
         if (!in_array('SUPERAD', session('objeto_permitido'))) {
             $aprobador = $this->personalChileRepository->getVisitadorObraCL(Auth::user()->username);
-            $centros_permitidos = array("centro_costo" => explode(',', trim($aprobador->cc, '{}')));
+            if ($aprobador) {
+                $centros_permitidos = array("centro_costo" => explode(',', trim($aprobador[0]->cc, '{}')));
+            }
+            
             if (Auth::user()->username == 'dreidy.contreras@dvc.cl') {
                 $centros_permitidos['centro_costo'][] = 'DVCR50012';
             }
