@@ -94,7 +94,7 @@ class AuthController extends Controller
             $email = 'jorge.barrozo@flesan.cl';
         } */
  
-        if ($email == 'cesar.munoz@flesan.cl') {  //visitador de obra DMOPR12118GG 
+        if ($email == 'cesar.munoz@flesan.cl') {  //visitador de obra DVCR50012 
             $email = 'dreidy.contreras@dvc.cl';
         }
  

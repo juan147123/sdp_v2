@@ -84,11 +84,8 @@ class SolicitudController extends Controller
         if (!in_array('SUPERAD', session('objeto_permitido'))) {
             $aprobador = $this->personalChileRepository->getAprobadorObraCL(Auth::user()->username);
             $centros_permitidos = array("centro_costo" => explode(',', trim($aprobador->cc, '{}')));
-            if (Auth::user()->username == 'cristian.donoso@flesan.cl') {
-                $centros_permitidos['centro_costo'][] = 'CFMCFM020014';
-                $centros_permitidos['centro_costo'][] = 'DMOPR12118GG';
-                $centros_permitidos['centro_costo'][] = 'DMRM1052DEM';
-                $centros_permitidos['centro_costo'][] = 'DVCR80010';
+            if (Auth::user()->username == 'dreidy.contreras@dvc.cl') {
+                $centros_permitidos['centro_costo'][] = 'DVCR50012';
             }
         }
 
@@ -119,11 +116,8 @@ class SolicitudController extends Controller
         if (!in_array('SUPERAD', session('objeto_permitido'))) {
             $aprobador = $this->personalChileRepository->getVisitadorObraCL(Auth::user()->username);
             $centros_permitidos = array("centro_costo" => explode(',', trim($aprobador->cc, '{}')));
-            if (Auth::user()->username == 'jorge.stuardo@dvc.cl') {
-                $centros_permitidos['centro_costo'][] = 'DMRM1052DEM';
-                $centros_permitidos['centro_costo'][] = 'DMOPR12118GG';
-                $centros_permitidos['centro_costo'][] = 'CFMCFM020014';
-                $centros_permitidos['centro_costo'][] = 'DVCR80010';
+            if (Auth::user()->username == 'dreidy.contreras@dvc.cl') {
+                $centros_permitidos['centro_costo'][] = 'DVCR50012';
             }
         }
         $result = $this->repository->all(['*'], [
