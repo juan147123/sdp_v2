@@ -203,7 +203,7 @@ class SolicitudColaboradorController extends Controller
                 $request->id_solicitud,
                 6
             );
-            
+             
             if ($solicitudes == 0) {
                 $nuevoStatus = ($solicitudes_aprobadas != 0) ? 4 : 5;
                 $this->repositorySolicitud->update($request->id_solicitud, ["status" => $nuevoStatus]);
