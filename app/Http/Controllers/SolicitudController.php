@@ -263,7 +263,7 @@ class SolicitudController extends Controller
             $this->insertCheckList($request, $request->{"user_id$index"}, $newSolicitudDetail->id);
 
             $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos1, "carta_firmada", "Carta firmada o comprobante de envio por correo certificado", null);
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos2, "cese_dt", "CESE DT", null);
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos2, "cese_dt", "AVISO DT", null);
             $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos3, "cese_afc", "CESE AFC", null);
             $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos4, "aporte_empleador", "Aporte empleador AFC", null);
             $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos5, "cert_defuncion", "Certificado de defunción", null);
@@ -361,7 +361,7 @@ class SolicitudController extends Controller
             $newSolicitudDetail =  $this->repositorySolicitudDetalle->update($request->{"id$index"}, $data);
 
             $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos1, "carta_firmada", "Carta firmada o comprobante de envio por correo certificado", null);
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos2, "cese_dt", "CESE DT", null);
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos2, "cese_dt", "AVISO DT", null);
             $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos3, "cese_afc", "CESE AFC", null);
             $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos4, "aporte_empleador", "Aporte empleador AFC", null);
             $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos5, "cert_defuncion", "Certificado de defunción", null);

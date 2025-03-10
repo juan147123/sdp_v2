@@ -31,7 +31,7 @@
                             <div class="info-box-content">
                                 <span
                                     class="info-box-text color-custom-pendiente"
-                                    >PENDIENTE VISITADOR</span
+                                    >PENDIENTE GERENTE DE PROYECTO</span
                                 >
                                 <span class="info-box-number">{{
                                     conteoSolicitudes.PENDIENTE_VISI

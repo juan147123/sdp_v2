@@ -225,7 +225,7 @@
                                 :id="'cese_dt' + index"
                             >
                                 <label for="input1" class="form-label"
-                                    >CESE DT</label
+                                    >AVISO DT</label
                                 >
                                 <input
                                     type="file"
@@ -553,7 +553,7 @@ export default {
                     origen_detail = "Carta firmada";
                     break;
                 case "cese_dt":
-                    origen_detail = "CESE DT";
+                    origen_detail = "AVISO DT";
                     break;
                 case "cese_afc":
                     origen_detail = "CESE AFC";

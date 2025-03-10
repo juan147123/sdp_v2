@@ -116,7 +116,7 @@
                                 :id="'cese_dt' + index"
                             >
                                 <label for="input1" class="form-label"
-                                    >CESE DT</label
+                                    >AVISO DT</label
                                 >
                                 <input
                                     type="file"
