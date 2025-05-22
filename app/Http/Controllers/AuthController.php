@@ -48,56 +48,6 @@ class AuthController extends Controller
     {
         $user = Socialite::driver('google')->user();
         $email = $user->getEmail();
-        if ($email == 'jmestanza@flesan.com.pe') {
-            // $email = 'dreidy.contreras@dvc.cl'; // -->solicitante DMOPR12118GG
-            // $email = 'cristian.donoso@flesan.cl'; // -->administrador DMOPR12118GG
-            // $email = 'jorge.stuardo@dvc.cl'; // -->VISITADOR DMOPR12118GG
-            // $email = 'macarena.werner@flesan.cl'; // --> adminsitrador rrhh
-            // $email = 'jcmlmph@gmail.com'; // --> adminsitrador rrhh
-            $email = 'cesar.munoz@flesan.cl'; // --> adminsitrador rrhh
-            // $email = 'david.vilugron@flesan.cl'; // --> adminsitrador rrhh
-            
-
-
-            // $email = 'andres.bravo@flesan.cl'; //-->solicitante DMRM1052DEM
-            // $email = 'cmachado@flesan.cl'; //  --> administrador DMRM1052DEM
-            // $email = 'sebastian.valck@flesan.cl'; //  --> visitador DMRM1052DEM
-
-
-
-            // $email = 'ricardo.medel@flesan.cl'; //  --> solicitante CFMCFM020014 
-            // $email = 'cristian.paniagua@flesan.cl'; //  --> administrador CFMCFM020014 
-            // $email = 'jlabarca@flesan.cl'; //  --> visitador CFMCFM020014 
-
-
-            // $email = 'mario.ponce@dvc.cl'; //  --> solicitante DVCR80010 
-            // $email = 'emanriquez@dvc.cl'; //  --> administrador DVCR80010 
-            // $email = 'mperez@dvc.cl'; //  --> visitador DVCR80010 
-
-
-            // $email = 'carolina.carreno@flesan.cl'; //  --> visitador CFMCFM020014 
-            // $email = 'carolina.zavala@flesan.cl'; //  --> visitador CFMCFM020014 
-
-        }
-
-
-
-      /*   if ($email == 'maria.cayuqueo@flesan.cl') {  //solicitante DMOPR12118GG 
-            // $email = 'dreidy.contreras@dvc.cl';
-            // $email = 'andres.bravo@flesan.cl';
-            $email = 'macarena.werner@flesan.cl';
-            // $email = 'mario.ponce@dvc.cl';
-        }    
- */
-
-       /*  if ($email == 'david.vilugron@flesan.cl') {  //administrador de Obra DMOPR12118GG 
-            $email = 'jorge.barrozo@flesan.cl';
-        } */
- 
-        if ($email == 'cesar.munoz@flesan.cl') {  //visitador de obra DVCR50012 
-            $email = 'dreidy.contreras@dvc.cl';
-        }
- 
 
         $extension_correo = substr($email, -2);
         $pais = "PE";
