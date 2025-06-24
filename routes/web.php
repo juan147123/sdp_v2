@@ -113,6 +113,8 @@ Route::middleware([
     //APLICACION USUARIO
     Route::get('redirectpage/usuarios', [AplicacionUsuarioController::class, 'redirectUsers'])->name('redirect.usuarios');
     Route::get('list/usuarios', [AplicacionUsuarioController::class, 'listAll'])->name('list.usuarios.seguridad');
+    Route::post('create/usuarios', [AplicacionUsuarioController::class, 'create'])->name('create.usuarios.seguridad');
+    Route::put('update/usuarios', [AplicacionUsuarioController::class, 'update'])->name('update.usuarios.seguridad');
     Route::delete('delete/usuarios/{id}', [AplicacionUsuarioController::class, 'delete'])->name('delete.usuarios.seguridad');
     
 

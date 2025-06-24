@@ -25,8 +25,12 @@ class AplicacionUsuarioRepository extends BaseRepository implements AplicacionUs
     
     public function listAllActive(){
         return $this->model
-        ->where("estado_sesion", 1)
-        ->where("id_aplicacion",  $_ENV['ID_APLICACION'])
+        ->select('aplicacion_usuario.*','rol_aplicacion.nombre as nombre_rol','usuario_rol.objeto_permitido')
+        ->leftjoin("usuario_rol", "usuario_rol.id_aplicacion_usuario", "=", "aplicacion_usuario.id_aplicacion_usuario")
+        ->leftjoin("rol_aplicacion", "rol_aplicacion.id_rol", "=", "usuario_rol.id_rol")
+        ->where("aplicacion_usuario.estado_sesion", 1)
+        ->where("aplicacion_usuario.id_aplicacion",  $_ENV['ID_APLICACION'])
+        ->orderby("aplicacion_usuario.id_aplicacion",  'desc')
         ->get();
     }
 
