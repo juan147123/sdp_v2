@@ -71,10 +71,15 @@ class AuthController extends Controller
 
         $usuario = $this->getUser();
         $usuario_mail = $usuario['username'];
+        if($usuario_mail=='german.salazar@flesan.cl'){
+            $usuario_mail='mrojas@flesan.cl';
+        }
         $permisos = [];
         $usuario_seguridad_app = $this->repository->findUserByEmail($usuario_mail);
 
         $np_lider  = $this->getNpLider($usuario_mail);
+
+        
 
         if ($usuario_seguridad_app) {
             Auth::login($usuario_seguridad_app);
