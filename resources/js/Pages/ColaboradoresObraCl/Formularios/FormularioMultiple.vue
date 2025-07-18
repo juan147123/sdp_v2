@@ -483,9 +483,25 @@ export default {
             }
         },
         handleFileChange(event, index, column) {
+            console.log('handleFileChange ejecutado');
             const file = event.target.files[0];
+            const maxSizeMB = 5;
+            const maxSizeBytes = maxSizeMB * 1024 * 1024;  // 5 MB en bytes
+
             if (file) {
-                this.formData[column + index] = [file];
+                if (file.size > maxSizeBytes) {
+                    this.$toast.add({
+                        severity: "error",
+                        summary: "Archivo demasiado grande",
+                        detail: `El archivo "${file.name}" supera los ${maxSizeMB} MB permitidos.`,
+                        life: 6000,
+                    });
+
+                    event.target.value = null;
+                    return;
+                }
+
+                this.formData[column + index] = [file]; // Guardar si es válido
             }
         },
     },

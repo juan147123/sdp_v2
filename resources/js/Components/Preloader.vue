@@ -8,8 +8,9 @@
         >
             <img src="../../../public/images/preloader1.svg" id="loader" />
             <img
-                src="https://grupoflesan.com.pe/public/imagenes/LogoGrupoFlesan.png"
+                src="../../../public/images/logo_grupo_flesan.png"
                 width="220"
+                alt="imagen logo flesan"
             />
             <p>{{ this.mensaje }}</p>
         </div>
