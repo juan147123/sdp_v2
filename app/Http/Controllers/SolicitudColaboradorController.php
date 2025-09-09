@@ -63,7 +63,6 @@ class SolicitudColaboradorController extends Controller
                 "comentario_admin_obra" => $request->comentario_admin_obra,
                 "user_aprobate_admin_obra" => Auth::user()->name,
                 "date_aprobate_admin_obra" => now()->toDateString(),
-
             ]
         );
 
@@ -73,13 +72,11 @@ class SolicitudColaboradorController extends Controller
         $this->sendMailStatus($solicitud, $solicitud_colaborador, $request->status, "administrador de obra");
 
         $this->updateStatusSolicitud($request, null);
-
-        //enviar correos de estado
         return $update;
     }
 
     //update aprobar solicitudes administrador de obra
-    public function updateStatusAprobadorVisitador(Request $request)
+   public function updateStatusAprobadorVisitador(Request $request)
     {
         $update = $this->repository->update(
             $request->id,
@@ -97,10 +94,9 @@ class SolicitudColaboradorController extends Controller
         $this->sendMailStatus($solicitud, $solicitud_colaborador, $request->status, "visitador de obra");
 
         $this->updateStatusSolicitudVisitador($request, null);
-
-        //enviar correos de estado
         return $update;
     }
+
 
     //update aprobar solicitudes RRHH
     public function updateStatusAprobadorRrhh(Request $request)
@@ -236,7 +232,6 @@ class SolicitudColaboradorController extends Controller
             6 => ['cabecera' => 'APROBADO(A)', 'descripcion' => 'APROBACIÓN'],
             'default' => ['cabecera' => 'RECHAZADO(A)', 'descripcion' => 'RECHAZO']
         ];
-
         $estado = $estados[$status] ?? $estados['default'];
 
         $body = View::make('emails.SolicitudColaboradorEstado', [
@@ -246,39 +241,59 @@ class SolicitudColaboradorController extends Controller
                 'estado_cabecera' => $estado['cabecera'],
                 'estado_descripcion' => $estado['descripcion'],
                 'rol_usuario' => $rol,
-                'linkAcceso' => 'qadesvinculaciones.grupoflesan.com',
+                'linkAcceso' => 'https://desvinculaciones.grupoflesan.com/',
                 'usuario' => strtoupper(Auth::user()->name),
             ],
         ])->render();
 
-        $emails_to = 'jmestanza@flesan.com.pe';
+        // siempre partimos por el solicitante
+        $to = [strtolower(trim($solicitud->user_created))];
 
-        $centro_costo = $solicitud->centro_costo;
-        /* 
-        if ($centro_costo == 'DMOPR12118GG') {
-            $emails_to .= ',gabriel.fernandez@flesan.cl';
-            $emails_to .= ',cecilia.silva@flesan.cl';
-            $emails_to .= ',carolina.carreno@flesan.cl';
-            $emails_to .= ',carolina.zavala@flesan.cl';
-            $emails_to .= ',catalina.fuentes@flesan.cl';
-        } 
-        else if ($centro_costo == 'CFMR10005CFM') {
-            $emails_to .= ',lorena.faray@flesan.cl';
+        if ((int)$status === 6) {
+            $rolNorm = mb_strtolower($rol);
+
+            if ($rolNorm === 'administrador de obra') {
+                // agregar aprobador 2
+                $aprob1 = \DB::connection('dw_chile')
+                    ->table('flesan_rrhh.sap_maestro_colaborador_1 as empleado')
+                    ->join('flesan_rrhh.sap_maestro_colaborador_1 as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
+                    ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($solicitud->user_created)])
+                    ->value('lider.correo_flesan');
+
+                if ($aprob1) {
+                    $aprob2 = \DB::connection('dw_chile')
+                        ->table('flesan_rrhh.sap_maestro_colaborador_1 as empleado')
+                        ->join('flesan_rrhh.sap_maestro_colaborador_1 as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
+                        ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($aprob1)])
+                        ->value('lider.correo_flesan');
+
+                    if ($aprob2) {
+                        $to[] = strtolower(trim($aprob2));
+                    }
+                }
+            } elseif ($rolNorm === 'visitador de obra') {
+                // segunda aprobación -> RRHH (NO aprobador 2)
+                $rrhh = \DB::connection('dw_seguridad_app')
+                    ->table('seguridadapp.usuario_rol as ur')
+                    ->join('seguridadapp.aplicacion_usuario as au', 'ur.id_aplicacion_usuario', '=', 'au.id_aplicacion_usuario')
+                    ->where('ur.objeto_permitido', 'ADMRRHH')
+                    ->pluck('au.username')
+                    ->map(fn($e) => strtolower(trim($e)))
+                    ->unique()
+                    ->values()
+                    ->toArray();
+
+                $to = array_merge($to, $rrhh);
+            }
+            // otros roles al aprobar: se mantiene solo solicitante
+        } else {
+            // rechazos -> solo solicitante
         }
-        else if ($centro_costo == 'DMRM1052DEM') {
-            $emails_to .= ',cristobal.figueroa@flesan.cl';
-            $emails_to .= ',nicolas.toro@flesan.cl';
-            $emails_to .= ',david.vilugron@flesan.cl';
-            $emails_to .= ',catalina.fuentes@flesan.cl';
-        } */
 
+        $emails_to = implode(',', array_values(array_unique(array_filter($to))));
         $subject = "{$estado['descripcion']} DE COLABORADOR - SISTEMA DE DESVINCULACIÓN SDP";
 
-        ExtraServicecontroller::send_email_gf(
-            $body,
-            $subject,
-            $emails_to
-        );
+        ExtraServicecontroller::send_email_gf($body, $subject, $emails_to);
     }
     public function sendMailStatusMasive($solicitud, $status)
     {
@@ -294,41 +309,14 @@ class SolicitudColaboradorController extends Controller
                 'solicitud' => $solicitud,
                 'estado_cabecera' => $estado['cabecera'],
                 'estado_descripcion' => $estado['descripcion'],
-                'linkAcceso' => 'qadesvinculaciones.grupoflesan.com'
+                'linkAcceso' => 'https://desvinculaciones.grupoflesan.com/'
             ],
         ])->render();
 
-        $emails_to = 'jmestanza@flesan.com.pe';
-
-
-        $centro_costo = $solicitud->centro_costo;
-
-        if ($centro_costo == 'DMOPR12118GG') {
-            $emails_to .= ',cecilia.silva@flesan.cl';
-            $emails_to .= ',david.vilugron@flesan.cl';
-            $emails_to .= ',carolina.carreno@flesan.cl';
-            $emails_to .= ',carolina.zavala@flesan.cl';
-            $emails_to .= ',catalina.fuentes@flesan.cl';
-        } else if ($centro_costo == 'CFMCFM020014') {
-            $emails_to .= ',cristobal.figueroa@flesan.cl';
-            $emails_to .= ',nicolas.toro@flesan.cl';
-            $emails_to .= ',carolina.carreno@flesan.cl';
-            $emails_to .= ',carolina.zavala@flesan.cl';
-            $emails_to .= ',catalina.fuentes@flesan.cl';
-        } else if ($centro_costo == 'DVCR80010') {
-            $emails_to .= ',lorena.faray@flesan.cl';
-            $emails_to .= ',maria.cayuqueo@flesan.cl';
-            $emails_to .= ',carolina.carreno@flesan.cl';
-            $emails_to .= ',carolina.zavala@flesan.cl';
-            $emails_to .= ',catalina.fuentes@flesan.cl';
-        }
+        // 🔸 enviar SIEMPRE al solicitante en la etapa final
+        $emails_to = strtolower(trim($solicitud->user_created));
 
         $subject = "{$estado['descripcion']} DE SOLICITUD - SISTEMA DE DESVINCULACIÓN SDP";
-
-        ExtraServicecontroller::send_email_gf(
-            $body,
-            $subject,
-            $emails_to
-        );
+        ExtraServicecontroller::send_email_gf($body, $subject, $emails_to);
     }
 }

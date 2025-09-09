@@ -312,6 +312,7 @@ import breadcrumbs from "@/Components/Breadcrumbs.vue";
 import Modal from "./Components/Modal.vue";
 import Preloader from "@/Components/Preloader.vue";
 import { setSwal } from "../../../../Utils/swal";
+import { dateFormatChange } from "../../../../Utils/utils.js";
 import { FilterMatchMode } from "primevue/api";
 import PrimeVueComponents from "../../../../js/primevue.js";
 import setLocaleES from "../../../primevue.config.js";
@@ -328,6 +329,7 @@ export default {
     },
     setup() {
         setLocaleES();
+        return {};
     },
     data() {
         var self = this;
@@ -418,15 +420,22 @@ export default {
     },
     watch: {
         details: function (newValue, oldValue) {
-            if (newValue == true) {
+            if (newValue == true && this.solicitud_selected && this.solicitud_selected.solicitud_colaborador) {
+                this.dataTable.data = this.solicitud_selected.solicitud_colaborador;
                 this.initializeDropdownsData();
             }
         },
-        solicitud_selected: function (newValue, oldValue) {
-            if (newValue) {
-                this.dataTable.data =
-                    this.solicitud_selected.solicitud_colaborador;
-            }
+        solicitud_selected: {
+            handler: function (newValue, oldValue) {
+                if (newValue && newValue.solicitud_colaborador) {
+                    this.dataTable.data = newValue.solicitud_colaborador;
+                    if (this.details) {
+                        this.initializeDropdownsData();
+                    }
+                }
+            },
+            deep: true,
+            immediate: true
         },
     },
     methods: {
@@ -443,6 +452,10 @@ export default {
         },
 
         initializeDropdownsData() {
+            if (!this.dataTable.data || !Array.isArray(this.dataTable.data)) {
+                return;
+            }
+
             this.filtersDropdownData.user_id = [
                 ...new Set(
                     this.dataTable.data
@@ -469,6 +482,7 @@ export default {
                         .filter(
                             (s) =>
                                 s.sap_maestro_causales_terminos != "" &&
+                                s.sap_maestro_causales_terminos &&
                                 s.sap_maestro_causales_terminos.name != null
                         )
                         .map((s) => [
@@ -479,6 +493,7 @@ export default {
             ].map((o) => {
                 return { sap_maestro_causales_terminos: o };
             });
+            
             this.filtersDropdownData.centro_costo = [
                 ...new Set(
                     this.dataTable.data
@@ -494,7 +509,9 @@ export default {
                     this.dataTable.data
                         .filter(
                             (s) =>
-                                s.estado != "" && s.estado.descripcion != null
+                                s.estado != "" && 
+                                s.estado && 
+                                s.estado.descripcion != null
                         )
                         .map((s) => [s.estado.descripcion, s.estado])
                 ).values(),

@@ -218,100 +218,111 @@ class SolicitudController extends Controller
         ];
     }
     public function createMultiple(Request $request)
-    {
+{
+    $new_solicitud = $this->createSolicitudMultiple($request);
+    $requestData = $request->all();
+    $groupedIds = [];
 
-        $new_solicitud = $this->createSolicitudMultiple($request);
-        $requestData = $request->all();
-        $groupedIds = [];
+    $archivos_variante = $request->file("variable0");
+    $this->saveDocumentLocal(null, $new_solicitud,  $archivos_variante, "variable", "Variable", $new_solicitud->id);
 
-        $archivos_variante = $request->file("variable0");
-        $this->saveDocumentLocal(null, $new_solicitud,  $archivos_variante, "variable", "Variable", $new_solicitud->id);
-
-        foreach ($requestData as $key => $value) {
-
-            if (strpos($key, 'user_id') !== false) {
-                $groupId = substr($key, -1);
-                if (!in_array($groupId, $groupedIds)) {
-                    $groupedIds[] = $groupId;
-                }
+    foreach ($requestData as $key => $value) {
+        if (strpos($key, 'user_id') !== false) {
+            $groupId = substr($key, -1);
+            if (!in_array($groupId, $groupedIds)) {
+                $groupedIds[] = $groupId;
             }
         }
-        foreach ($groupedIds as $index => $value) {
-            $data = array(
-                "user_id" => $request->{"user_id$index"},
-                "nombre_completo" => $request->{"nombre_completo$index"},
-                "motivo" => $request->{"motivo$index"}['externalcode'],
-                "fecha_desvinculacion" => $request->{"fecha_desvinculacion$index"},
-                "redireccion" => $request->{"redireccion$index"},
-                "rut_empresa" => $request->{"rut_empresa$index"},
-                "centro_costo" => $request->{"centro_costo$index"},
-                "full_ceco" => $request->{"full_ceco$index"},
-                "fecha_ingreso" => $request->{"fecha_ingreso$index"},
-                'id_solicitud' => $new_solicitud->id
-            );
-            $archivos1 = $request->file("carta_firmada$index");
-            $archivos2 = $request->file("cese_dt$index");
-            $archivos3 = $request->file("cese_afc$index");
-            $archivos4 = $request->file("aporte_empleador$index");
-            $archivos5 = $request->file("cert_defuncion$index");
-            $archivos6 = $request->file("boleta_funebre$index");
-            $archivos7 = $request->file("info_bancaria$index");
-            $archivos8 = $request->file("convenio_practica$index");
+    }
 
-            $newSolicitudDetail =  $this->repositorySolicitudDetalle->create($data);
-
-            $this->insertCheckList($request, $request->{"user_id$index"}, $newSolicitudDetail->id);
-
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos1, "carta_firmada", "Carta firmada o comprobante de envio por correo certificado", null);
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos2, "cese_dt", "AVISO DT", null);
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos3, "cese_afc", "CESE AFC", null);
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos4, "aporte_empleador", "Aporte empleador AFC", null);
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos5, "cert_defuncion", "Certificado de defunción", null);
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos6, "boleta_funebre", "Boleta o comprobante de gastos funebres", null);
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos7, "info_bancaria", "Información bancaria del beneficiario", null);
-            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud,  $archivos8, "convenio_practica", "Convenio de práctica", null);
-        }
-
-        $body = View::make('emails.NuevaSolicitud', [
-            'data' => [
-                'solicitud' => $new_solicitud,
-                'linkAcceso' => 'qadesvinculaciones.grupoflesan.com',
-                'usuario' => strtoupper(Auth::user()->name),
-            ],
-        ])->render();
-        $emails_to = 'jmestanza@flesan.com.pe';
-
-        $centro_costo = $new_solicitud->centro_costo;
-
-        if ($centro_costo == 'DMOPR12118GG') {
-            $emails_to .= ',cecilia.silva@flesan.cl';
-            $emails_to .= ',david.vilugron@flesan.cl';
-            $emails_to .= ',carolina.carreno@flesan.cl';
-            $emails_to .= ',carolina.zavala@flesan.cl';
-            $emails_to .= ',catalina.fuentes@flesan.cl';
-        } else if ($centro_costo == 'CFMCFM020014') {
-            $emails_to .= ',cristobal.figueroa@flesan.cl';
-            $emails_to .= ',nicolas.toro@flesan.cl';
-            $emails_to .= ',carolina.carreno@flesan.cl';
-            $emails_to .= ',carolina.zavala@flesan.cl';
-            $emails_to .= ',catalina.fuentes@flesan.cl';
-        } else if ($centro_costo == 'DVCR80010') {
-            $emails_to .= ',lorena.faray@flesan.cl';
-            $emails_to .= ',maria.cayuqueo@flesan.cl';
-            $emails_to .= ',carolina.carreno@flesan.cl';
-            $emails_to .= ',carolina.zavala@flesan.cl';
-            $emails_to .= ',catalina.fuentes@flesan.cl';
-        }
-
-        $subject = 'SISTEMA DE DESVINCULACIÓN SDP';
-        ExtraServicecontroller::send_email_gf(
-            $body,
-            $subject,
-            $emails_to
+    foreach ($groupedIds as $index => $value) {
+        $data = array(
+            "user_id" => $request->{"user_id$index"},
+            "nombre_completo" => $request->{"nombre_completo$index"},
+            "motivo" => $request->{"motivo$index"}['externalcode'],
+            "fecha_desvinculacion" => $request->{"fecha_desvinculacion$index"},
+            "redireccion" => $request->{"redireccion$index"},
+            "rut_empresa" => $request->{"rut_empresa$index"},
+            "centro_costo" => $request->{"centro_costo$index"},
+            "full_ceco" => $request->{"full_ceco$index"},
+            "fecha_ingreso" => $request->{"fecha_ingreso$index"},
+            'id_solicitud' => $new_solicitud->id
         );
 
-        return redirect($request->pathname0);
+        $archivos1 = $request->file("carta_firmada$index");
+        $archivos2 = $request->file("cese_dt$index");
+        $archivos3 = $request->file("cese_afc$index");
+        $archivos4 = $request->file("aporte_empleador$index");
+        $archivos5 = $request->file("cert_defuncion$index");
+        $archivos6 = $request->file("boleta_funebre$index");
+        $archivos7 = $request->file("info_bancaria$index");
+        $archivos8 = $request->file("convenio_practica$index");
+
+        $newSolicitudDetail =  $this->repositorySolicitudDetalle->create($data);
+        $this->insertCheckList($request, $request->{"user_id$index"}, $newSolicitudDetail->id);
+
+        $this->logInvalidFiles($archivos1, "carta_firmada$index");
+        $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos1, "carta_firmada", "Carta firmada o comprobante de envio por correo certificado", null);
+
+        $this->logInvalidFiles($archivos2, "cese_dt$index");
+        $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos2, "cese_dt", "AVISO DT", null);
+
+        $this->logInvalidFiles($archivos3, "cese_afc$index");
+        $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos3, "cese_afc", "CESE AFC", null);
+
+        $this->logInvalidFiles($archivos4, "aporte_empleador$index");
+        $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos4, "aporte_empleador", "Aporte empleador AFC", null);
+
+        $this->logInvalidFiles($archivos5, "cert_defuncion$index");
+        $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos5, "cert_defuncion", "Certificado de defunción", null);
+
+        $this->logInvalidFiles($archivos6, "boleta_funebre$index");
+        $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos6, "boleta_funebre", "Boleta o comprobante de gastos funebres", null);
+
+        $this->logInvalidFiles($archivos7, "info_bancaria$index");
+        $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos7, "info_bancaria", "Información bancaria del beneficiario", null);
+
+        $this->logInvalidFiles($archivos8, "convenio_practica$index");
+        $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos8, "convenio_practica", "Convenio de práctica", null);
     }
+
+    $body = View::make('emails.NuevaSolicitud', [
+        'data' => [
+            'solicitud' => $new_solicitud,
+            'linkAcceso' => 'https://desvinculaciones.grupoflesan.com/',
+            'usuario' => strtoupper(Auth::user()->name),
+        ],
+    ])->render();
+    $correo_solicitante = $new_solicitud->user_created;
+    $correo_aprob1 = \DB::connection('dw_chile')
+                ->table('flesan_rrhh.sap_maestro_colaborador_1 as empleado')
+                ->join('flesan_rrhh.sap_maestro_colaborador_1 as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
+                ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($correo_solicitante)])
+                ->select('lider.correo_flesan')
+                ->first();
+    
+
+    $emails_to = $correo_solicitante. ',' . $correo_aprob1->correo_flesan;
+    $subject = 'SISTEMA DE DESVINCULACIÓN SDP';
+    ExtraServicecontroller::send_email_gf($body, $subject, $emails_to);
+
+    return redirect($request->pathname0);
+}
+
+private function logInvalidFiles($archivos, $campo)
+{
+    if ($archivos) {
+        foreach (is_array($archivos) ? $archivos : [$archivos] as $file) {
+            if (!$file->isValid()) {
+                \Log::error("Archivo inválido en campo '$campo': "
+                    . $file->getClientOriginalName()
+                    . " → " . $file->getErrorMessage()
+                );
+            }
+        }
+    }
+}
+
 
     public function updateMultiple(Request $request)
     {

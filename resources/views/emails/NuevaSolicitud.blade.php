@@ -29,9 +29,36 @@
                                     <p style="margin: 0; letter-spacing: 0.1px; line-height: 1.5; padding-left: 25px; padding-right: 25px; padding-top: -25px;">
                                         El usuario {{$data["usuario"]}} ha registrado la solicitud de desvinculación, identificada con el código {{$data["solicitud"]["codigo"]}}.
                                     </p>
-                                    <p style="margin: 0; font-size: 12px; letter-spacing: 0.1px; line-height: 1.5; padding-left: 25px; padding-right: 25px; padding-top: 25px;">
-                                        Para ve la solicitud haga click en el siguiente enlace: <a href="{{ $data['linkAcceso'] }}">{{ $data['linkAcceso'] }}</a>
-                                    </p>
+                                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0; padding-left:25px; padding-right:25px; padding-top:25px;">
+                                        <tr>
+                                            <td align="center">
+                                            
+                                            <!--[if mso]>
+                                            <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" href="{{ $data['linkAcceso'] }}" style="height:44px;v-text-anchor:middle;width:240px;" arcsize="8%" strokecolor="#0d6efd" fillcolor="#0d6efd">
+                                                <w:anchorlock/>
+                                                <center style="color:#ffffff;font-family:Arial,sans-serif;font-size:14px;font-weight:bold;">
+                                                Ver solicitud
+                                                </center>
+                                            </v:roundrect>
+                                            <![endif]-->
+
+                                            <!--[if !mso]><!-- -->
+                                            <a href="{{ $data['linkAcceso'] }}" target="_blank" rel="noopener noreferrer"
+                                                style="background:#0d6efd;border:1px solid #0d6efd;border-radius:6px;color:#ffffff;display:inline-block;font-family:Arial,sans-serif;font-size:14px;font-weight:bold;line-height:44px;text-align:center;text-decoration:none;width:240px;">
+                                                Ver solicitud
+                                            </a>
+                                            <!--<![endif]-->
+
+                                            <!-- Fallback de texto (opcional) -->
+                                            <div style="font-size:12px;line-height:1.5;color:#6c757d;margin-top:10px;">
+                                                Si el botón no funciona, copie y pegue este enlace en su navegador:
+                                                <br>
+                                                <a href="{{ $data['linkAcceso'] }}" target="_blank" rel="noopener noreferrer" style="color:#0d6efd;">{{ $data['linkAcceso'] }}</a>
+                                            </div>
+
+                                            </td>
+                                        </tr>
+                                        </table>
                                 </td>
                             </tr>
                         </tbody>

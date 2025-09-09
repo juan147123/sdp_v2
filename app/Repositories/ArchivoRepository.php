@@ -26,6 +26,14 @@ class ArchivoRepository extends BaseRepository implements ArchivoRepositoryInter
             $carpeta = date('Ymd') . $new_solicitud->codigo;
             $path = $archivo->storeAs('public/' . $carpeta, $fileUuid);
             $url = Storage::url($path);
+            
+            \Log::info('Archivo subido', [
+                'originalName' => $archivo->getClientOriginalName(),
+                'fileUuid'     => $fileUuid,
+                'path'         => $path,
+                'url'          => $url,
+            ]);
+
 
             $resultados[] = array(
                 "id_solicitud_colaborador" => $id,

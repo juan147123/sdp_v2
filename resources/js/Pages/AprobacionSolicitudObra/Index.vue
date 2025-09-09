@@ -1,5 +1,5 @@
-<template>
-    <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
+  <template> 
+   <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
     <AppLayout>
         <div v-if="this.details != true">
             <breadcrumbs :modules="breadcrumbs" />
@@ -168,6 +168,7 @@ export default {
     },
     setup() {
         setLocaleES();
+        return {};
     },
     data() {
         return {

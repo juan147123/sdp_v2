@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ExtraService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Log;
 
 class ExtraServicecontroller extends Controller
 {
@@ -25,7 +26,7 @@ class ExtraServicecontroller extends Controller
 
     public static function send_email_gf($body, $subject, $emails_to)
     {
-        return 1;
+        // return 1;
         $URL_API = 'https://api.grupoflesan.com/api/';
         $token = self::get_token_api_gf();
         $headers = [
@@ -41,6 +42,7 @@ class ExtraServicecontroller extends Controller
             "{$URL_API}sendNotificacionVacia",
             $data
         );
+        \Log::info("Enviando correos a: {$emails_to}");
         return $response;
     }
 
