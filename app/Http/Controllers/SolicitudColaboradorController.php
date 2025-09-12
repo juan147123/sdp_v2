@@ -146,7 +146,7 @@ class SolicitudColaboradorController extends Controller
             $nuevoStatus = ($solicitudes_aprobadas != 0) ? 2 : 5;
             $this->repositorySolicitud->update($request->id_solicitud, ["status" => $nuevoStatus]);
             $solicitud = $this->repositorySolicitud->findById($request->id_solicitud);
-            $this->sendMailStatusMasive($solicitud, $nuevoStatus);
+            $this->sendMailStatusMasive($solicitud, $nuevoStatus, "administrador de obra");
         }
     }
 
@@ -174,7 +174,7 @@ class SolicitudColaboradorController extends Controller
             $nuevoStatus = ($solicitudes_aprobadas != 0) ? 3 : 5;
             $this->repositorySolicitud->update($request->id_solicitud, ["status" => $nuevoStatus]);
             $solicitud = $this->repositorySolicitud->findById($request->id_solicitud);
-            $this->sendMailStatusMasive($solicitud, $nuevoStatus);
+            $this->sendMailStatusMasive($solicitud, $nuevoStatus, "visitador de obra");
         }
     }
 
@@ -204,7 +204,7 @@ class SolicitudColaboradorController extends Controller
                 $nuevoStatus = ($solicitudes_aprobadas != 0) ? 4 : 5;
                 $this->repositorySolicitud->update($request->id_solicitud, ["status" => $nuevoStatus]);
                 $solicitud = $this->repositorySolicitud->findById($request->id_solicitud);
-                $this->sendMailStatusMasive($solicitud, $nuevoStatus);
+                $this->sendMailStatusMasive($solicitud, $nuevoStatus, "rrhh");
             }
         }else{
             $solicitudes = $this->repository->getSolicitudColaboradorPendinteRrhh(
@@ -221,7 +221,7 @@ class SolicitudColaboradorController extends Controller
                 $nuevoStatus = ($solicitudes_aprobadas != 0) ? 4 : 5;
                 $this->repositorySolicitud->update($request->id_solicitud, ["status" => $nuevoStatus]);
                 $solicitud = $this->repositorySolicitud->findById($request->id_solicitud);
-                $this->sendMailStatusMasive($solicitud, $nuevoStatus);
+                $this->sendMailStatusMasive($solicitud, $nuevoStatus, "rrhh");
             }
         }
     }
@@ -249,11 +249,11 @@ class SolicitudColaboradorController extends Controller
         // siempre partimos por el solicitante
         $to = [strtolower(trim($solicitud->user_created))];
 
-        if ((int)$status === 6) {
+            if ((int)$status === 6 && $rol) {
             $rolNorm = mb_strtolower($rol);
 
             if ($rolNorm === 'administrador de obra') {
-                // agregar aprobador 2
+                // Buscar aprobador 1
                 $aprob1 = \DB::connection('dw_chile')
                     ->table('flesan_rrhh.sap_maestro_colaborador_1 as empleado')
                     ->join('flesan_rrhh.sap_maestro_colaborador_1 as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
@@ -261,6 +261,7 @@ class SolicitudColaboradorController extends Controller
                     ->value('lider.correo_flesan');
 
                 if ($aprob1) {
+                    // Buscar aprobador 2 a partir del correo del aprobador 1
                     $aprob2 = \DB::connection('dw_chile')
                         ->table('flesan_rrhh.sap_maestro_colaborador_1 as empleado')
                         ->join('flesan_rrhh.sap_maestro_colaborador_1 as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
@@ -271,12 +272,13 @@ class SolicitudColaboradorController extends Controller
                         $to[] = strtolower(trim($aprob2));
                     }
                 }
+
             } elseif ($rolNorm === 'visitador de obra') {
-                // segunda aprobación -> RRHH (NO aprobador 2)
+                // Notificar a RRHH
                 $rrhh = \DB::connection('dw_seguridad_app')
                     ->table('seguridadapp.usuario_rol as ur')
                     ->join('seguridadapp.aplicacion_usuario as au', 'ur.id_aplicacion_usuario', '=', 'au.id_aplicacion_usuario')
-                    ->where('ur.objeto_permitido', 'ADMRRHH')
+                    ->whereIn('ur.objeto_permitido', ['ADMRRHH', 'APROBOBRA'])
                     ->pluck('au.username')
                     ->map(fn($e) => strtolower(trim($e)))
                     ->unique()
@@ -285,9 +287,6 @@ class SolicitudColaboradorController extends Controller
 
                 $to = array_merge($to, $rrhh);
             }
-            // otros roles al aprobar: se mantiene solo solicitante
-        } else {
-            // rechazos -> solo solicitante
         }
 
         $emails_to = implode(',', array_values(array_unique(array_filter($to))));
@@ -295,28 +294,111 @@ class SolicitudColaboradorController extends Controller
 
         ExtraServicecontroller::send_email_gf($body, $subject, $emails_to);
     }
-    public function sendMailStatusMasive($solicitud, $status)
-    {
-        $estados = [
-            5 => ['cabecera' => 'RECHAZADA', 'descripcion' => 'RECHAZO'],
-            'default' => ['cabecera' => 'APROBADA', 'descripcion' => 'APROBACIÓN']
-        ];
+public function sendMailStatusMasive($solicitud, $status, $rol = null)
+{
+    $estados = [
+        4 => ['cabecera' => 'APROBADA TOTAL', 'descripcion' => 'APROBACIÓN'],
+        5 => ['cabecera' => 'RECHAZADA', 'descripcion' => 'RECHAZO'],
+        7 => ['cabecera' => 'RECHAZADA', 'descripcion' => 'RECHAZO'],
+        'default' => ['cabecera' => 'PENDIENTE', 'descripcion' => 'PENDIENTE']
+    ];
+    $estado = $estados[$status] ?? $estados['default'];
 
-        $estado = $estados[$status] ?? $estados['default'];
+    // Cargar la solicitud con sus colaboradores
+    $solicitud = \App\Models\Solicitud::with('solicitudColaborador')->find($solicitud->id);
 
-        $body = View::make('emails.SolicitudColaboradorEstadoMultiple', [
-            'data' => [
-                'solicitud' => $solicitud,
-                'estado_cabecera' => $estado['cabecera'],
-                'estado_descripcion' => $estado['descripcion'],
-                'linkAcceso' => 'https://desvinculaciones.grupoflesan.com/'
-            ],
-        ])->render();
+    // Extraer nombres de colaboradores
+    $colaboradores = $solicitud->solicitudColaborador
+        ->pluck('nombre_completo')
+        ->filter()
+        ->implode(', ');
 
-        // 🔸 enviar SIEMPRE al solicitante en la etapa final
-        $emails_to = strtolower(trim($solicitud->user_created));
+    // Extraer comentarios de colaboradores (dependiendo del rol)
+    $comentarios = $solicitud->solicitudColaborador
+        ->map(function ($colab) use ($rol) {
+            $rolNorm = mb_strtolower($rol);
 
-        $subject = "{$estado['descripcion']} DE SOLICITUD - SISTEMA DE DESVINCULACIÓN SDP";
-        ExtraServicecontroller::send_email_gf($body, $subject, $emails_to);
+            if ($rolNorm === 'administrador de obra') {
+                return $colab->comentario_admin_obra;
+            } elseif ($rolNorm === 'visitador de obra') {
+                return $colab->comentario_visitador;
+            } elseif ($rolNorm === 'rrhh' || $rolNorm === 'administrador de rrhh') {
+                return $colab->comentario_rrhh;
+            }
+            return null;
+        })
+        ->filter()
+        ->implode(' | ');
+
+    // Construir el body del correo
+    $body = View::make('emails.SolicitudColaboradorEstadoMultiple', [
+        'data' => [
+            'solicitud' => $solicitud,
+            'estado_cabecera' => $estado['cabecera'],
+            'estado_descripcion' => $estado['descripcion'],
+            'linkAcceso' => 'https://desvinculaciones.grupoflesan.com/',
+            'usuario' => strtoupper(Auth::user()->name),
+            'colaboradores' => $colaboradores,
+            'comentarios' => $comentarios,
+        ],
+    ])->render();
+
+    // siempre partimos por el solicitante
+    $to = [strtolower(trim($solicitud->user_created))];
+
+    $rolNorm = $rol ? mb_strtolower($rol) : null;
+
+    // Caso: aprobado por administrador de obra → notificar aprobador 2
+    if ((int)$status === 2 && $rolNorm === 'administrador de obra') {
+        $colaborador = $solicitud->solicitudColaborador->first();
+
+        if ($colaborador) {
+            $aprob1 = \DB::connection('dw_chile')
+                ->table('flesan_rrhh.sap_maestro_colaborador_1 as empleado')
+                ->join('flesan_rrhh.sap_maestro_colaborador_1 as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
+                ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($colaborador->correo_flesan ?? $solicitud->user_created)])
+                ->value('lider.correo_flesan');
+
+            if ($aprob1) {
+                $aprob2 = \DB::connection('dw_chile')
+                    ->table('flesan_rrhh.sap_maestro_colaborador_1 as empleado')
+                    ->join('flesan_rrhh.sap_maestro_colaborador_1 as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
+                    ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($aprob1)])
+                    ->value('lider.correo_flesan');
+
+                if ($aprob2) {
+                    $to[] = strtolower(trim($aprob2));
+                }
+            }
+        }
     }
+
+    // Caso: aprobado por visitador de obra → notificar a RRHH
+    if ((int)$status === 3 && $rolNorm === 'visitador de obra') {
+        $rrhh = \DB::connection('dw_seguridad_app')
+            ->table('seguridadapp.usuario_rol as ur')
+            ->join('seguridadapp.aplicacion_usuario as au', 'ur.id_aplicacion_usuario', '=', 'au.id_aplicacion_usuario')
+            ->where('ur.objeto_permitido', 'like', '%ADMRRHH%')
+            ->pluck('au.username')
+            ->map(fn($e) => strtolower(trim($e)))
+            ->unique()
+            ->values()
+            ->toArray();
+
+        $to = array_merge($to, $rrhh);
+    }
+
+    // Caso: rechazado (total o parcial)
+    if (in_array((int)$status, [5, 7])) {
+        // ya tenemos al solicitante en $to
+        // aquí no agregamos más destinatarios
+    }
+
+    $emails_to = implode(',', array_values(array_unique(array_filter($to))));
+    $subject = "{$estado['descripcion']} DE SOLICITUD MASIVA - SISTEMA DE DESVINCULACIÓN SDP";
+
+    \Log::info("Correos enviados en MASIVO ({$rol}): " . $emails_to);
+
+    ExtraServicecontroller::send_email_gf($body, $subject, $emails_to);
+}
 }
