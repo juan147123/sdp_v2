@@ -63,11 +63,11 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
         $query = "
         WITH RECURSIVE colaboradores AS (
             SELECT user_id, np_lider, first_name, last_name, national_id, correo_flesan, correo_gmail, empresa, centro_costo, nombre_centro_costo, departamento, nombre_departamento, division, nombre_division, external_cod_cargo, ubicacion
-            FROM flesan_rrhh.sap_maestro_colaborador_1
+            FROM flesan_rrhh.sap_maestro_colaborador
             WHERE np_lider = CAST(:userId AS character varying) AND empl_status = '41111'
             UNION ALL
             SELECT mc.user_id, mc.np_lider, mc.first_name, mc.last_name, mc.national_id, mc.correo_flesan, mc.correo_gmail, mc.empresa, mc.centro_costo, mc.nombre_centro_costo, mc.departamento, mc.nombre_departamento, mc.division, mc.nombre_division, mc.external_cod_cargo, mc.ubicacion
-            FROM flesan_rrhh.sap_maestro_colaborador_1 mc
+            FROM flesan_rrhh.sap_maestro_colaborador mc
             INNER JOIN colaboradores c ON CAST(mc.np_lider AS character varying) = CAST(c.user_id AS character varying)
             WHERE mc.empl_status = '41111'
         )
@@ -104,7 +104,7 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
         FROM colaboradores c
         left join flesan_rrhh.sap_maestro_cargos smc on c.external_cod_cargo = smc.external_code 
         left join public.maestro_rut mr  ON mr.id_sap = c.empresa    
-        LEFT JOIN flesan_rrhh.sap_maestro_empresa_dep_un_cc_1 m ON (m.external_code_cc=c.centro_costo)
+        LEFT JOIN flesan_rrhh.sap_maestro_empresa_dep_un_cc m ON (m.external_code_cc=c.centro_costo)
         group by 
         c.user_id,
         c.np_lider,
@@ -149,16 +149,16 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
         $query_obra = "
          with cecos_lider as( 
             select 
-                sap_maestro_empresa_dep_un_cc_1.external_code_cc,
-                sap_maestro_empresa_dep_un_cc_1.nombre_cc,
+                sap_maestro_empresa_dep_un_cc.external_code_cc,
+                sap_maestro_empresa_dep_un_cc.nombre_cc,
                 correo as correo_lider
             from
-                flesan_rrhh.tabla_encargados_cc_1
-            join flesan_rrhh.sap_maestro_empresa_dep_un_cc_1 on
-                (sap_maestro_empresa_dep_un_cc_1.external_code_empresa || '-' || sap_maestro_empresa_dep_un_cc_1.nombre_empresa = tabla_encargados_cc_1.sociedad
-                    and sap_maestro_empresa_dep_un_cc_1.external_code_cc || '-' || sap_maestro_empresa_dep_un_cc_1.nombre_cc = tabla_encargados_cc_1.centro_coto)
+                flesan_rrhh.tabla_encargados_cc
+            join flesan_rrhh.sap_maestro_empresa_dep_un_cc on
+                (sap_maestro_empresa_dep_un_cc.external_code_empresa || '-' || sap_maestro_empresa_dep_un_cc.nombre_empresa = tabla_encargados_cc.sociedad
+                    and sap_maestro_empresa_dep_un_cc.external_code_cc || '-' || sap_maestro_empresa_dep_un_cc.nombre_cc = tabla_encargados_cc.centro_coto)
             left join PUBLIC.maestro_rut on
-                (maestro_rut.id_sap = sap_maestro_empresa_dep_un_cc_1.external_code_empresa)
+                (maestro_rut.id_sap = sap_maestro_empresa_dep_un_cc.external_code_empresa)
             where
                 correo is not null)
         select 
@@ -192,10 +192,10 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
             c.division,
             c.nombre_division
         from cecos_lider cl 
-        inner join flesan_rrhh.sap_maestro_colaborador_1 c on cl.external_code_cc = c.centro_costo
+        inner join flesan_rrhh.sap_maestro_colaborador c on cl.external_code_cc = c.centro_costo
         inner join flesan_rrhh.sap_maestro_cargos smc on c.external_cod_cargo = smc.external_code
         inner join public.maestro_rut mr  ON mr.id_sap = c.empresa
-        inner JOIN flesan_rrhh.sap_maestro_empresa_dep_un_cc_1 m ON m.external_code_cc = c.centro_costo
+        inner JOIN flesan_rrhh.sap_maestro_empresa_dep_un_cc m ON m.external_code_cc = c.centro_costo
         and c.empl_status = '41111'
         and cl.correo_lider = :correo_lider
         and smc.planta_noplanta = 'NP'
@@ -241,10 +241,10 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
     {
 
         $query_obra = "
-            SELECT distinct ARRAY_AGG(external_code_cc) AS cc, sap_maestro_empresa_dep_un_cc_1.lider_departamento AS np_adm_obra,lower(sap_maestro_colaborador_1.correo_flesan) as correo,sap_maestro_colaborador_1.first_name AS nombres_adm_obra,sap_maestro_colaborador_1.last_name AS apellidos__adm_obra FROM flesan_rrhh.sap_maestro_empresa_dep_un_cc_1
-            LEFT JOIN flesan_rrhh.sap_maestro_colaborador_1 ON (sap_maestro_empresa_dep_un_cc_1.lider_departamento=sap_maestro_colaborador_1.user_id::TEXT)
-            LEFT JOIN flesan_rrhh.sap_maestro_colaborador_1 AS lider ON (lider.user_id::TEXT=sap_maestro_colaborador_1.np_lider::TEXT)
-            WHERE status_departamento ='A' and lider.user_id is not null and LOWER(sap_maestro_colaborador_1.correo_flesan) = :correo 
+            SELECT distinct ARRAY_AGG(external_code_cc) AS cc, sap_maestro_empresa_dep_un_cc.lider_departamento AS np_adm_obra,lower(sap_maestro_colaborador.correo_flesan) as correo,sap_maestro_colaborador.first_name AS nombres_adm_obra,sap_maestro_colaborador.last_name AS apellidos__adm_obra FROM flesan_rrhh.sap_maestro_empresa_dep_un_cc
+            LEFT JOIN flesan_rrhh.sap_maestro_colaborador ON (sap_maestro_empresa_dep_un_cc.lider_departamento=sap_maestro_colaborador.user_id::TEXT)
+            LEFT JOIN flesan_rrhh.sap_maestro_colaborador AS lider ON (lider.user_id::TEXT=sap_maestro_colaborador.np_lider::TEXT)
+            WHERE status_departamento ='A' and lider.user_id is not null and LOWER(sap_maestro_colaborador.correo_flesan) = :correo 
             group by np_adm_obra,correo,nombres_adm_obra,apellidos__adm_obra;      
         ";
 
@@ -258,9 +258,9 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
     {
 
         $query_obra = "
-        select distinct ARRAY_AGG(external_code_cc) AS cc, lider.user_id ,lower(lider.correo_flesan)as correo,lider.first_name AS nombre_visitador, lider.last_name AS apellido_visitador FROM flesan_rrhh.sap_maestro_empresa_dep_un_cc_1
-        LEFT JOIN flesan_rrhh.sap_maestro_colaborador_1 ON (sap_maestro_empresa_dep_un_cc_1.lider_departamento=sap_maestro_colaborador_1.user_id::TEXT)
-        LEFT JOIN flesan_rrhh.sap_maestro_colaborador_1 AS lider ON (lider.user_id::TEXT=sap_maestro_colaborador_1.np_lider::TEXT)
+        select distinct ARRAY_AGG(external_code_cc) AS cc, lider.user_id ,lower(lider.correo_flesan)as correo,lider.first_name AS nombre_visitador, lider.last_name AS apellido_visitador FROM flesan_rrhh.sap_maestro_empresa_dep_un_cc
+        LEFT JOIN flesan_rrhh.sap_maestro_colaborador ON (sap_maestro_empresa_dep_un_cc.lider_departamento=sap_maestro_colaborador.user_id::TEXT)
+        LEFT JOIN flesan_rrhh.sap_maestro_colaborador AS lider ON (lider.user_id::TEXT=sap_maestro_colaborador.np_lider::TEXT)
         WHERE status_departamento ='A' and lider.first_name is not null and LOWER(lider.correo_flesan) = :correo
         group by lider.user_id,correo,nombre_visitador,apellido_visitador;      
         ";
@@ -277,14 +277,14 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
         $query = "
         select
             distinct 
-                tabla_encargados_cc_1.correo
+                tabla_encargados_cc.correo
             from
-                flesan_rrhh.tabla_encargados_cc_1
-            join sap_maestro_empresa_dep_un_cc_1 on
-                (sap_maestro_empresa_dep_un_cc_1.external_code_empresa || '-' || sap_maestro_empresa_dep_un_cc_1.nombre_empresa = tabla_encargados_cc_1.sociedad
-                    and sap_maestro_empresa_dep_un_cc_1.external_code_cc || '-' || sap_maestro_empresa_dep_un_cc_1.nombre_cc = tabla_encargados_cc_1.centro_coto)
+                flesan_rrhh.tabla_encargados_cc
+            join sap_maestro_empresa_dep_un_cc on
+                (sap_maestro_empresa_dep_un_cc.external_code_empresa || '-' || sap_maestro_empresa_dep_un_cc.nombre_empresa = tabla_encargados_cc.sociedad
+                    and sap_maestro_empresa_dep_un_cc.external_code_cc || '-' || sap_maestro_empresa_dep_un_cc.nombre_cc = tabla_encargados_cc.centro_coto)
             left join PUBLIC.maestro_rut on
-                (maestro_rut.id_sap = sap_maestro_empresa_dep_un_cc_1.external_code_empresa)
+                (maestro_rut.id_sap = sap_maestro_empresa_dep_un_cc.external_code_empresa)
             WHERE correo IS NOT null;
             ";
         $resultados = DB::connection('dw_chile')
@@ -300,14 +300,14 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
         $query = "
         select
             distinct 
-                tabla_encargados_cc_1.correo
+                tabla_encargados_cc.correo
             from
-                flesan_rrhh.tabla_encargados_cc_1
-            join sap_maestro_empresa_dep_un_cc_1 on
-                (sap_maestro_empresa_dep_un_cc_1.external_code_empresa || '-' || sap_maestro_empresa_dep_un_cc_1.nombre_empresa = tabla_encargados_cc_1.sociedad
-                    and sap_maestro_empresa_dep_un_cc_1.external_code_cc || '-' || sap_maestro_empresa_dep_un_cc_1.nombre_cc = tabla_encargados_cc_1.centro_coto)
+                flesan_rrhh.tabla_encargados_cc
+            join sap_maestro_empresa_dep_un_cc on
+                (sap_maestro_empresa_dep_un_cc.external_code_empresa || '-' || sap_maestro_empresa_dep_un_cc.nombre_empresa = tabla_encargados_cc.sociedad
+                    and sap_maestro_empresa_dep_un_cc.external_code_cc || '-' || sap_maestro_empresa_dep_un_cc.nombre_cc = tabla_encargados_cc.centro_coto)
             left join PUBLIC.maestro_rut on
-                (maestro_rut.id_sap = sap_maestro_empresa_dep_un_cc_1.external_code_empresa)
+                (maestro_rut.id_sap = sap_maestro_empresa_dep_un_cc.external_code_empresa)
             WHERE correo = :correo_lider;
             ";
         $resultados = DB::connection('dw_chile')
@@ -320,10 +320,10 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
     public function getAdministradorDepartamento($correo)
     {
         $query = "
-        SELECT distinct  sap_maestro_empresa_dep_un_cc_1.lider_departamento AS np_adm_obra,lower(sap_maestro_colaborador_1.correo_flesan) as correo,sap_maestro_colaborador_1.first_name AS nombres_adm_obra,sap_maestro_colaborador_1.last_name AS apellidos__adm_obra FROM flesan_rrhh.sap_maestro_empresa_dep_un_cc_1
-        LEFT JOIN flesan_rrhh.sap_maestro_colaborador_1 ON (sap_maestro_empresa_dep_un_cc_1.lider_departamento=sap_maestro_colaborador_1.user_id::TEXT)
-        LEFT JOIN flesan_rrhh.sap_maestro_colaborador_1 AS lider ON (lider.user_id::TEXT=sap_maestro_colaborador_1.np_lider::TEXT)
-        WHERE status_departamento ='A' and lider.user_id is not null and LOWER(sap_maestro_colaborador_1.correo_flesan) = :correo;";
+        SELECT distinct  sap_maestro_empresa_dep_un_cc.lider_departamento AS np_adm_obra,lower(sap_maestro_colaborador.correo_flesan) as correo,sap_maestro_colaborador.first_name AS nombres_adm_obra,sap_maestro_colaborador.last_name AS apellidos__adm_obra FROM flesan_rrhh.sap_maestro_empresa_dep_un_cc
+        LEFT JOIN flesan_rrhh.sap_maestro_colaborador ON (sap_maestro_empresa_dep_un_cc.lider_departamento=sap_maestro_colaborador.user_id::TEXT)
+        LEFT JOIN flesan_rrhh.sap_maestro_colaborador AS lider ON (lider.user_id::TEXT=sap_maestro_colaborador.np_lider::TEXT)
+        WHERE status_departamento ='A' and lider.user_id is not null and LOWER(sap_maestro_colaborador.correo_flesan) = :correo;";
 
         $resultados = DB::connection('dw_chile')
             ->select(DB::raw($query), [
@@ -338,9 +338,9 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
     public function getVisitadorDepartamento($correo)
     {
         $query = "
-        select distinct lider.user_id AS np_visitador,lower(lider.correo_flesan),lider.first_name AS nombre_visitador, lider.last_name AS apellido_visitador FROM flesan_rrhh.sap_maestro_empresa_dep_un_cc_1
-        LEFT JOIN flesan_rrhh.sap_maestro_colaborador_1 ON (sap_maestro_empresa_dep_un_cc_1.lider_departamento=sap_maestro_colaborador_1.user_id::TEXT)
-        LEFT JOIN flesan_rrhh.sap_maestro_colaborador_1 AS lider ON (lider.user_id::TEXT=sap_maestro_colaborador_1.np_lider::TEXT)
+        select distinct lider.user_id AS np_visitador,lower(lider.correo_flesan),lider.first_name AS nombre_visitador, lider.last_name AS apellido_visitador FROM flesan_rrhh.sap_maestro_empresa_dep_un_cc
+        LEFT JOIN flesan_rrhh.sap_maestro_colaborador ON (sap_maestro_empresa_dep_un_cc.lider_departamento=sap_maestro_colaborador.user_id::TEXT)
+        LEFT JOIN flesan_rrhh.sap_maestro_colaborador AS lider ON (lider.user_id::TEXT=sap_maestro_colaborador.np_lider::TEXT)
         WHERE status_departamento ='A' and lider.first_name is not null and LOWER(lider.correo_flesan) = :correo;";
 
         $resultados = DB::connection('dw_chile')

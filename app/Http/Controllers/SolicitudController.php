@@ -295,8 +295,8 @@ class SolicitudController extends Controller
     ])->render();
     $correo_solicitante = $new_solicitud->user_created;
     $correo_aprob1 = \DB::connection('dw_chile')
-                ->table('flesan_rrhh.sap_maestro_colaborador_1 as empleado')
-                ->join('flesan_rrhh.sap_maestro_colaborador_1 as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
+                ->table('flesan_rrhh.sap_maestro_colaborador as empleado')
+                ->join('flesan_rrhh.sap_maestro_colaborador as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
                 ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($correo_solicitante)])
                 ->select('lider.correo_flesan')
                 ->first();

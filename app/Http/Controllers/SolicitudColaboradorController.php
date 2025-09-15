@@ -267,16 +267,16 @@ class SolicitudColaboradorController extends Controller
             if ($rolNorm === 'administrador de obra') {
                 // Buscar aprobador 1
                 $aprob1 = \DB::connection('dw_chile')
-                    ->table('flesan_rrhh.sap_maestro_colaborador_1 as empleado')
-                    ->join('flesan_rrhh.sap_maestro_colaborador_1 as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
+                    ->table('flesan_rrhh.sap_maestro_colaborador as empleado')
+                    ->join('flesan_rrhh.sap_maestro_colaborador as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
                     ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($solicitud->user_created)])
                     ->value('lider.correo_flesan');
 
                 if ($aprob1) {
                     // Buscar aprobador 2 a partir del correo del aprobador 1
                     $aprob2 = \DB::connection('dw_chile')
-                        ->table('flesan_rrhh.sap_maestro_colaborador_1 as empleado')
-                        ->join('flesan_rrhh.sap_maestro_colaborador_1 as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
+                        ->table('flesan_rrhh.sap_maestro_colaborador as empleado')
+                        ->join('flesan_rrhh.sap_maestro_colaborador as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
                         ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($aprob1)])
                         ->value('lider.correo_flesan');
 
@@ -364,15 +364,15 @@ public function sendMailStatusMasive($solicitud, $status, $rol = null)
 
         if ($colaborador) {
             $aprob1 = \DB::connection('dw_chile')
-                ->table('flesan_rrhh.sap_maestro_colaborador_1 as empleado')
-                ->join('flesan_rrhh.sap_maestro_colaborador_1 as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
+                ->table('flesan_rrhh.sap_maestro_colaborador as empleado')
+                ->join('flesan_rrhh.sap_maestro_colaborador as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
                 ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($colaborador->correo_flesan ?? $solicitud->user_created)])
                 ->value('lider.correo_flesan');
 
             if ($aprob1) {
                 $aprob2 = \DB::connection('dw_chile')
-                    ->table('flesan_rrhh.sap_maestro_colaborador_1 as empleado')
-                    ->join('flesan_rrhh.sap_maestro_colaborador_1 as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
+                    ->table('flesan_rrhh.sap_maestro_colaborador as empleado')
+                    ->join('flesan_rrhh.sap_maestro_colaborador as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
                     ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($aprob1)])
                     ->value('lider.correo_flesan');
 
