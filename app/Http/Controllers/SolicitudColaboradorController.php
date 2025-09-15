@@ -234,6 +234,17 @@ class SolicitudColaboradorController extends Controller
         ];
         $estado = $estados[$status] ?? $estados['default'];
 
+        $rolNorm = mb_strtolower($rol);
+        $comentario = null;
+
+        if ($rolNorm === 'administrador de obra') {
+            $comentario = $solicitud_colaborador->comentario_admin_obra ?? null;
+        } elseif ($rolNorm === 'visitador de obra') {
+            $comentario = $solicitud_colaborador->comentario_visitador ?? null;
+        } elseif ($rolNorm === 'rrhh' || $rolNorm === 'administrador de rrhh') {
+            $comentario = $solicitud_colaborador->comentario_rrhh ?? null;
+        }
+
         $body = View::make('emails.SolicitudColaboradorEstado', [
             'data' => [
                 'solicitud' => $solicitud,
@@ -243,10 +254,11 @@ class SolicitudColaboradorController extends Controller
                 'rol_usuario' => $rol,
                 'linkAcceso' => 'https://desvinculaciones.grupoflesan.com/',
                 'usuario' => strtoupper(Auth::user()->name),
+                'comentarios' => $comentario ?? 'Sin comentarios'
             ],
         ])->render();
 
-        // siempre partimos por el solicitante
+        // siempre se noitifica al solicitante
         $to = [strtolower(trim($solicitud->user_created))];
 
             if ((int)$status === 6 && $rol) {
@@ -278,7 +290,7 @@ class SolicitudColaboradorController extends Controller
                 $rrhh = \DB::connection('dw_seguridad_app')
                     ->table('seguridadapp.usuario_rol as ur')
                     ->join('seguridadapp.aplicacion_usuario as au', 'ur.id_aplicacion_usuario', '=', 'au.id_aplicacion_usuario')
-                    ->whereIn('ur.objeto_permitido', ['ADMRRHH', 'APROBOBRA'])
+                    ->whereIn('ur.objeto_permitido', ['ADMRRHH'])
                     ->pluck('au.username')
                     ->map(fn($e) => strtolower(trim($e)))
                     ->unique()
@@ -296,12 +308,10 @@ class SolicitudColaboradorController extends Controller
     }
 public function sendMailStatusMasive($solicitud, $status, $rol = null)
 {
-    $estados = [
-        4 => ['cabecera' => 'APROBADA TOTAL', 'descripcion' => 'APROBACIÓN'],
-        5 => ['cabecera' => 'RECHAZADA', 'descripcion' => 'RECHAZO'],
-        7 => ['cabecera' => 'RECHAZADA', 'descripcion' => 'RECHAZO'],
-        'default' => ['cabecera' => 'PENDIENTE', 'descripcion' => 'PENDIENTE']
-    ];
+   $estados = [
+            5 => ['cabecera' => 'RECHAZADA', 'descripcion' => 'RECHAZO'],
+            'default' => ['cabecera' => 'APROBADA', 'descripcion' => 'APROBACIÓN']
+        ];
     $estado = $estados[$status] ?? $estados['default'];
 
     // Cargar la solicitud con sus colaboradores
@@ -328,7 +338,7 @@ public function sendMailStatusMasive($solicitud, $status, $rol = null)
             return null;
         })
         ->filter()
-        ->implode(' | ');
+        ->first();
 
     // Construir el body del correo
     $body = View::make('emails.SolicitudColaboradorEstadoMultiple', [
@@ -378,7 +388,7 @@ public function sendMailStatusMasive($solicitud, $status, $rol = null)
         $rrhh = \DB::connection('dw_seguridad_app')
             ->table('seguridadapp.usuario_rol as ur')
             ->join('seguridadapp.aplicacion_usuario as au', 'ur.id_aplicacion_usuario', '=', 'au.id_aplicacion_usuario')
-            ->where('ur.objeto_permitido', 'like', '%ADMRRHH%')
+            ->whereIn('ur.objeto_permitido', ['ADMRRHH'])
             ->pluck('au.username')
             ->map(fn($e) => strtolower(trim($e)))
             ->unique()

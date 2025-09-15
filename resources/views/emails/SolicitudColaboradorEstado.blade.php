@@ -33,7 +33,7 @@
                                         <strong>Observaciones:</strong>
                                     <ul style="padding-left: 25px;">
                                         <li>
-                                            {{ $data["solicitud_colaborador"]["comentario_admin_obra"] ?? 'Sin comentarios' }}
+                                            {{ $data['comentarios'] ?? 'Sin comentarios' }}
                                         </li>
                                     </ul>
                                     </p>
