@@ -260,18 +260,21 @@ class SolicitudColaboradorController extends Controller
 
         // siempre se noitifica al solicitante
         $to = [strtolower(trim($solicitud->user_created))];
-
+        $cc = $solicitud->centro_costo ?? $solicitud_colaborador->centro_costo ?? null;
+        $aprob1 = null;
             if ((int)$status === 6 && $rol) {
             $rolNorm = mb_strtolower($rol);
 
             if ($rolNorm === 'administrador de obra') {
                 // Buscar aprobador 1
-                $aprob1 = \DB::connection('dw_chile')
-                    ->table('flesan_rrhh.sap_maestro_colaborador as empleado')
-                    ->join('flesan_rrhh.sap_maestro_colaborador as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
-                    ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($solicitud->user_created)])
-                    ->value('lider.correo_flesan');
-
+                if ($cc){
+                    $aprob1 = \DB::connection('dw_chile')
+                        ->table('flesan_rrhh.sap_maestro_empresa_dep_un_cc as sme')
+                        ->join('flesan_rrhh.sap_maestro_colaborador as smc', 'sme.lider_departamento', '=', \DB::raw('smc.user_id::text'))
+                        ->where('smc.empl_status', '41111')
+                        ->where('sme.external_code_cc', $cc)
+                        ->value(\DB::raw('LOWER(smc.correo_flesan)'));
+                }
                 if ($aprob1) {
                     // Buscar aprobador 2 a partir del correo del aprobador 1
                     $aprob2 = \DB::connection('dw_chile')
@@ -284,7 +287,6 @@ class SolicitudColaboradorController extends Controller
                         $to[] = strtolower(trim($aprob2));
                     }
                 }
-
             } elseif ($rolNorm === 'visitador de obra') {
                 // Notificar a RRHH
                 $rrhh = \DB::connection('dw_seguridad_app')
@@ -360,14 +362,16 @@ public function sendMailStatusMasive($solicitud, $status, $rol = null)
 
     // Caso: aprobado por administrador de obra → notificar aprobador 2
     if ((int)$status === 2 && $rolNorm === 'administrador de obra') {
-        $colaborador = $solicitud->solicitudColaborador->first();
-
-        if ($colaborador) {
+        $cc = $solicitud->centro_costo ?? $solicitud_colaborador->centro_costo ?? null;
+        $aprob1 = null;
+        if ($cc) {
+            // Aprobador 1 por CC (líder del departamento del CC)
             $aprob1 = \DB::connection('dw_chile')
-                ->table('flesan_rrhh.sap_maestro_colaborador as empleado')
-                ->join('flesan_rrhh.sap_maestro_colaborador as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
-                ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($colaborador->correo_flesan ?? $solicitud->user_created)])
-                ->value('lider.correo_flesan');
+                ->table('flesan_rrhh.sap_maestro_empresa_dep_un_cc as sme')
+                ->join('flesan_rrhh.sap_maestro_colaborador as smc', 'sme.lider_departamento', '=', \DB::raw('smc.user_id::text'))
+                ->where('smc.empl_status', '41111')
+                ->where('sme.external_code_cc', $cc)
+                ->value(\DB::raw('LOWER(smc.correo_flesan)'));
 
             if ($aprob1) {
                 $aprob2 = \DB::connection('dw_chile')

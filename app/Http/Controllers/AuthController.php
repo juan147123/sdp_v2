@@ -74,10 +74,10 @@ class AuthController extends Controller
         if($usuario_mail=='german.salazar@flesan.cl'){
             $usuario_mail='mrojas@flesan.cl';
         }
-        // if($usuario_mail=='desarrollo@flesan.cl'){
+        // if($usuario_mail=='victor.guerra@flesan.cl'){
         //     $usuario_mail='jorge.barrozo@flesan.cl';
         // }
-        // if($usuario_mail=='desarrollo@flesan.cl'){
+        // if($usuario_mail=='victor.guerra@flesan.cl'){
         //     $usuario_mail='alfredo.hirmas@flesan.cl';
         // }
         $permisos = [];
