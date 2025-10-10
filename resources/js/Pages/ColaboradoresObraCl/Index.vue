@@ -371,16 +371,22 @@ export default {
         async getData() {
             this.mensaje = "Cargando datos ...";
             this.isLoadingForm = true;
-            await axios
-                .get(rutaBase + "/colaboradores/obra/cl")
-                .then(async (response) => {
-                    if (response.status == 200) {
-                        this.dataTable.data = response.data;
-                        this.mensaje = "";
-                        this.isLoadingForm = false;
-                    }
+            await axios.get(rutaBase + "/colaboradores/obra/cl")
+                .then((response) => {
+                if (response.status == 200) {
+                    console.table((response.data || []).map(r => ({
+                    user_id: r.user_id,
+                    full_name: r.full_name,
+                    solicitudes: r.solicitudes,
+                    tipo: typeof r.solicitudes,
+                    })));
+                    console.log('Primeras filas:', response.data.slice(0,5));
+                    this.dataTable.data = response.data; // 👈 asigna recién aquí
+                    this.mensaje = "";
+                    this.isLoadingForm = false;
+                }
                 });
-        },
+            },
         initializeDropdownsData() {
             this.filtersDropdownData.user_id = [
                 ...new Set(
