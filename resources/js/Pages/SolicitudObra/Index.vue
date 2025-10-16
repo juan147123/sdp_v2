@@ -256,6 +256,18 @@
                                     </MultiSelect>
                                 </template>
                             </Column>
+
+                            <Column
+                            header="Siguiente Aprobador"
+                            headerStyle="background-color:black; color:white"
+                            style="text-align:center"
+                            >
+                            <template #body="{ data }">
+                                <span v-if="getNextApproverEmail(data)">{{ getNextApproverEmail(data) }}</span>
+                                <Tag v-else value="No aplica" severity="warning" />
+                            </template>
+                            </Column>
+
                             <Column
                                 :field="null"
                                 filterField="user_id"
@@ -667,7 +679,7 @@ export default {
                 } else if (estado === "PENDIENTE_VISI") {
                     this.conteoSolicitudes["PENDIENTE_VISI"] =
                         estadoCount[
-                            "PENDIENTE APROBAR POR DE VISITADOR DE OBRA"
+                            "PENDIENTE APROBAR POR GERENTE DE PROYECTO"
                         ] || 0;
                 } else if (estado === "PENDIENTE_RRHH") {
                     this.conteoSolicitudes["PENDIENTE_RRHH"] =
@@ -723,6 +735,22 @@ export default {
         showModal() {
             this.visiblemultiple = !this.visiblemultiple;
         },
-    },
+        getNextApproverEmail(row) {
+        const correos = row?.aprobadores_correos || {};
+        const desc = (row?.estado?.descripcion || '').toUpperCase();
+
+        // Estados finales: no mostrar siguiente
+        if (desc.includes('APROBADA') || desc.includes('RECHAZADA')) return null;
+        if (desc.includes('CREADO')) return correos.a1 || null;
+        if (desc.includes('PENDIENTE APROBAR POR ADMINISTRADOR')) return correos.a1 || null;
+        if (desc.includes('PENDIENTE APROBAR POR GERENTE')) return correos.a2 || null;
+        if (desc.includes('PENDIENTE APROBAR POR RRHH')) return null;
+
+        // Fallback: intenta a2 y si no, a1
+        return correos.a2 || correos.a1 || null;
+        },
+
+    }
+    
 };
 </script>

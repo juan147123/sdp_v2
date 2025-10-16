@@ -576,7 +576,7 @@ export default {
                             "PENDIENTE APROBAR POR ADMINISTRADOR DE OBRA"
                         ] || 0) +
                         (estadoCount[
-                            "PENDIENTE APROBAR POR DE VISITADOR DE OBRA"
+                            "PENDIENTE APROBAR POR GERENTE DE PROYECTO"
                         ] || 0) +
                         (estadoCount["PENDIENTE APROBAR POR RRHH"] || 0);
                 } else {

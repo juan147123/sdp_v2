@@ -60,15 +60,45 @@ class SolicitudController extends Controller
         return Inertia::render('SolicitudObra/Index');
     }
 
+
+    private function attachAprobadoresCorreos($result)
+    {
+        // 1) CECOs únicos presentes en el resultado
+        $ccs = collect($result)->map(function ($s) {
+            return $s->centro_costo ?? $s->external_code_cc ?? null;
+        })->filter()->unique()->values();
+
+        // 2) Resolver una sola vez por CECO
+        $ccMap = [];
+        foreach ($ccs as $cc) {
+            $ccMap[$cc] = $this->getCorreosAprobadoresPorCC($cc); // ['a1'=>..., 'a2'=>...]
+        }
+
+        // 3) Inyectar en cada solicitud
+        return collect($result)->map(function ($s) use ($ccMap) {
+            $cc = $s->centro_costo ?? $s->external_code_cc ?? null;
+            $s->aprobadores_correos = $cc && isset($ccMap[$cc])
+                ? $ccMap[$cc]
+                : ['a1' => null, 'a2' => null];
+            return $s;
+        });
+    }
+
     //LISTADO DE SOLICITUDES POR PERMISOS (MEJORAR)
     public function listAll()
     {
-        if (in_array('LIDERCL', session('objeto_permitido')) || in_array('LIDERPE', session('objeto_permitido')) || in_array('LIDEROBRACL', session('objeto_permitido'))) {
+        if (
+            in_array('LIDERCL', session('objeto_permitido')) ||
+            in_array('LIDERPE', session('objeto_permitido')) ||
+            in_array('LIDEROBRACL', session('objeto_permitido'))
+        ) {
             $list = $this->listSolicitudesLider(['user_created' => strtoupper(Auth::user()->username), "enable" => 1]);
         } else {
             $list = $this->listSolicitudesLiderAll(["enable" => 1]);
         }
-        return $list;
+        $list = $this->attachAprobadoresCorreos($list);
+
+        return $list->values();
     }
 
 

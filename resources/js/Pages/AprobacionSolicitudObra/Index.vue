@@ -425,7 +425,7 @@ export default {
                         (estadoCount["APROBADO"] || 0) +
                         (estadoCount["APROBADO ADMINISTRADOR"] || 0) +
                         (estadoCount["SOLICITUD APROBADA TOTAL"] || 0) +
-                        (estadoCount["PENDIENTE APROBAR POR DE VISITADOR DE OBRA"] || 0);
+                        (estadoCount["PENDIENTE APROBAR POR GERENTE DE PROYECTO"] || 0);
                 } else if (estado === "RECHAZADO") {
                     // Sumar todas las variantes de "RECHAZADO"
                     this.conteoSolicitudes["RECHAZADO"] =
@@ -461,7 +461,7 @@ export default {
             if (desc.includes('CREADO')) return c.a1 || null;
             if (desc.includes('PENDIENTE APROBAR POR ADMINISTRADOR')) return c.a1 || null;
 
-            // fallback correcto (sin "No aplica" fijo)
+            
             return c.a2 || c.a1 || null;
         }
     },

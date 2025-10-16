@@ -633,7 +633,7 @@ export default {
                 } else if (estado === "PENDIENTE_VISI") {
                     this.conteoSolicitudes["PENDIENTE_VISI"] =
                         estadoCount[
-                            "PENDIENTE APROBAR POR DE VISITADOR DE OBRA"
+                            "PENDIENTE APROBAR POR GERENTE DE PROYECTO"
                         ] || 0;
                 } else if (estado === "PENDIENTE_RRHH") {
                     this.conteoSolicitudes["PENDIENTE_RRHH"] =
