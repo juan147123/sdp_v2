@@ -116,6 +116,16 @@
                                     </MultiSelect>
                                 </template>
                             </Column>
+                            <Column
+                            header="Siguiente Aprobador"
+                            headerStyle="background-color:black; color:white"
+                            style="text-align:center"
+                            >
+                            <template #body="{ data }">
+                                <span v-if="getNextApproverEmail(data)">{{ getNextApproverEmail(data) }}</span>
+                                <Tag v-else value="Sin ruta" severity="warning" />
+                            </template>
+                            </Column>
                             <Column :field="null" filterField="user_id" header="Colaboradores"
                                 headerStyle="background-color:black; color:white" sortable style="text-align: center"
                                 :showFilterMatchModes="false">
@@ -440,6 +450,43 @@ export default {
             this.details = !this.details;
             this.solicitud_selected = data ? data : [];
         },
+        getNextApproverEmail(row) {
+        const a1 = row?.aprobadores_correos?.a1 || null;
+        const a2 = row?.aprobadores_correos?.a2 || null;
+
+        // Visitador de Obra aprueba después del Administrador → mostrar A2 preferentemente
+        return a2 || a1 || null;
+        }
     },
 };
 </script>
+<style scoped>
+
+:deep(.p-datatable-table){ table-layout: fixed; width: 100%; }
+:deep(.p-datatable-thead th),
+:deep(.p-datatable-tbody td){ padding: 6px 8px; }
+
+/* 2) Columnas con ancho reducido (1..5 y 7) */
+:deep(.p-datatable-thead th:nth-child(1)),
+:deep(.p-datatable-tbody td:nth-child(1)){ width: 115px; text-align:center; }  /* Código */
+
+:deep(.p-datatable-thead th:nth-child(2)),
+:deep(.p-datatable-tbody td:nth-child(2)){ width: 170px; }                     /* Solicitante */
+
+:deep(.p-datatable-thead th:nth-child(3)),
+:deep(.p-datatable-tbody td:nth-child(3)){ width: 110px; text-align:center; }  /* Centro de costo */
+
+:deep(.p-datatable-thead th:nth-child(4)),
+:deep(.p-datatable-tbody td:nth-child(4)){ width: 110px; text-align:center; }  /* Fecha */
+
+:deep(.p-datatable-thead th:nth-child(5)),
+:deep(.p-datatable-tbody td:nth-child(5)){ width: 160px; text-align:center; }  /* Estado */
+
+:deep(.p-datatable-thead th:nth-child(7)),
+:deep(.p-datatable-tbody td:nth-child(7)){ width: 125px;  text-align:center; }  /* Colaboradores (iconos) */
+
+/* 3) Siguiente Aprobador: sin ancho fijo y con salto de línea */
+:deep(.p-datatable-thead th:nth-child(6)),
+:deep(.p-datatable-tbody td:nth-child(6)){ width: 180px; text-align:center; }
+
+</style>

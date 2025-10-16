@@ -78,29 +78,82 @@ class SolicitudController extends Controller
         return Inertia::render('AprobacionSolicitudObra/Index');
     }
 
+    private function getCorreosAprobadoresPorCC(string $cc): array
+    {
+        // Aprobador 1: líder del departamento del CECO
+        $correoAprob1 = \DB::connection('dw_chile')
+            ->table('flesan_rrhh.sap_maestro_empresa_dep_un_cc_1 as sme')
+            ->join('flesan_rrhh.sap_maestro_colaborador_1 as smc', \DB::raw('sme.lider_departamento'), '=', \DB::raw('smc.user_id::text'))
+            ->where('sme.external_code_cc', $cc)
+            ->select('smc.correo_flesan')
+            ->value('smc.correo_flesan'); // retorna solo el valor
+
+        // Aprobador 2: líder del líder (usando el correo del Aprobador 1)
+        $correoAprob2 = null;
+        if ($correoAprob1) {
+            $correoAprob2 = \DB::connection('dw_chile')
+                ->table('flesan_rrhh.sap_maestro_colaborador_1 as empleado')
+                ->join('flesan_rrhh.sap_maestro_colaborador_1 as lider', \DB::raw('empleado.np_lider'), '=', \DB::raw('lider.user_id::text'))
+                ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($correoAprob1)])
+                ->select('lider.correo_flesan')
+                ->value('lider.correo_flesan');
+        }
+
+        return [
+            'a1' => $correoAprob1 ?: null,
+            'a2' => $correoAprob2 ?: null,
+        ];
+    }
+
     public function listAllCCAprobar()
     {
         $centros_permitidos = [];
         if (!in_array('SUPERAD', session('objeto_permitido'))) {
             $aprobador = $this->personalChileRepository->getAprobadorObraCL(Auth::user()->username);
             if ($aprobador) {
-                $centros_permitidos = array("centro_costo" => explode(',', trim($aprobador[0]->cc, '{}')));
+                $centros_permitidos = ["centro_costo" => explode(',', trim($aprobador[0]->cc, '{}'))];
             }
-
             if (Auth::user()->username == 'dreidy.contreras@dvc.cl') {
                 $centros_permitidos['centro_costo'][] = 'DVCR50012';
             }
         }
-        $result = $this->repository->all(['*'], [
-            'estado',
-            'archivos',
-            'solicitudColaborador',
-            'solicitudColaborador.archivos',
-            'solicitudColaborador.estado',
-            'solicitudColaborador.SapMaestroCausalesTerminos',
-            'solicitudColaborador.checkAreaColaboradores',
-            'solicitudColaborador.estadoadmin'
-        ], [], $centros_permitidos)->whereIn('status', [1, 2]);
+
+        $result = $this->repository->all(
+            ['*'],
+            [
+                'estado',
+                'archivos',
+                'solicitudColaborador',
+                'solicitudColaborador.archivos',
+                'solicitudColaborador.estado',
+                'solicitudColaborador.SapMaestroCausalesTerminos',
+                'solicitudColaborador.checkAreaColaboradores',
+                'solicitudColaborador.estadoadmin'
+            ],
+            [],
+            $centros_permitidos
+        )->whereIn('status', [1, 2]);
+
+        // 1) CECOs únicos (ajusta el nombre si tu campo es otro)
+        $ccs = collect($result)->map(function ($s) {
+            // Usa el campo real del CECO en tu payload:
+            return $s->centro_costo ?? $s->external_code_cc ?? null;
+        })->filter()->unique()->values();
+
+        // 2) Resolver correos por CECO una sola vez
+        $ccMap = [];
+        foreach ($ccs as $cc) {
+            $ccMap[$cc] = $this->getCorreosAprobadoresPorCC($cc); // ['a1'=>..., 'a2'=>...]
+        }
+
+        // 3) Inyectar en cada solicitud
+        $result = $result->map(function ($s) use ($ccMap) {
+            $cc = $s->centro_costo ?? $s->external_code_cc ?? null;
+            $s->aprobadores_correos = $cc && isset($ccMap[$cc])
+                ? $ccMap[$cc]
+                : ['a1' => null, 'a2' => null];
+            return $s;
+        });
 
         return $result->values();
     }
@@ -124,17 +177,41 @@ class SolicitudController extends Controller
                 $centros_permitidos['centro_costo'][] = 'DVCR50012';
             }
         }
-        $result = $this->repository->all(['*'], [
+        $result = $this->repository->all(
+        ['*'],
+        [
             'estado',
             'archivos',
             'solicitudColaborador',
             'solicitudColaborador.archivos',
             'solicitudColaborador.estado',
-            'solicitudColaborador.estadoadmin',
-            'solicitudColaborador.estadovisitador',
             'solicitudColaborador.SapMaestroCausalesTerminos',
-            'solicitudColaborador.checkAreaColaboradores'
-        ], [], $centros_permitidos)->whereIn('status', [2, 3]);
+            'solicitudColaborador.checkAreaColaboradores',
+            'solicitudColaborador.estadoadmin'
+        ],
+        [],
+        $centros_permitidos
+        )->whereIn('status', [1, 2]);
+
+        // CECOs únicos
+        $ccs = collect($result)->map(function ($s) {
+            return $s->centro_costo ?? $s->external_code_cc ?? null;
+        })->filter()->unique()->values();
+
+        // resolver correos por CECO (usa tu helper ya hecho)
+        $ccMap = [];
+        foreach ($ccs as $cc) {
+            $ccMap[$cc] = $this->getCorreosAprobadoresPorCC($cc); // ['a1'=>..., 'a2'=>...]
+        }
+
+        // inyectar en cada solicitud
+        $result = $result->map(function ($s) use ($ccMap) {
+            $cc = $s->centro_costo ?? $s->external_code_cc ?? null;
+            $s->aprobadores_correos = $cc && isset($ccMap[$cc])
+                ? $ccMap[$cc]
+                : ['a1' => null, 'a2' => null];
+            return $s;
+        });
 
         return $result->values();
     }

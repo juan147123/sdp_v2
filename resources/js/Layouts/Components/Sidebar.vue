@@ -149,7 +149,7 @@
                                     <p style="
                                             text-transform: lowercase !important;
                                         ">
-                                        ( visitador obra )
+                                        ( gerente proyecto )
                                     </p>
                                 </strong>
                             </a>
