@@ -451,11 +451,16 @@ export default {
             this.solicitud_selected = data ? data : [];
         },
         getNextApproverEmail(row) {
-        const a1 = row?.aprobadores_correos?.a1 || null;
-        const a2 = row?.aprobadores_correos?.a2 || null;
+            const c = row?.aprobadores_correos || {};
+            const desc = (row?.estado?.descripcion || '').toUpperCase();
 
-        // Visitador de Obra aprueba después del Administrador → mostrar A2 preferentemente
-        return a2 || a1 || null;
+            if (desc.includes('APROBADO') || desc.includes('RECHAZADA')) return null;
+            if (desc.includes('CREADO')) return c.a1 || null;
+            if (desc.includes('PENDIENTE APROBAR POR ADMINISTRADOR')) return c.a1 || null;
+            if (desc.includes('PENDIENTE APROBAR POR GERENTE ')) return c.a2 || null;
+
+            
+            return c.a2 || c.a1 || null;
         }
     },
 };

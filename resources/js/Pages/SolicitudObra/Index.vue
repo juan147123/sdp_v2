@@ -740,7 +740,7 @@ export default {
         const desc = (row?.estado?.descripcion || '').toUpperCase();
 
         // Estados finales: no mostrar siguiente
-        if (desc.includes('APROBADA') || desc.includes('RECHAZADA')) return null;
+        if (desc.includes('APROBADO') || desc.includes('RECHAZADA')) return null;
         if (desc.includes('CREADO')) return correos.a1 || null;
         if (desc.includes('PENDIENTE APROBAR POR ADMINISTRADOR')) return correos.a1 || null;
         if (desc.includes('PENDIENTE APROBAR POR GERENTE')) return correos.a2 || null;
@@ -754,3 +754,33 @@ export default {
     
 };
 </script>
+<style scoped>
+
+:deep(.p-datatable-table){ table-layout: fixed; width: 100%; }
+:deep(.p-datatable-thead th),
+:deep(.p-datatable-tbody td){ padding: 6px 8px; }
+
+/* 2) Columnas con ancho reducido (1..5 y 7) */
+:deep(.p-datatable-thead th:nth-child(1)),
+:deep(.p-datatable-tbody td:nth-child(1)){ width: 115px; text-align:center; }  /* Código */
+
+:deep(.p-datatable-thead th:nth-child(2)),
+:deep(.p-datatable-tbody td:nth-child(2)){ width: 170px; }                     /* Solicitante */
+
+:deep(.p-datatable-thead th:nth-child(3)),
+:deep(.p-datatable-tbody td:nth-child(3)){ width: 110px; text-align:center; }  /* Centro de costo */
+
+:deep(.p-datatable-thead th:nth-child(4)),
+:deep(.p-datatable-tbody td:nth-child(4)){ width: 110px; text-align:center; }  /* Fecha */
+
+:deep(.p-datatable-thead th:nth-child(5)),
+:deep(.p-datatable-tbody td:nth-child(5)){ width: 160px; text-align:center; }  /* Estado */
+
+:deep(.p-datatable-thead th:nth-child(7)),
+:deep(.p-datatable-tbody td:nth-child(7)){ width: 125px;  text-align:center; }  /* Colaboradores (iconos) */
+
+/* 3) Siguiente Aprobador: sin ancho fijo y con salto de línea */
+:deep(.p-datatable-thead th:nth-child(6)),
+:deep(.p-datatable-tbody td:nth-child(6)){ width: 180px; text-align:center; }
+
+</style>

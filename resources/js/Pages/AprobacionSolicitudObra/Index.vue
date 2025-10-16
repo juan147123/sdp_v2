@@ -457,7 +457,7 @@ export default {
             const c = row?.aprobadores_correos || {};
             const desc = (row?.estado?.descripcion || '').toUpperCase();
 
-            if (desc.includes('APROBADO')) return null;
+            if (desc.includes('APROBADO') || desc.includes('RECHAZADA')) return null;
             if (desc.includes('CREADO')) return c.a1 || null;
             if (desc.includes('PENDIENTE APROBAR POR ADMINISTRADOR')) return c.a1 || null;
 
