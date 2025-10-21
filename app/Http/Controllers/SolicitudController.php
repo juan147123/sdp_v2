@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
+use PhpParser\Node\Stmt\Return_;
 
 class SolicitudController extends Controller
 {
@@ -128,12 +129,23 @@ class SolicitudController extends Controller
                 ->select('lider.correo_flesan')
                 ->value('lider.correo_flesan');
         }
+        $bloqueados = [
+                'alfredo.hirmas@flesan.cl'
+            ];
+            $mensaje = 'Contactar a oficina central';
 
-        return [
-            'a1' => $correoAprob1 ?: null,
-            'a2' => $correoAprob2 ?: null,
-        ];
-    }
+            
+            $maskIfBlocked = function (?string $correo) use ($bloqueados, $mensaje): ?string {
+                if (!$correo) return null;
+                return in_array(mb_strtolower(trim($correo)), $bloqueados, true) ? $mensaje : $correo;
+            };
+
+            return [
+                'a1' => $maskIfBlocked($correoAprob1),
+                'a2' => $maskIfBlocked($correoAprob2),
+            ];
+            }
+    
 
     public function listAllCCAprobar()
     {
