@@ -113,8 +113,8 @@ class SolicitudController extends Controller
     {
         // Aprobador 1: líder del departamento del CECO
         $correoAprob1 = \DB::connection('dw_chile')
-            ->table('flesan_rrhh.sap_maestro_empresa_dep_un_cc_1 as sme')
-            ->join('flesan_rrhh.sap_maestro_colaborador_1 as smc', \DB::raw('sme.lider_departamento'), '=', \DB::raw('smc.user_id::text'))
+            ->table('flesan_rrhh.sap_maestro_empresa_dep_un_cc as sme')
+            ->join('flesan_rrhh.sap_maestro_colaborador as smc', \DB::raw('sme.lider_departamento'), '=', \DB::raw('smc.user_id::text'))
             ->where('sme.external_code_cc', $cc)
             ->select('smc.correo_flesan')
             ->value('smc.correo_flesan'); // retorna solo el valor
@@ -123,14 +123,17 @@ class SolicitudController extends Controller
         $correoAprob2 = null;
         if ($correoAprob1) {
             $correoAprob2 = \DB::connection('dw_chile')
-                ->table('flesan_rrhh.sap_maestro_colaborador_1 as empleado')
-                ->join('flesan_rrhh.sap_maestro_colaborador_1 as lider', \DB::raw('empleado.np_lider'), '=', \DB::raw('lider.user_id::text'))
+                ->table('flesan_rrhh.sap_maestro_colaborador as empleado')
+                ->join('flesan_rrhh.sap_maestro_colaborador as lider', \DB::raw('empleado.np_lider'), '=', \DB::raw('lider.user_id::text'))
                 ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($correoAprob1)])
                 ->select('lider.correo_flesan')
                 ->value('lider.correo_flesan');
         }
         $bloqueados = [
-                'alfredo.hirmas@flesan.cl'
+                'rsalinas@flesan.cl',
+                'tchahuan@dvc.cl',
+                'jorge.stuardo@flesan.cl'
+
             ];
             $mensaje = 'Contactar a oficina central';
 
