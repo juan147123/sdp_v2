@@ -49,9 +49,6 @@
                                     style="font-size: 0.9rem; height: 30px"
                                     severity="info"
                                     @click="showModal"
-                                    :disabled="
-                                        this.colaboradoresDetalle.length == 0
-                                    "
                                     v-tooltip.top="'Nueva solicitud'"
                                 />
                             </div>
