@@ -179,19 +179,15 @@ class SolicitudController extends Controller
             $centros_permitidos
         )->whereIn('status', [1, 2]);
 
-        // 1) CECOs únicos (ajusta el nombre si tu campo es otro)
         $ccs = collect($result)->map(function ($s) {
-            // Usa el campo real del CECO en tu payload:
             return $s->centro_costo ?? $s->external_code_cc ?? null;
         })->filter()->unique()->values();
 
-        // 2) Resolver correos por CECO una sola vez
         $ccMap = [];
         foreach ($ccs as $cc) {
-            $ccMap[$cc] = $this->getCorreosAprobadoresPorCC($cc); // ['a1'=>..., 'a2'=>...]
+            $ccMap[$cc] = $this->getCorreosAprobadoresPorCC($cc); 
         }
 
-        // 3) Inyectar en cada solicitud
         $result = $result->map(function ($s) use ($ccMap) {
             $cc = $s->centro_costo ?? $s->external_code_cc ?? null;
             $s->aprobadores_correos = $cc && isset($ccMap[$cc])
@@ -238,18 +234,16 @@ class SolicitudController extends Controller
         $centros_permitidos
         )->whereIn('status', [1, 2]);
 
-        // CECOs únicos
         $ccs = collect($result)->map(function ($s) {
             return $s->centro_costo ?? $s->external_code_cc ?? null;
         })->filter()->unique()->values();
 
-        // resolver correos por CECO (usa tu helper ya hecho)
         $ccMap = [];
         foreach ($ccs as $cc) {
-            $ccMap[$cc] = $this->getCorreosAprobadoresPorCC($cc); // ['a1'=>..., 'a2'=>...]
+            $ccMap[$cc] = $this->getCorreosAprobadoresPorCC($cc);
         }
 
-        // inyectar en cada solicitud
+ 
         $result = $result->map(function ($s) use ($ccMap) {
             $cc = $s->centro_costo ?? $s->external_code_cc ?? null;
             $s->aprobadores_correos = $cc && isset($ccMap[$cc])

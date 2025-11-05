@@ -191,10 +191,10 @@ export default {
     methods: {
         getNombresRolesLegibles(codigosRoles) {
             const mapaRoles = {
-                'LIDEROBRACL': 'Líder Obra Chile',
+                'LIDEROBRACL': 'Administrador obra RRHH',
                 'ADMRRHH': 'Administrador RRHH',
-                'APROBOBRA': 'Aprobador Obra',
-                'APROBVISITADOR': 'Aprobador Visitador',
+                'APROBOBRA': 'Administrador de obra',
+                'APROBVISITADOR': 'Gerente de proyecto',
                 'SUPERAD': 'Superadministrador',
                 'LIDERCL': 'Líder Chile',
                 'LIDERPE': 'Líder Perú',
