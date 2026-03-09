@@ -475,25 +475,25 @@ export default {
 
 /* 2) Columnas con ancho reducido (1..5 y 7) */
 :deep(.p-datatable-thead th:nth-child(1)),
-:deep(.p-datatable-tbody td:nth-child(1)){ width: 115px; text-align:center; }  /* Código */
+:deep(.p-datatable-tbody td:nth-child(1)){ width: 125px; text-align:center; }  /* Código */
 
 :deep(.p-datatable-thead th:nth-child(2)),
-:deep(.p-datatable-tbody td:nth-child(2)){ width: 170px; }                     /* Solicitante */
+:deep(.p-datatable-tbody td:nth-child(2)){ width: 215px; }                     /* Solicitante */
 
 :deep(.p-datatable-thead th:nth-child(3)),
-:deep(.p-datatable-tbody td:nth-child(3)){ width: 110px; text-align:center; }  /* Centro de costo */
+:deep(.p-datatable-tbody td:nth-child(3)){ width: 120px; text-align:center; }  /* Centro de costo */
 
 :deep(.p-datatable-thead th:nth-child(4)),
-:deep(.p-datatable-tbody td:nth-child(4)){ width: 110px; text-align:center; }  /* Fecha */
+:deep(.p-datatable-tbody td:nth-child(4)){ width: 120px; text-align:center; }  /* Fecha */
 
 :deep(.p-datatable-thead th:nth-child(5)),
-:deep(.p-datatable-tbody td:nth-child(5)){ width: 160px; text-align:center; }  /* Estado */
+:deep(.p-datatable-tbody td:nth-child(5)){ width: 170px; text-align:center; }  /* Estado */
 
 :deep(.p-datatable-thead th:nth-child(7)),
-:deep(.p-datatable-tbody td:nth-child(7)){ width: 125px;  text-align:center; }  /* Colaboradores (iconos) */
+:deep(.p-datatable-tbody td:nth-child(7)){ width: 135px;  text-align:center; }  /* Colaboradores (iconos) */
 
 /* 3) Siguiente Aprobador: sin ancho fijo y con salto de línea */
 :deep(.p-datatable-thead th:nth-child(6)),
-:deep(.p-datatable-tbody td:nth-child(6)){ width: 180px; text-align:center; }
+:deep(.p-datatable-tbody td:nth-child(6)){ width: 190px; text-align:center; }
 
 </style>

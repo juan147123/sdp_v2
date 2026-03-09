@@ -177,7 +177,8 @@ class SolicitudController extends Controller
             ],
             [],
             $centros_permitidos
-        )->whereIn('status', [1, 2]);
+        )->whereIn('status', [1, 2])
+         ->filter(fn($s) => !empty($s->centro_costo) || !empty($s->external_code_cc));
 
         $ccs = collect($result)->map(function ($s) {
             return $s->centro_costo ?? $s->external_code_cc ?? null;
@@ -232,7 +233,8 @@ class SolicitudController extends Controller
         ],
         [],
         $centros_permitidos
-        )->whereIn('status', [1, 2]);
+        )->whereIn('status', [1, 2])
+         ->filter(fn($s) => !empty($s->centro_costo) || !empty($s->external_code_cc));
 
         $ccs = collect($result)->map(function ($s) {
             return $s->centro_costo ?? $s->external_code_cc ?? null;
