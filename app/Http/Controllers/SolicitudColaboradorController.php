@@ -378,6 +378,7 @@ public function sendMailStatusMasive($solicitud, $status, $rol = null)
                     ->table('flesan_rrhh.sap_maestro_colaborador as empleado')
                     ->join('flesan_rrhh.sap_maestro_colaborador as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
                     ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($aprob1)])
+                    ->where('empleado.centro_costo', $cc)
                     ->value('lider.correo_flesan');
 
                 if ($aprob2) {
