@@ -126,6 +126,7 @@ class SolicitudController extends Controller
                 ->table('flesan_rrhh.sap_maestro_colaborador as empleado')
                 ->join('flesan_rrhh.sap_maestro_colaborador as lider', \DB::raw('empleado.np_lider'), '=', \DB::raw('lider.user_id::text'))
                 ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($correoAprob1)])
+                ->where('empleado.centro_costo', $cc) 
                 ->select('lider.correo_flesan')
                 ->value('lider.correo_flesan');
         }
