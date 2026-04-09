@@ -123,12 +123,17 @@ class SolicitudController extends Controller
         $correoAprob2 = null;
         if ($correoAprob1) {
             $correoAprob2 = \DB::connection('dw_chile')
-                ->table('flesan_rrhh.sap_maestro_colaborador as empleado')
-                ->join('flesan_rrhh.sap_maestro_colaborador as lider', \DB::raw('empleado.np_lider'), '=', \DB::raw('lider.user_id::text'))
-                ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($correoAprob1)])
-                ->where('empleado.centro_costo', $cc) 
-                ->select('lider.correo_flesan')
-                ->value('lider.correo_flesan');
+            ->table('flesan_rrhh.sap_maestro_colaborador as empleado')
+            ->join('flesan_rrhh.sap_maestro_colaborador as lider', function($join) {
+                $join->on('empleado.np_lider', '=', \DB::raw('lider.user_id::text'));
+            })
+            ->leftJoin('flesan_rrhh.sap_maestro_empresa_dep_un_cc as emp', function($join) {
+                $join->on('emp.lider_departamento', '=', \DB::raw('empleado.user_id::text'));
+            })
+            ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($correoAprob1)])
+            ->where('emp.external_code_cc', $cc)
+            ->select('lider.correo_flesan')
+            ->value('lider.correo_flesan');
         }
         $bloqueados = [
                 'rsalinas@flesan.cl',
