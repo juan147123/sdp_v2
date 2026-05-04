@@ -418,12 +418,16 @@ class SolicitudController extends Controller
         ],
     ])->render();
     $correo_solicitante = $new_solicitud->user_created;
-    $correo_aprob1 = \DB::connection('dw_chile')
-                ->table('flesan_rrhh.sap_maestro_colaborador as empleado')
-                ->join('flesan_rrhh.sap_maestro_colaborador as lider', 'empleado.np_lider', '=', \DB::raw('lider.user_id::text'))
-                ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($correo_solicitante)])
-                ->select('lider.correo_flesan')
-                ->first();
+    $primerIndex = $groupedIds[0] ?? 0;
+    $cc = $request->{"full_ceco$primerIndex"};
+    $correo_aprob1 = null;
+        if ($cc) {
+            $correo_aprob1 = \DB::connection('dw_chile')
+                ->table('flesan_rrhh.sap_maestro_empresa_dep_un_cc as sme')
+                ->join('flesan_rrhh.sap_maestro_colaborador as smc', \DB::raw('sme.lider_departamento'), '=', \DB::raw('smc.user_id::text'))
+                ->where('sme.external_code_cc', $cc)
+                ->value('smc.correo_flesan'); 
+        }
     
 
     $emails_to = $correo_solicitante. ',' . $correo_aprob1->correo_flesan;
