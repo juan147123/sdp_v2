@@ -289,7 +289,7 @@ export default {
                 if (data != undefined) {
                     var filterdata = [];
                     data.forEach((colaborador) => {
-                        if (colaborador.estadoadmin.id != 7) {
+                        if (colaborador.estadoadmin?.id != 7) {
                             filterdata.push(colaborador);
                         }
                     });

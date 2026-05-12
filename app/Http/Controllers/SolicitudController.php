@@ -123,38 +123,30 @@ class SolicitudController extends Controller
         $correoAprob2 = null;
         if ($correoAprob1) {
             $correoAprob2 = \DB::connection('dw_chile')
-            ->table('flesan_rrhh.sap_maestro_colaborador as empleado')
-            ->join('flesan_rrhh.sap_maestro_colaborador as lider', function($join) {
-                $join->on('empleado.np_lider', '=', \DB::raw('lider.user_id::text'));
-            })
-            ->leftJoin('flesan_rrhh.sap_maestro_empresa_dep_un_cc as emp', function($join) {
-                $join->on('emp.lider_departamento', '=', \DB::raw('empleado.user_id::text'));
-            })
-            ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($correoAprob1)])
-            ->where('emp.external_code_cc', $cc)
-            ->select('lider.correo_flesan')
-            ->value('lider.correo_flesan');
+                ->table('flesan_rrhh.sap_maestro_colaborador as empleado')
+                ->join('flesan_rrhh.sap_maestro_colaborador as lider', function ($join) {
+                    $join->on('empleado.np_lider', '=', \DB::raw('lider.user_id::text'));
+                })
+                ->leftJoin('flesan_rrhh.sap_maestro_empresa_dep_un_cc as emp', function ($join) {
+                    $join->on('emp.lider_departamento', '=', \DB::raw('empleado.user_id::text'));
+                })
+                ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($correoAprob1)])
+                ->where('emp.external_code_cc', $cc)
+                ->select('lider.correo_flesan')
+                ->value('lider.correo_flesan');
         }
         $bloqueados = [
-                'rsalinas@flesan.cl',
-                'tchahuan@dvc.cl',
-                'jorge.stuardo@flesan.cl'
+            'rsalinas@flesan.cl',
+            'tchahuan@dvc.cl',
+            'jorge.stuardo@flesan.cl'
 
-            ];
-            $mensaje = 'Contactar a oficina central';
+        ];
+        return [
+            'a1' => $correoAprob1,
+            'a2' => $correoAprob2,
+        ];
+    }
 
-            
-            $maskIfBlocked = function (?string $correo) use ($bloqueados, $mensaje): ?string {
-                if (!$correo) return null;
-                return in_array(mb_strtolower(trim($correo)), $bloqueados, true) ? $mensaje : $correo;
-            };
-
-            return [
-                'a1' => $maskIfBlocked($correoAprob1),
-                'a2' => $maskIfBlocked($correoAprob2),
-            ];
-            }
-    
 
     public function listAllCCAprobar()
     {
@@ -184,7 +176,7 @@ class SolicitudController extends Controller
             [],
             $centros_permitidos
         )->whereIn('status', [1, 2])
-         ->filter(fn($s) => !empty($s->centro_costo) || !empty($s->external_code_cc));
+            ->filter(fn($s) => !empty($s->centro_costo) || !empty($s->external_code_cc));
 
         $ccs = collect($result)->map(function ($s) {
             return $s->centro_costo ?? $s->external_code_cc ?? null;
@@ -192,7 +184,7 @@ class SolicitudController extends Controller
 
         $ccMap = [];
         foreach ($ccs as $cc) {
-            $ccMap[$cc] = $this->getCorreosAprobadoresPorCC($cc); 
+            $ccMap[$cc] = $this->getCorreosAprobadoresPorCC($cc);
         }
 
         $result = $result->map(function ($s) use ($ccMap) {
@@ -220,27 +212,27 @@ class SolicitudController extends Controller
             if ($aprobador) {
                 $centros_permitidos = array("centro_costo" => explode(',', trim($aprobador[0]->cc, '{}')));
             }
-            
+
             if (Auth::user()->username == 'dreidy.contreras@dvc.cl') {
                 $centros_permitidos['centro_costo'][] = 'DVCR50012';
             }
         }
         $result = $this->repository->all(
-        ['*'],
-        [
-            'estado',
-            'archivos',
-            'solicitudColaborador',
-            'solicitudColaborador.archivos',
-            'solicitudColaborador.estado',
-            'solicitudColaborador.SapMaestroCausalesTerminos',
-            'solicitudColaborador.checkAreaColaboradores',
-            'solicitudColaborador.estadoadmin'
-        ],
-        [],
-        $centros_permitidos
+            ['*'],
+            [
+                'estado',
+                'archivos',
+                'solicitudColaborador',
+                'solicitudColaborador.archivos',
+                'solicitudColaborador.estado',
+                'solicitudColaborador.SapMaestroCausalesTerminos',
+                'solicitudColaborador.checkAreaColaboradores',
+                'solicitudColaborador.estadoadmin'
+            ],
+            [],
+            $centros_permitidos
         )->whereIn('status', [1, 2])
-         ->filter(fn($s) => !empty($s->centro_costo) || !empty($s->external_code_cc));
+            ->filter(fn($s) => !empty($s->centro_costo) || !empty($s->external_code_cc));
 
         $ccs = collect($result)->map(function ($s) {
             return $s->centro_costo ?? $s->external_code_cc ?? null;
@@ -251,7 +243,7 @@ class SolicitudController extends Controller
             $ccMap[$cc] = $this->getCorreosAprobadoresPorCC($cc);
         }
 
- 
+
         $result = $result->map(function ($s) use ($ccMap) {
             $cc = $s->centro_costo ?? $s->external_code_cc ?? null;
             $s->aprobadores_correos = $cc && isset($ccMap[$cc])
@@ -310,7 +302,7 @@ class SolicitudController extends Controller
     public function createSolicitudDetail($request, $new_solicitud)
     {
         $solicitud_detail = $this->buildSolicitudDetail($request->all(), $new_solicitud);
-        $newSolicitudDetail =  $this->repositorySolicitudDetalle->create($solicitud_detail);
+        $newSolicitudDetail = $this->repositorySolicitudDetalle->create($solicitud_detail);
         return $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $request->file('filesForm'), '', '', null);
     }
 
@@ -342,114 +334,152 @@ class SolicitudController extends Controller
         ];
     }
     public function createMultiple(Request $request)
-{
-    $new_solicitud = $this->createSolicitudMultiple($request);
-    $requestData = $request->all();
-    $groupedIds = [];
+    {
+        $new_solicitud = $this->createSolicitudMultiple($request);
+        $requestData = $request->all();
+        $groupedIds = [];
 
-    $archivos_variante = $request->file("variable0");
-    $this->saveDocumentLocal(null, $new_solicitud,  $archivos_variante, "variable", "Variable", $new_solicitud->id);
+        $archivos_variante = $request->file("variable0");
+        $this->saveDocumentLocal(null, $new_solicitud, $archivos_variante, "variable", "Variable", $new_solicitud->id);
 
-    foreach ($requestData as $key => $value) {
-        if (strpos($key, 'user_id') !== false) {
-            $groupId = substr($key, -1);
-            if (!in_array($groupId, $groupedIds)) {
-                $groupedIds[] = $groupId;
+        foreach ($requestData as $key => $value) {
+            if (strpos($key, 'user_id') !== false) {
+                $groupId = substr($key, -1);
+                if (!in_array($groupId, $groupedIds)) {
+                    $groupedIds[] = $groupId;
+                }
+            }
+        }
+
+        $bloqueados = ['rsalinas@flesan.cl', 'tchahuan@dvc.cl', 'jorge.stuardo@flesan.cl'];
+
+        foreach ($groupedIds as $index => $value) {
+            $cc = $request->{"centro_costo$index"};
+            $approvers = $this->getCorreosAprobadoresPorCC($cc);
+
+            // LOGS DE PRUEBA (Ver en storage/logs/laravel.log)
+            \Log::info("Validando CC: " . $cc);
+            \Log::info("Aprobador 1 detectado: '" . ($approvers['a1'] ?? 'null') . "'");
+
+            // Determinar estado inicial por auto-aprobación
+            $status_inicial = 1; // Pendiente
+            $a1_limpio = strtolower(trim($approvers['a1'] ?? ''));
+            $a1_es_jefe = in_array($a1_limpio, $bloqueados);
+
+            \Log::info("¿Es jefe bloqueado?: " . ($a1_es_jefe ? 'SI' : 'NO'));
+
+            if ($a1_es_jefe) {
+                $status_inicial = 2; // Auto-aprobado por Admin
+                $a2_limpio = strtolower(trim($approvers['a2'] ?? ''));
+                if (in_array($a2_limpio, $bloqueados)) {
+                    $status_inicial = 6; // Auto-aprobado por Visitador
+                }
+            }
+
+            $data = array(
+                "user_id" => $request->{"user_id$index"},
+                "nombre_completo" => $request->{"nombre_completo$index"},
+                "motivo" => $request->{"motivo$index"}['externalcode'],
+                "fecha_desvinculacion" => $request->{"fecha_desvinculacion$index"},
+                "redireccion" => $request->{"redireccion$index"},
+                "rut_empresa" => $request->{"rut_empresa$index"},
+                "centro_costo" => $cc,
+                "full_ceco" => $request->{"full_ceco$index"},
+                "fecha_ingreso" => $request->{"fecha_ingreso$index"},
+                'id_solicitud' => $new_solicitud->id,
+                'status' => $status_inicial // Asignamos el estado calculado
+            );
+
+            $archivos1 = $request->file("carta_firmada$index");
+            $archivos2 = $request->file("cese_dt$index");
+            $archivos3 = $request->file("cese_afc$index");
+            $archivos4 = $request->file("aporte_empleador$index");
+            $archivos5 = $request->file("cert_defuncion$index");
+            $archivos6 = $request->file("boleta_funebre$index");
+            $archivos7 = $request->file("info_bancaria$index");
+            $archivos8 = $request->file("convenio_practica$index");
+
+            $newSolicitudDetail = $this->repositorySolicitudDetalle->create($data);
+            $this->insertCheckList($request, $request->{"user_id$index"}, $newSolicitudDetail->id);
+
+            $this->logInvalidFiles($archivos1, "carta_firmada$index");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos1, "carta_firmada", "Carta firmada o comprobante de envio por correo certificado", null);
+
+            $this->logInvalidFiles($archivos2, "cese_dt$index");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos2, "cese_dt", "AVISO DT", null);
+
+            $this->logInvalidFiles($archivos3, "cese_afc$index");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos3, "cese_afc", "CESE AFC", null);
+
+            $this->logInvalidFiles($archivos4, "aporte_empleador$index");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos4, "aporte_empleador", "Aporte empleador AFC", null);
+
+            $this->logInvalidFiles($archivos5, "cert_defuncion$index");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos5, "cert_defuncion", "Certificado de defunción", null);
+
+            $this->logInvalidFiles($archivos6, "boleta_funebre$index");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos6, "boleta_funebre", "Boleta o comprobante de gastos funebres", null);
+
+            $this->logInvalidFiles($archivos7, "info_bancaria$index");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos7, "info_bancaria", "Información bancaria del beneficiario", null);
+
+            $this->logInvalidFiles($archivos8, "convenio_practica$index");
+            $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos8, "convenio_practica", "Convenio de práctica", null);
+        }
+
+        $body = View::make('emails.NuevaSolicitud', [
+            'data' => [
+                'solicitud' => $new_solicitud,
+                'linkAcceso' => 'https://desvinculaciones.grupoflesan.com/',
+                'usuario' => strtoupper(Auth::user()->name),
+            ],
+        ])->render();
+
+        $correo_solicitante = $new_solicitud->user_created;
+
+        // Lógica de correos para el primer aprobador
+        $primerIndex = $groupedIds[0] ?? 0;
+        $cc_inicial = $request->{"centro_costo$primerIndex"};
+        $approvers_inicial = $this->getCorreosAprobadoresPorCC($cc_inicial);
+
+        $destinatarios = [$correo_solicitante];
+
+        // Solo enviar al Aprobador 1 si NO es uno de los jefes bloqueados
+        if ($approvers_inicial['a1'] && !in_array(strtolower(trim($approvers_inicial['a1'])), $bloqueados)) {
+            $destinatarios[] = $approvers_inicial['a1'];
+        }
+
+        $emails_to = implode(',', $destinatarios);
+        $subject = 'SISTEMA DE DESVINCULACIÓN SDP';
+        ExtraServicecontroller::send_email_gf($body, $subject, $emails_to, 'https://i-c-flesan.github.io/assets-flesan/headers_aplicativos/header_rojo_sdd_nuevasolicitud.png');
+
+        // Actualizar el estado de la solicitud global si hubo auto-aprobación
+        // Buscamos el estado más bajo de los detalles recién creados
+        $minStatus = \DB::table('solicitud_colaborador')
+            ->where('id_solicitud', $new_solicitud->id)
+            ->min('status');
+
+        if ($minStatus > 1) {
+            $this->repository->update($new_solicitud->id, ['status' => $minStatus]);
+        }
+
+        return redirect($request->pathname0);
+    }
+
+    private function logInvalidFiles($archivos, $campo)
+    {
+        if ($archivos) {
+            foreach (is_array($archivos) ? $archivos : [$archivos] as $file) {
+                if (!$file->isValid()) {
+                    \Log::error(
+                        "Archivo inválido en campo '$campo': "
+                        . $file->getClientOriginalName()
+                        . " → " . $file->getErrorMessage()
+                    );
+                }
             }
         }
     }
-
-    foreach ($groupedIds as $index => $value) {
-        $data = array(
-            "user_id" => $request->{"user_id$index"},
-            "nombre_completo" => $request->{"nombre_completo$index"},
-            "motivo" => $request->{"motivo$index"}['externalcode'],
-            "fecha_desvinculacion" => $request->{"fecha_desvinculacion$index"},
-            "redireccion" => $request->{"redireccion$index"},
-            "rut_empresa" => $request->{"rut_empresa$index"},
-            "centro_costo" => $request->{"centro_costo$index"},
-            "full_ceco" => $request->{"full_ceco$index"},
-            "fecha_ingreso" => $request->{"fecha_ingreso$index"},
-            'id_solicitud' => $new_solicitud->id
-        );
-
-        $archivos1 = $request->file("carta_firmada$index");
-        $archivos2 = $request->file("cese_dt$index");
-        $archivos3 = $request->file("cese_afc$index");
-        $archivos4 = $request->file("aporte_empleador$index");
-        $archivos5 = $request->file("cert_defuncion$index");
-        $archivos6 = $request->file("boleta_funebre$index");
-        $archivos7 = $request->file("info_bancaria$index");
-        $archivos8 = $request->file("convenio_practica$index");
-
-        $newSolicitudDetail =  $this->repositorySolicitudDetalle->create($data);
-        $this->insertCheckList($request, $request->{"user_id$index"}, $newSolicitudDetail->id);
-
-        $this->logInvalidFiles($archivos1, "carta_firmada$index");
-        $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos1, "carta_firmada", "Carta firmada o comprobante de envio por correo certificado", null);
-
-        $this->logInvalidFiles($archivos2, "cese_dt$index");
-        $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos2, "cese_dt", "AVISO DT", null);
-
-        $this->logInvalidFiles($archivos3, "cese_afc$index");
-        $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos3, "cese_afc", "CESE AFC", null);
-
-        $this->logInvalidFiles($archivos4, "aporte_empleador$index");
-        $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos4, "aporte_empleador", "Aporte empleador AFC", null);
-
-        $this->logInvalidFiles($archivos5, "cert_defuncion$index");
-        $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos5, "cert_defuncion", "Certificado de defunción", null);
-
-        $this->logInvalidFiles($archivos6, "boleta_funebre$index");
-        $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos6, "boleta_funebre", "Boleta o comprobante de gastos funebres", null);
-
-        $this->logInvalidFiles($archivos7, "info_bancaria$index");
-        $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos7, "info_bancaria", "Información bancaria del beneficiario", null);
-
-        $this->logInvalidFiles($archivos8, "convenio_practica$index");
-        $this->saveDocumentLocal($newSolicitudDetail->id, $new_solicitud, $archivos8, "convenio_practica", "Convenio de práctica", null);
-    }
-
-    $body = View::make('emails.NuevaSolicitud', [
-        'data' => [
-            'solicitud' => $new_solicitud,
-            'linkAcceso' => 'https://desvinculaciones.grupoflesan.com/',
-            'usuario' => strtoupper(Auth::user()->name),
-        ],
-    ])->render();
-    $correo_solicitante = $new_solicitud->user_created;
-    $primerIndex = $groupedIds[0] ?? 0;
-    $cc = $request->{"full_ceco$primerIndex"};
-    $correo_aprob1 = null;
-        if ($cc) {
-            $correo_aprob1 = \DB::connection('dw_chile')
-                ->table('flesan_rrhh.sap_maestro_empresa_dep_un_cc as sme')
-                ->join('flesan_rrhh.sap_maestro_colaborador as smc', \DB::raw('sme.lider_departamento'), '=', \DB::raw('smc.user_id::text'))
-                ->where('sme.external_code_cc', $cc)
-                ->value('smc.correo_flesan'); 
-        }
-    
-
-    $emails_to = $correo_solicitante. ',' . $correo_aprob1->correo_flesan;
-    $subject = 'SISTEMA DE DESVINCULACIÓN SDP';
-    ExtraServicecontroller::send_email_gf($body, $subject, $emails_to);
-
-    return redirect($request->pathname0);
-}
-
-private function logInvalidFiles($archivos, $campo)
-{
-    if ($archivos) {
-        foreach (is_array($archivos) ? $archivos : [$archivos] as $file) {
-            if (!$file->isValid()) {
-                \Log::error("Archivo inválido en campo '$campo': "
-                    . $file->getClientOriginalName()
-                    . " → " . $file->getErrorMessage()
-                );
-            }
-        }
-    }
-}
 
 
     public function updateMultiple(Request $request)
@@ -458,7 +488,7 @@ private function logInvalidFiles($archivos, $campo)
         $requestData = $request->all();
         $old_solicitud = $this->repository->findById($request->id_solicitud0);
         $archivos_variante = $request->file("variable0");
-        $this->saveDocumentLocal(null, $old_solicitud,  $archivos_variante, "variable", "Variable", $old_solicitud->id);
+        $this->saveDocumentLocal(null, $old_solicitud, $archivos_variante, "variable", "Variable", $old_solicitud->id);
 
         $groupedIds = [];
         foreach ($requestData as $key => $value) {
@@ -483,7 +513,7 @@ private function logInvalidFiles($archivos, $campo)
                 "comentario_admin_obra" => null,
                 "aprobado_visitador_obra" => $request->{"aprobado_visitador_obra$index"},
                 "comentario_visitador" => null,
-                "aprobado_rrhh" =>  $request->{"aprobado_rrhh$index"},
+                "aprobado_rrhh" => $request->{"aprobado_rrhh$index"},
                 "comentario_rrhh" => null,
             );
 
@@ -497,16 +527,16 @@ private function logInvalidFiles($archivos, $campo)
             $archivos8 = $request->file("convenio_practica$index");
 
 
-            $newSolicitudDetail =  $this->repositorySolicitudDetalle->update($request->{"id$index"}, $data);
+            $newSolicitudDetail = $this->repositorySolicitudDetalle->update($request->{"id$index"}, $data);
 
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos1, "carta_firmada", "Carta firmada o comprobante de envio por correo certificado", null);
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos2, "cese_dt", "AVISO DT", null);
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos3, "cese_afc", "CESE AFC", null);
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos4, "aporte_empleador", "Aporte empleador AFC", null);
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos5, "cert_defuncion", "Certificado de defunción", null);
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos6, "boleta_funebre", "Boleta o comprobante de gastos funebres", null);
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos7, "info_bancaria", "Información bancaria del beneficiario", null);
-            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud,  $archivos8, "convenio_practica", "Convenio de práctica", null);
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud, $archivos1, "carta_firmada", "Carta firmada o comprobante de envio por correo certificado", null);
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud, $archivos2, "cese_dt", "AVISO DT", null);
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud, $archivos3, "cese_afc", "CESE AFC", null);
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud, $archivos4, "aporte_empleador", "Aporte empleador AFC", null);
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud, $archivos5, "cert_defuncion", "Certificado de defunción", null);
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud, $archivos6, "boleta_funebre", "Boleta o comprobante de gastos funebres", null);
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud, $archivos7, "info_bancaria", "Información bancaria del beneficiario", null);
+            $this->saveDocumentLocal($request->{"id$index"}, $old_solicitud, $archivos8, "convenio_practica", "Convenio de práctica", null);
         }
 
 
@@ -537,7 +567,7 @@ private function logInvalidFiles($archivos, $campo)
     {
         try {
             if ($archivos) {
-                $documents =  $this->archivoRepository->uploadFile($archivos, $id, $new_solicitud, $origen, $titulo, $id_solicitud);
+                $documents = $this->archivoRepository->uploadFile($archivos, $id, $new_solicitud, $origen, $titulo, $id_solicitud);
                 foreach ($documents as $document) {
                     $this->archivoRepository->create($document);
                 }

@@ -141,7 +141,7 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
             $colaborador->solicitudes = $this->CountSolicitudByUserId($colaborador->user_id);
             return $colaborador;
         });
-        return  $colaboradores;
+        return $colaboradores;
     }
 
     public function getColaboradoresObra($correo)
@@ -235,7 +235,7 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
             $colaborador->solicitudes = $this->CountSolicitudByUserId($colaborador->user_id);
             return $colaborador;
         });
-        return  $colaboradores;
+        return $colaboradores;
     }
     public function getAprobadorObraCL($correo)
     {
@@ -251,7 +251,7 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
         $colaborador = DB::connection('dw_chile')->select(DB::raw($query_obra), [
             'correo' => $correo,
         ]);
-        return  $colaborador;
+        return $colaborador;
     }
 
     public function getVisitadorObraCL($correo)
@@ -268,7 +268,7 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
         $colaborador = DB::connection('dw_chile')->select(DB::raw($query_obra), [
             'correo' => $correo,
         ]);
-        return  $colaborador;
+        return $colaborador;
     }
 
 
@@ -354,14 +354,14 @@ class PersonalChileRepository extends BaseRepository implements PersonalChileRep
     }
 
     public function CountSolicitudByUserId($userId)
-{
-    return DB::connection('pgsql') 
-        ->table('solicitud_colaborador as sc')
-        ->join('solicitudes as s', 's.id', '=', 'sc.id_solicitud')
-        ->where('sc.user_id', $userId)
-        ->where('sc.enable', 1)   
-        ->where('s.enable', 1) 
-        ->distinct('sc.id_solicitud')
-        ->count('sc.id_solicitud');
-}
+    {
+        return DB::connection('pgsql')
+            ->table('solicitud_colaborador as sc')
+            ->join('solicitudes as s', 's.id', '=', 'sc.id_solicitud')
+            ->where('sc.user_id', $userId)
+            ->where('sc.enable', 1)
+            ->where('s.enable', 1)
+            ->distinct('sc.id_solicitud')
+            ->count('sc.id_solicitud');
+    }
 }

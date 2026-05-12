@@ -24,26 +24,38 @@ class ExtraServicecontroller extends Controller
         return $access_token;
     }
 
-    public static function send_email_gf($body, $subject, $emails_to)
+    public static function send_email_gf($body, $subject, $emails_to, $url_header = null)
     {
-        // return 1;
-        $URL_API = 'https://api.grupoflesan.com/api/';
-        $token = self::get_token_api_gf();
-        $headers = [
-            'Authorization' => "Bearer $token"
-        ];
-        $data = [
-            'cuerpo' => $body,
-            'asunto' => $subject,
-            'destinatarios' => $emails_to,
-            'cabecera_img' => 'https://api.grupoflesan.com/img/LogoSDP.png'
-        ];
-        $response = Http::withHeaders($headers)->post(
-            "{$URL_API}sendNotificacionVacia",
-            $data
-        );
-        \Log::info("Enviando correos a: {$emails_to}");
-        return $response;
+        $URL_API = 'https://apinotificaciones.grupoflesan.com/api/v1/notifications/email-custom';
+        $apiKey = '6a503aa284cfbd36593fa35e3bf9b0';
+
+        if (empty($url_header)) {
+            $url_header = 'https://i-c-flesan.github.io/assets-flesan/headers_aplicativos/header_rojo_sdd_estadodesolicitud.png';
+        }
+
+        $recipients = explode(',', $emails_to);
+        $lastResponse = null;
+
+        foreach ($recipients as $recipient) {
+            $recipient = trim($recipient);
+            if (empty($recipient)) continue;
+
+            $data = [
+                'custom_html' => $body,
+                'recipient' => $recipient,
+                'subject' => $subject,
+                'url_header' => $url_header
+            ];
+
+            $response = Http::withHeaders([
+                'x-api-key' => $apiKey,
+            ])->post($URL_API, $data);
+
+            $lastResponse = $response;
+            \Log::info("Enviando correo a: {$recipient} - Status: " . $response->status());
+        }
+
+        return $lastResponse;
     }
 
 

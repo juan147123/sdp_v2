@@ -1,4 +1,4 @@
-<template>
+<template> 
     <Preloader v-if="isLoadingForm == true" :mensaje="mensaje" />
     <AppLayout>
         <div v-if="this.details != true">
@@ -13,7 +13,7 @@
                                 <span class="info-box-text color-custom-pendiente">PENDIENTES</span>
                                 <span class="info-box-number">{{
                                     conteoSolicitudes.PENDIENTE
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -25,7 +25,7 @@
                                 <span class="info-box-text color-custom-aprobado">APROBADOS</span>
                                 <span class="info-box-number">{{
                                     conteoSolicitudes.APROBADO
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                                 <span class="info-box-text color-custom-rechazado">RECHAZADOS</span>
                                 <span class="info-box-number">{{
                                     conteoSolicitudes.RECHAZADO
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -101,12 +101,12 @@
                                 headerStyle="background-color:black; color:white" style="text-align: center" sortable
                                 :showFilterMatchModes="false">
                                 <template #body="{ data }">
-                                    <Tag :value="data.estado.id == 3
+                                    <Tag :value="data.estado?.id == 3 || data.estado?.id == 4
                                         ? 'APROBADO'
-                                        : data.estado.descripcion
-                                        " :severity="data.estado.id == 3
+                                        : (data.estado?.descripcion || 'SIN ESTADO')
+                                        " :severity="data.estado?.id == 3 || data.estado?.id == 4
                                             ? 'success'
-                                            : data.estado.color
+                                            : (data.estado?.color || 'warning')
                                             " />
                                 </template>
                                 <template #filter="{ filterModel }">
@@ -120,6 +120,7 @@
                             header="Siguiente Aprobador"
                             headerStyle="background-color:black; color:white"
                             style="text-align:center"
+                            :bodyClass="'wrap-cell max-w-email'"
                             >
                             <template #body="{ data }">
                                 <span v-if="getNextApproverEmail(data)">{{ getNextApproverEmail(data) }}</span>
@@ -130,7 +131,7 @@
                                 headerStyle="background-color:black; color:white" sortable style="text-align: center"
                                 :showFilterMatchModes="false">
                                 <template #body="{ data }">
-                                    <Button icon="pi pi-users" class="ml-2" style="font-size: 0.9rem; height: 30px;  width: 2rem !important;
+                                    <Button icon="pi pi-users" class="ml-2" style="font-size: 0.9rem; height: 30px;     width: 2rem !important;
                                             height: 2rem !important;" severity="info" @click="ChangeView(data)"
                                         v-tooltip.top="'colaboradores'" />
                                     <Button icon="pi pi-folder" class="ml-2" style="
@@ -149,8 +150,7 @@
         </div>
         <SolicitudesColaborador @ChangeView="this.ChangeView" @getData="this.getData"
             :solicitud_selected="solicitud_selected" :details="this.details" />
-        <Modal :archivosList="this.archivosList" :visible="this.visible" @setImagenes="this.setImagenes" />
-
+            <Modal :archivosList="this.archivosList" :visible="this.visible" @setImagenes="this.setImagenes" />
     </AppLayout>
 </template>
 <script>
@@ -166,7 +166,6 @@ import { FilterMatchMode } from "primevue/api";
 import PrimeVueComponents from "../../../js/primevue.js";
 import Modal from "./SolicitudColaborador/Components/Modal.vue";
 
-
 export default {
     components: {
         AppLayout,
@@ -178,16 +177,23 @@ export default {
     },
     setup() {
         setLocaleES();
+        return {};
     },
     data() {
         return {
             breadcrumbs: [
                 {
                     label: "Solicitudes",
-                    url: "/redirectpage/solicitud/aprobar",
+                    url: "/redirectpage/solicitud/visitador/aprobar",
                     icon: "fa fa-book",
                 },
             ],
+            conteoSolicitudes: {
+                CREADO: 0,
+                PEDIENTE: 0,
+                APROBADO: 0,
+                RECHAZADO: 0,
+            },
             mensaje: "",
             isLoadingForm: false,
             table: [],
@@ -200,12 +206,6 @@ export default {
                 id_solicitud: 0,
                 comentario: "",
             }),
-            conteoSolicitudes: {
-                CREADO: 0,
-                PEDIENTE: 0,
-                APROBADO: 0,
-                RECHAZADO: 0,
-            },
             dataTable: {
                 rows: 10,
                 data: [],
@@ -270,10 +270,13 @@ export default {
             this.form.id = id;
             this.form.status = status;
             this.form.id_solicitud = id_solicitud;
+            this.mensaje = "espere mientras se efectuan los cambios....";
+            this.isLoadingForm = true;
 
             await new Promise((resolve) => {
                 setSwal({
                     value: "updateStatusInput",
+                    data: status,
                     callback: async (comentario) => {
                         resolve();
                         this.update(comentario);
@@ -283,8 +286,6 @@ export default {
         },
 
         update(comentario) {
-            this.mensaje = "espere mientras se efectuan los cambios....";
-            this.isLoadingForm = true;
             this.form.comentario = comentario;
             this.form.put(this.route("solicitud.colaborador.update.status"), {
                 onFinish: () => {
@@ -395,9 +396,10 @@ export default {
                 return { estado: o };
             });
 
-            this.setDashboard();
+            // Asegurar que todos los estados deseados estén presentes
+            this.setDAtaDashboard();
         },
-        setDashboard() {
+        setDAtaDashboard() {
             const estadoCount = this.dataTable.data.reduce((acc, s) => {
                 const descripcion =
                     s.estado && s.estado.descripcion
@@ -406,7 +408,6 @@ export default {
                 acc[descripcion] = (acc[descripcion] || 0) + 1;
                 return acc;
             }, {});
-            // Asegurar que todos los estados deseados estén presentes
             const estadosDeseados = [
                 "CREADO",
                 "PENDIENTE",
@@ -420,7 +421,7 @@ export default {
                     // Sumar todas las variantes de "APROBADO"
                     this.conteoSolicitudes["APROBADO"] =
                         (estadoCount["APROBADO"] || 0) +
-                        (estadoCount["APROBADO ADMINISTRADOR"] || 0) +
+                        (estadoCount["APROBADO VISITADOR"] || 0) +
                         (estadoCount["SOLICITUD APROBADA TOTAL"] || 0) +
                         (estadoCount["PENDIENTE APROBAR POR RRHH"] || 0);
                 } else if (estado === "RECHAZADO") {
@@ -428,13 +429,13 @@ export default {
                     this.conteoSolicitudes["RECHAZADO"] =
                         (estadoCount["SOLICITUD RECHAZADA"] || 0) +
                         (estadoCount["RECHAZADO RRHH"] || 0) +
-                        (estadoCount["RECHAZADO ADMINISTRADOR"] || 0) +
+                        (estadoCount["RECHAZADO VISITADOR"] || 0) +
                         (estadoCount["SOLICITUD RECHAZADA TOTAL"] || 0);
                 } else if (estado === "PENDIENTE") {
-                    // Sumar todas las variantes de "RECHAZADO"
+                    // Pendiente para el visitador
                     this.conteoSolicitudes["PENDIENTE"] =
                         (estadoCount[
-                            "PENDIENTE APROBAR POR DE VISITADOR DE OBRA"
+                            "PENDIENTE APROBAR POR GERENTE DE PROYECTO"
                         ] || 0);
                 } else {
                     // Para otros estados, asignar el valor directamente
@@ -446,7 +447,7 @@ export default {
             return dateFormatChange(data);
         },
         ChangeView(data) {
-            this.setDashboard();
+            this.setDAtaDashboard();
             this.details = !this.details;
             this.solicitud_selected = data ? data : [];
         },
@@ -455,12 +456,10 @@ export default {
             const desc = (row?.estado?.descripcion || '').toUpperCase();
 
             if (desc.includes('APROBADO') || desc.includes('RECHAZADA')) return null;
-            if (desc.includes('CREADO')) return c.a1 || null;
-            if (desc.includes('PENDIENTE APROBAR POR ADMINISTRADOR')) return c.a1 || null;
-            if (desc.includes('PENDIENTE APROBAR POR GERENTE ')) return c.a2 || null;
-
+            if (desc.includes('GERENTE DE PROYECTO')) return c.a2 || null;
+            if (desc.includes('RRHH')) return 'RRHH';
             
-            return c.a2 || c.a1 || null;
+            return c.a2 || null;
         }
     },
 };
@@ -473,25 +472,25 @@ export default {
 
 /* 2) Columnas con ancho reducido (1..5 y 7) */
 :deep(.p-datatable-thead th:nth-child(1)),
-:deep(.p-datatable-tbody td:nth-child(1)){ width: 115px; text-align:center; }  /* Código */
+:deep(.p-datatable-tbody td:nth-child(1)){ width: 125px; text-align:center; }  /* Código */
 
 :deep(.p-datatable-thead th:nth-child(2)),
-:deep(.p-datatable-tbody td:nth-child(2)){ width: 170px; }                     /* Solicitante */
+:deep(.p-datatable-tbody td:nth-child(2)){ width: 215px; }                     /* Solicitante */
 
 :deep(.p-datatable-thead th:nth-child(3)),
-:deep(.p-datatable-tbody td:nth-child(3)){ width: 110px; text-align:center; }  /* Centro de costo */
+:deep(.p-datatable-tbody td:nth-child(3)){ width: 120px; text-align:center; }  /* Centro de costo */
 
 :deep(.p-datatable-thead th:nth-child(4)),
-:deep(.p-datatable-tbody td:nth-child(4)){ width: 110px; text-align:center; }  /* Fecha */
+:deep(.p-datatable-tbody td:nth-child(4)){ width: 120px; text-align:center; }  /* Fecha */
 
 :deep(.p-datatable-thead th:nth-child(5)),
-:deep(.p-datatable-tbody td:nth-child(5)){ width: 160px; text-align:center; }  /* Estado */
+:deep(.p-datatable-tbody td:nth-child(5)){ width: 170px; text-align:center; }  /* Estado */
 
 :deep(.p-datatable-thead th:nth-child(7)),
-:deep(.p-datatable-tbody td:nth-child(7)){ width: 125px;  text-align:center; }  /* Colaboradores (iconos) */
+:deep(.p-datatable-tbody td:nth-child(7)){ width: 135px;  text-align:center; }  /* Colaboradores (iconos) */
 
 /* 3) Siguiente Aprobador: sin ancho fijo y con salto de línea */
 :deep(.p-datatable-thead th:nth-child(6)),
-:deep(.p-datatable-tbody td:nth-child(6)){ width: 180px; text-align:center; }
+:deep(.p-datatable-tbody td:nth-child(6)){ width: 190px; text-align:center; }
 
 </style>
