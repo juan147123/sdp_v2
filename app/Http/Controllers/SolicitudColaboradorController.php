@@ -175,6 +175,75 @@ class SolicitudColaboradorController extends Controller
         $this->updateStatusSolicitudVisitador($request, null);
     }
 
+    public function updateStatusAprobadorVisitador(Request $request)
+    {
+        $update = $this->repository->update($request->id, [
+            'aprobado_visitador_obra' => $request->status,
+            'comentario_visitador' => $request->comentario_visitador,
+            'user_aprobate_visi_obra' => Auth::user()->name,
+            'date_aprobate_visi_obra' => now()->toDateString(),
+        ]);
+
+        $solicitud_colaborador = $this->repository->findById($request->id);
+        $solicitud = $this->repositorySolicitud->findById($request->id_solicitud);
+
+        $this->sendMailStatus($solicitud, $solicitud_colaborador, $request->status, 'visitador de obra');
+        $this->updateStatusSolicitudVisitador($request, null);
+
+        return $update;
+    }
+
+    public function updateStatusAprobadorRrhh(Request $request)
+    {
+        $update = $this->repository->update($request->id, [
+            'aprobado_rrhh' => $request->status,
+            'comentario_rrhh' => $request->comentario_rrhh,
+            'user_aprobate_rrhh_obra' => Auth::user()->name,
+            'date_aprobate_rrhh_obra' => now()->toDateString(),
+        ]);
+
+        $solicitud_colaborador = $this->repository->findById($request->id);
+        $solicitud = $this->repositorySolicitud->findById($request->id_solicitud);
+
+        $this->sendMailStatus($solicitud, $solicitud_colaborador, $request->status, 'rrhh');
+        $this->updateStatusSolicitudRrhh($request, null);
+
+        return $update;
+    }
+
+    public function updateAllStatusAprobadorRrhh(Request $request)
+    {
+        $this->repository->updateStatusMasiveRrhh($request);
+        $this->updateStatusSolicitudRrhh($request, null);
+    }
+
+    public function updateStatusSolicitudRrhh($request, $status)
+    {
+        $solicitudes = $this->repository->getSolicitudColaboradorPendinteRrhh(
+            $request->id_solicitud,
+            $status
+        );
+
+        if ($request->obra != 0) {
+            $solicitudes_aprobadas = $this->repository->getSolicitudColaboradorPendinteRrhh(
+                $request->id_solicitud,
+                6
+            );
+        } else {
+            $solicitudes_aprobadas = $this->repository->getSolicitudColaboradorPendinteRrhhPlanta(
+                $request->id_solicitud,
+                6
+            );
+        }
+
+        if ($solicitudes == 0) {
+            $nuevoStatus = ($solicitudes_aprobadas != 0) ? 4 : 5;
+            \DB::table('solicitudes')->where('id', $request->id_solicitud)->update(['status' => $nuevoStatus]);
+            $solicitud = $this->repositorySolicitud->findById($request->id_solicitud);
+            $this->sendMailStatusMasive($solicitud, $nuevoStatus, 'rrhh');
+        }
+    }
+
     public function updateStatusSolicitudVisitador($request, $status)
     {
         $solicitudes = \DB::table('solicitud_colaborador')
@@ -212,6 +281,8 @@ class SolicitudColaboradorController extends Controller
             $comentarios = $solicitud_colaborador->comentario_admin_obra;
         } elseif ($rolNorm == "visitador de obra") {
             $comentarios = $solicitud_colaborador->comentario_visitador;
+        } elseif ($rolNorm === 'rrhh' || $rolNorm === 'administrador de rrhh') {
+            $comentarios = $solicitud_colaborador->comentario_rrhh;
         }
 
         $body = View::make('emails.NuevaSolicitud', [
