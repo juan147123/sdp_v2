@@ -26,6 +26,34 @@ class SolicitudColaboradorController extends Controller
         $this->repositoryPersonal = $repositoryPersonal;
     }
 
+    public function delete($id, $id_solicitud)
+    {
+        $this->repository->update($id, ["enable" => 0]);
+        $detalle =  $this->repository->all(['*'], [], ['id_solicitud' => $id_solicitud, "enable" => 1])->count();
+        if ($detalle == 0) {
+            $this->repositorySolicitud->update($id_solicitud, ["enable" => 0]);
+        }
+    }
+
+    public function updateStatus(Request $request)
+    {
+        $this->repository->update(
+            $request->id,
+            $request->except(['id_solicitud'])
+        );
+
+        $this->updateStatusSolicitud($request, null);
+
+        return redirect()->route('redirect.solicitud');
+    }
+
+    /* OBSERBADO */
+    public function updateAllStatus(Request $request)
+    {
+        // $this->repository->updateStatusMasive($request->status, $request->ids);
+        $this->updateStatusSolicitud($request, 7);
+    }
+
     public function updateStatusAprobadorCC(Request $request)
     {
         $solicitud_colaborador = $this->repository->findById($request->id);
