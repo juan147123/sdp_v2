@@ -306,7 +306,7 @@
                                     />
 
                                     <Button
-                                        v-if="data.status == 5 || setAlertButton(data.solicitud_colaborador2)"
+                                        v-if="data.status == 5"
                                         icon="pi pi-pencil "
                                         class="ml-2"
                                         style="
