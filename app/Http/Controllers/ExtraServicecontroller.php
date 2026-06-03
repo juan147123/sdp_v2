@@ -47,16 +47,32 @@ class ExtraServicecontroller extends Controller
                 'url_header' => $url_header
             ];
 
+            try {
+            // Realizamos la petición HTTP
             $response = Http::withHeaders([
                 'x-api-key' => $apiKey,
             ])->post($URL_API, $data);
 
             $lastResponse = $response;
-            \Log::info("Enviando correo a: {$recipient} - Status: " . $response->status());
-        }
 
-        return $lastResponse;
+            // Si el estatus es exitoso (2xx)
+            if ($response->successful()) {
+                \Log::info("Correo enviado exitosamente a: {$recipient} - Status: " . $response->status());
+            } else {
+                // SI DA ERROR (como el 403), capturamos los detalles exactos
+                \Log::error("🚨 FALLÓ el envío de correo a: {$recipient}");
+                \Log::error("Status Code recibido: " . $response->status());
+                \Log::error("Cuerpo del error de la API: " . $response->body());
+            }
+
+        } catch (\Exception $e) {
+            // Captura errores de red crípticos (errores de timeout, caídas de DNS, SSL inválidos, etc.)
+            \Log::error("💥 Error crítico de conexión al intentar enviar correo a {$recipient}: " . $e->getMessage());
+        }
     }
+
+    return $lastResponse;
+}
 
 
     public static function SendDocumentsInDrive($files, $app)

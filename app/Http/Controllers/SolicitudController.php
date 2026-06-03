@@ -111,30 +111,36 @@ class SolicitudController extends Controller
 
     private function getCorreosAprobadoresPorCC(string $cc): array
     {
-        // Aprobador 1: líder del departamento del CECO
+        // Aprobador 1: líder del departamento 
         $correoAprob1 = \DB::connection('dw_chile')
             ->table('flesan_rrhh.sap_maestro_empresa_dep_un_cc as sme')
             ->join('flesan_rrhh.sap_maestro_colaborador as smc', \DB::raw('sme.lider_departamento'), '=', \DB::raw('smc.user_id::text'))
             ->where('sme.external_code_cc', $cc)
             ->select('smc.correo_flesan')
-            ->value('smc.correo_flesan'); // retorna solo el valor
-
-        // Aprobador 2: líder del líder (usando el correo del Aprobador 1)
+            ->value('smc.correo_flesan');
+        // Aprobador 2: líder del líder del departamento
         $correoAprob2 = null;
-        if ($correoAprob1) {
-            $correoAprob2 = \DB::connection('dw_chile')
+        if ($cc === 'DVCR80010') {
+            $correoAprob2 = 'mperez@dvc.cl';
+        } elseif ($cc === 'DVC080011') {
+            $correoAprob2 = 'mchahuan@dvc.cl';
+        } else {
+            if ($correoAprob1) {
+                $correoAprob2 = \DB::connection('dw_chile')
                 ->table('flesan_rrhh.sap_maestro_colaborador as empleado')
                 ->join('flesan_rrhh.sap_maestro_colaborador as lider', function ($join) {
-                    $join->on('empleado.np_lider', '=', \DB::raw('lider.user_id::text'));
-                })
+                        $join->on('empleado.np_lider', '=', \DB::raw('lider.user_id::text'));
+                    })
                 ->leftJoin('flesan_rrhh.sap_maestro_empresa_dep_un_cc as emp', function ($join) {
-                    $join->on('emp.lider_departamento', '=', \DB::raw('empleado.user_id::text'));
-                })
-                ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($correoAprob1)])
-                ->where('emp.external_code_cc', $cc)
-                ->select('lider.correo_flesan')
-                ->value('lider.correo_flesan');
+                        $join->on('emp.lider_departamento', '=', \DB::raw('empleado.user_id::text'));
+                    })
+                    ->whereRaw('LOWER(empleado.correo_flesan) = ?', [strtolower($correoAprob1)])
+                    ->where('emp.external_code_cc', $cc)
+                    ->select('lider.correo_flesan')
+                    ->value('lider.correo_flesan');
+            }
         }
+
         $bloqueados = [
             'rsalinas@flesan.cl',
             'tchahuan@dvc.cl',
@@ -215,6 +221,24 @@ class SolicitudController extends Controller
 
             if (Auth::user()->username == 'dreidy.contreras@dvc.cl') {
                 $centros_permitidos['centro_costo'][] = 'DVCR50012';
+            }
+
+            $usuarioLogueado = strtolower(trim(Auth::user()->username));
+
+            // Regla para Marco Pérez
+            if ($usuarioLogueado == 'mperez@dvc.cl') {
+                if (!isset($centros_permitidos['centro_costo'])) {
+                    $centros_permitidos['centro_costo'] = [];
+                }
+                $centros_permitidos['centro_costo'][] = 'DVCR80010';
+            }
+
+            // Regla para Michel Chahuan
+            if ($usuarioLogueado == 'mchahuan@dvc.cl') {
+                if (!isset($centros_permitidos['centro_costo'])) {
+                    $centros_permitidos['centro_costo'] = [];
+                }
+                $centros_permitidos['centro_costo'][] = 'DVC080011';
             }
         }
         $result = $this->repository->all(
