@@ -238,7 +238,7 @@ class SolicitudController extends Controller
                 if (!isset($centros_permitidos['centro_costo'])) {
                     $centros_permitidos['centro_costo'] = [];
                 }
-                $centros_permitidos['centro_costo'][] = 'DVC080011';
+                $centros_permitidos['centro_costo'][] = 'DVCDVC080011';
             }
         }
         $result = $this->repository->all(
