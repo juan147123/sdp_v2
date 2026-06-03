@@ -122,7 +122,7 @@ class SolicitudController extends Controller
         $correoAprob2 = null;
         if ($cc === 'DVCR80010') {
             $correoAprob2 = 'mperez@dvc.cl';
-        } elseif ($cc === 'DVC080011') {
+        } elseif ($cc === 'DVCDVC080011') {
             $correoAprob2 = 'mchahuan@dvc.cl';
         } else {
             if ($correoAprob1) {
