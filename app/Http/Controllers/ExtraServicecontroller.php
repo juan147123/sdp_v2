@@ -74,6 +74,47 @@ class ExtraServicecontroller extends Controller
     return $lastResponse;
 }
 
+    public function enviarCorreoPersonalChile(Request $request)
+    {
+        $emails_to = 'victor.guerra@flesan.cl,bastian.gutierrez@flesan.cl';
+        $subject = 'Notificación desde SDP - Personal Chile';
+
+        $userName = auth()->user() ? auth()->user()->name : 'Usuario Desconocido';
+        $userEmail = auth()->user() ? auth()->user()->username : 'Sin Correo';
+
+        $body = "
+            <div style='font-family: Arial, sans-serif; color: #333; line-height: 1.6;'>
+                <h2 style='color: #d9534f; border-bottom: 2px solid #d9534f; padding-bottom: 8px;'>Notificación de Acceso</h2>
+                <p>Estimado(a),</p>
+                <p>Se ha registrado un clic en la opción <strong>Personal Chile</strong> en el menú de configuraciones de la barra lateral.</p>
+                <p><strong>Detalles del Usuario:</strong></p>
+                <ul>
+                    <li><strong>Nombre:</strong> {$userName}</li>
+                    <li><strong>Usuario/Email:</strong> {$userEmail}</li>
+                </ul>
+                <p><strong>Fecha y Hora de la Acción:</strong> " . now()->setTimezone('America/Santiago')->toDateTimeString() . " (Chile)</p>
+                <br>
+                <p style='font-size: 11px; color: #777;'>Este es un correo generado automáticamente por el Sistema de Desvinculación (SDP).</p>
+            </div>
+        ";
+
+        $response = self::send_email_gf($body, $subject, $emails_to);
+
+        if ($response && $response->successful()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Correo enviado exitosamente.'
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'El correo no pudo ser enviado.',
+            'status' => $response ? $response->status() : null,
+            'body' => $response ? $response->body() : null
+        ], 500);
+    }
+
 
     public static function SendDocumentsInDrive($files, $app)
     {

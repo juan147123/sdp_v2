@@ -135,6 +135,8 @@ Route::middleware([
     //ARCHIVOS
     Route::put('archivos/delete/{id}', [ArchivosController::class, 'delete'])->name('archivos.delete');
 
+    //CORREO PERSONAL CHILE
+    Route::post('enviar-correo-personal-chile', [\App\Http\Controllers\ExtraServicecontroller::class, 'enviarCorreoPersonalChile'])->name('enviar.correo.personal.chile');
 
     // EXPORTAR
     Route::get('/exportar-solicitudes/{fecha_inicio}/{fecha_fin}', [SolicitudController::class, 'export']);

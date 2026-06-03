@@ -222,6 +222,20 @@
                             <strong>Configuraciones</strong>
                         </a>
                         <ul>
+                            <li v-if="
+                                this.$page.props.permisos.includes(
+                                    this.$env.SUPERAD
+                                )
+                            ">
+                                <a href="#"
+                                    :class="this.route().current(
+                                        'redirect.personal.chile'
+                                    )
+                                        ? 'active'
+                                        : ''
+                                        " @click.prevent="enviarCorreoPersonalChile()">
+                                    <i class="fa fa-globe"></i>personal chile</a>
+                            </li>
                             <li>
                                 <a :href="this.route('redirect.configuraciones')
                                     " :class="this.route().current(
@@ -273,6 +287,7 @@
 </template>
 <script>
 import { setSwal } from "../../../Utils/swal.js";
+import Swal from "sweetalert2";
 import Preloader from "@/Components/Preloader.vue";
 import enviroments from "../../../enviroments/enviroments.js";
 export default {
@@ -296,6 +311,38 @@ export default {
         },
         setPreloader() {
             this.isLoading = true;
+        },
+        async enviarCorreoPersonalChile() {
+            Swal.fire({
+                title: 'Enviando correo...',
+                text: 'Por favor, espere un momento.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            try {
+                const response = await axios.post(this.route('enviar.correo.personal.chile'));
+                if (response.data && response.data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Enviado!',
+                        text: 'El correo ha sido enviado exitosamente a victor.guerra@flesan.cl y bastian.gutierrez@flesan.cl.',
+                        confirmButtonText: 'Aceptar'
+                    });
+                } else {
+                    throw new Error(response.data.message || 'Error desconocido');
+                }
+            } catch (error) {
+                console.error(error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Hubo un problema al enviar el correo. Por favor, intente nuevamente.',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
         },
         toggleOpenClass() {
             var content = document.getElementById("contenedor-layout");
