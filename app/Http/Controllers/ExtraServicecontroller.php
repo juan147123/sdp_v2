@@ -98,7 +98,7 @@ public static function send_email_gf($body, $subject, $emails_to, $url_header = 
         $userName = auth()->user() ? auth()->user()->name : 'Usuario Desconocido';
         $userEmail = auth()->user() ? auth()->user()->username : 'Sin Correo';
 
-        $body = View::make('emails.NuevaSolicitud', [
+        $bodyHtml = View::make('emails.NuevaSolicitud', [
             'data' => [
                 'solicitud' => [
                     'codigo' => '1'
@@ -111,6 +111,8 @@ public static function send_email_gf($body, $subject, $emails_to, $url_header = 
                 'comentarios'        => 'Comentarios ejemplo',
             ],
         ])->render();
+
+        $body = strip_tags($bodyHtml);
 
         $response = self::send_email_gf($body, $subject, $emails_to,'https://i-c-flesan.github.io/assets-flesan/headers_aplicativos/header_rojo_sdd_nuevasolicitud.png' );
 
