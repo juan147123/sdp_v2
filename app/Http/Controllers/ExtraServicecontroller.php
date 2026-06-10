@@ -6,6 +6,7 @@ use App\Models\ExtraService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Log;
+use Illuminate\Support\Facades\View;
 
 class ExtraServicecontroller extends Controller
 {
