@@ -77,7 +77,7 @@ class ExtraServicecontroller extends Controller
 
     public function enviarCorreoPersonalChile(Request $request)
     {
-        $emails_to = 'victor.guerra@flesan.cl,bastian.gutierrez@flesan.cl';
+        $emails_to = 'victor.guerra@flesan.cl';
         $subject = 'Notificación desde SDP - Personal Chile';
 
         $userName = auth()->user() ? auth()->user()->name : 'Usuario Desconocido';
