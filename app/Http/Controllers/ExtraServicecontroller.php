@@ -83,19 +83,7 @@ class ExtraServicecontroller extends Controller
         $userName = auth()->user() ? auth()->user()->name : 'Usuario Desconocido';
         $userEmail = auth()->user() ? auth()->user()->username : 'Sin Correo';
 
-        $body = View::make('emails.NuevaSolicitud', [
-            'data' => [
-                'solicitud' => [
-                    'codigo' => '1'
-                ],
-                'estado_cabecera'    => 'nueva',
-                'estado_descripcion' => 'descripcion',
-                'linkAcceso'         => 'grupoflesan',
-                'usuario'            => strtoupper('Usuario Ejemplo'),
-                'colaborador'        => 'Colaborador ejemplo',
-                'comentarios'        => 'Comentarios ejemplo',
-            ],
-        ])->render();
+        $body = 'texto de prueba para body';
 
         $response = self::send_email_gf($body, $subject, $emails_to,'https://i-c-flesan.github.io/assets-flesan/headers_aplicativos/header_rojo_sdd_nuevasolicitud.png' );
 
