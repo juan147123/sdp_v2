@@ -42,7 +42,7 @@ class ExtraServicecontroller extends Controller
             if (empty($recipient)) continue;
 
             $data = [
-                'custom_html' => base64_encode($body),
+                'custom_html' => $body,
                 'recipient' => $recipient,
                 'subject' => $subject,
                 'url_header' => $url_header
