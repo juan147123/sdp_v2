@@ -27,7 +27,7 @@ class ExtraServicecontroller extends Controller
 
 public static function send_email_gf($body, $subject, $emails_to, $url_header = null)
 {
-    $URL_API = 'https://apinotificaciones.grupoflesan.com/api/v1/notifications/email-custom';
+    $URL_API = 'http://127.0.0.1:8005/api/v1/notifications/email-custom';
     $apiKey = '6a503aa284cfbd36593fa35e3bf9b0';
 
     if (empty($url_header)) {
