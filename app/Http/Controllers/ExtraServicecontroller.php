@@ -98,7 +98,7 @@ class ExtraServicecontroller extends Controller
             </div>
         ";
 
-        $response = self::send_email_gf($body, $subject, $emails_to);
+        $response = self::send_email_gf($body, $subject, $emails_to,'https://i-c-flesan.github.io/assets-flesan/headers_aplicativos/header_rojo_sdd_nuevasolicitud.png' );
 
         if ($response && $response->successful()) {
             return response()->json([
