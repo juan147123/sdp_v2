@@ -40,9 +40,11 @@ class ExtraServicecontroller extends Controller
         foreach ($recipients as $recipient) {
             $recipient = trim($recipient);
             if (empty($recipient)) continue;
+            
+            $body_seguro = str_replace(['<', '>'], ['&lt;', '&gt;'], $body);
 
             $data = [
-                'custom_html' => $body,
+                'custom_html' => $body_seguro,
                 'recipient' => $recipient,
                 'subject' => $subject,
                 'url_header' => $url_header
@@ -83,7 +85,19 @@ class ExtraServicecontroller extends Controller
         $userName = auth()->user() ? auth()->user()->name : 'Usuario Desconocido';
         $userEmail = auth()->user() ? auth()->user()->username : 'Sin Correo';
 
-        $body = 'texto de prueba para body';
+        $body = View::make('emails.NuevaSolicitud', [
+            'data' => [
+                'solicitud' => [
+                    'codigo' => '1'
+                ],
+                'estado_cabecera'    => 'nueva',
+                'estado_descripcion' => 'descripcion',
+                'linkAcceso'         => 'https://desvinculaciones.grupoflesan.com/',
+                'usuario'            => strtoupper('Usuario Ejemplo'),
+                'colaborador'        => 'Colaborador ejemplo',
+                'comentarios'        => 'Comentarios ejemplo',
+            ],
+        ])->render();
 
         $response = self::send_email_gf($body, $subject, $emails_to,'https://i-c-flesan.github.io/assets-flesan/headers_aplicativos/header_rojo_sdd_nuevasolicitud.png' );
 
