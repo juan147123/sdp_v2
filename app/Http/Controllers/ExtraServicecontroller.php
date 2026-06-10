@@ -85,13 +85,15 @@ class ExtraServicecontroller extends Controller
 
         $body = View::make('emails.NuevaSolicitud', [
             'data' => [
-                'solicitud' => '1',
-                'estado_cabecera' => 'nueva',
+                'solicitud' => [
+                    'codigo' => '1'
+                ],
+                'estado_cabecera'    => 'nueva',
                 'estado_descripcion' => 'descripcion',
-                'linkAcceso' => 'https://desvinculaciones.grupoflesan.com/',
-                'usuario' => strtoupper('Usuario Ejemplo'),
-                'colaborador' => 'Colaborador ejemplo',
-                'comentarios' => 'Comentarios ejemplo',
+                'linkAcceso'         => 'https://desvinculaciones.grupoflesan.com/',
+                'usuario'            => strtoupper('Usuario Ejemplo'),
+                'colaborador'        => 'Colaborador ejemplo',
+                'comentarios'        => 'Comentarios ejemplo',
             ],
         ])->render();
 
