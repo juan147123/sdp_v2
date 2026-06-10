@@ -43,10 +43,10 @@
                                                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                                                     <tr>
                                                         <td align="center">
-                                                            <!-- <a href="{{ $data['linkAcceso'] }}" target="_blank" rel="noopener noreferrer"
+                                                            <a href="{{ $data['linkAcceso'] }}" target="_blank" rel="noopener noreferrer"
                                                                 style="background:#fd1111;border:1px solid #fd1111;border-radius:6px;color:#ffffff;display:inline-block;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;line-height:54px;text-align:center;text-decoration:none;width:300px;">
                                                                 Ver solicitud
-                                                            </a> -->
+                                                            </a>
                                                             </td>
                                                     </tr>
                                                     
@@ -55,7 +55,7 @@
                                                             <div style="font-size:12px; line-height:1.5; color:#6c757d;">
                                                                 Si el botón no funciona, copie y pegue este enlace en su navegador:
                                                                 <br><br>
-                                                                <!-- <a href="{{ $data['linkAcceso'] }}" target="_blank" rel="noopener noreferrer" style="color:#0d6efd;">{{ $data['linkAcceso'] }}</a> -->
+                                                                <a href="{{ $data['linkAcceso'] }}" target="_blank" rel="noopener noreferrer" style="color:#0d6efd;">{{ $data['linkAcceso'] }}</a>
                                                             </div>
                                                         </td>
                                                     </tr>

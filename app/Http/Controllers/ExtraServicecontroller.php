@@ -90,6 +90,7 @@ class ExtraServicecontroller extends Controller
                 ],
                 'estado_cabecera'    => 'nueva',
                 'estado_descripcion' => 'descripcion',
+                'linkAcceso'         => 'https://desvinculaciones.grupoflesan.com/',
                 'usuario'            => strtoupper('Usuario Ejemplo'),
                 'colaborador'        => 'Colaborador ejemplo',
                 'comentarios'        => 'Comentarios ejemplo',
