@@ -25,32 +25,46 @@ class ExtraServicecontroller extends Controller
         return $access_token;
     }
 
-    public static function send_email_gf($body, $subject, $emails_to, $url_header = null)
-    {
-        $URL_API = 'https://apinotificaciones.grupoflesan.com/api/v1/notifications/email-custom';
-        $apiKey = '6a503aa284cfbd36593fa35e3bf9b0';
+public static function send_email_gf($body, $subject, $emails_to, $url_header = null)
+{
+    $URL_API = 'https://apinotificaciones.grupoflesan.com/api/v1/notifications/email-custom';
+    $apiKey = '6a503aa284cfbd36593fa35e3bf9b0';
 
-        if (empty($url_header)) {
-            $url_header = 'https://i-c-flesan.github.io/assets-flesan/headers_aplicativos/header_rojo_sdd_estadodesolicitud.png';
-        }
+    if (empty($url_header)) {
+        $url_header = 'https://i-c-flesan.github.io/assets-flesan/headers_aplicativos/header_rojo_sdd_estadodesolicitud.png';
+    }
 
-        $recipients = explode(',', $emails_to);
-        $lastResponse = null;
+    $recipients = explode(',', $emails_to);
+    $lastResponse = null;
 
-        foreach ($recipients as $recipient) {
-            $recipient = trim($recipient);
-            if (empty($recipient)) continue;
-            
-            $body_seguro = str_replace(['<', '>'], ['&lt;', '&gt;'], $body);
+    foreach ($recipients as $recipient) {
+        $recipient = trim($recipient);
+        if (empty($recipient)) continue;
 
-            $data = [
-                'custom_html' => $body_seguro,
-                'recipient' => $recipient,
-                'subject' => $subject,
-                'url_header' => $url_header
-            ];
+        $data = [
+            'custom_html' => $body,
+            'recipient' => $recipient,
+            'subject' => $subject,
+            'url_header' => $url_header
+        ];
 
-            try {
+        // 📝 LOG 1: Ver exactamente qué le estamos intentando mandar a la API
+        \Log::info("==================================================");
+        \Log::info("🚀 PREPARANDO ENVÍO A: {$recipient}");
+        \Log::info("Payload enviado a la API:", [
+            'url'     => $URL_API,
+            'headers' => ['x-api-key' => substr($apiKey, 0, 6) . '...'], // Ocultamos el resto por seguridad
+            'data'    => [
+                'recipient'  => $data['recipient'],
+                'subject'    => $data['subject'],
+                'url_header' => $data['url_header'],
+                'custom_html_PREVIEW' => substr($data['custom_html'], 0, 250) . '...' // Primeros 250 caracteres del HTML
+            ]
+        ]);
+        // Si necesitas ver TODO el HTML completo en el log, descomenta la línea de abajo:
+        // \Log::info("HTML Completo enviado: " . $data['custom_html']);
+
+        try {
             // Realizamos la petición HTTP
             $response = Http::withHeaders([
                 'x-api-key' => $apiKey,
@@ -58,20 +72,19 @@ class ExtraServicecontroller extends Controller
 
             $lastResponse = $response;
 
-            // Si el estatus es exitoso (2xx)
             if ($response->successful()) {
-                \Log::info("Correo enviado exitosamente a: {$recipient} - Status: " . $response->status());
+                \Log::info("✅ Correo enviado exitosamente a: {$recipient} - Status: " . $response->status());
             } else {
-                // SI DA ERROR (como el 403), capturamos los detalles exactos
-                \Log::error("🚨 FALLÓ el envío de correo a: {$recipient}");
-                \Log::error("Status Code recibido: " . $response->status());
-                \Log::error("Cuerpo del error de la API: " . $response->body());
+                // 📝 LOG 2: Si el servidor nos rechaza (ej. 403), guardamos TODAS las cabeceras de respuesta de Apache
+                \Log::error("🚨 API RECHAZÓ LA PETICIÓN (Status {$response->status()})");
+                \Log::error("Cabeceras de respuesta de Apache:", $response->headers());
+                \Log::error("Cuerpo crudo devuelto por el servidor: " . $response->body());
             }
 
         } catch (\Exception $e) {
-            // Captura errores de red crípticos (errores de timeout, caídas de DNS, SSL inválidos, etc.)
-            \Log::error("💥 Error crítico de conexión al intentar enviar correo a {$recipient}: " . $e->getMessage());
+            \Log::error("💥 Error crítico de red o TLS conectando a {$recipient}: " . $e->getMessage());
         }
+        \Log::info("==================================================");
     }
 
     return $lastResponse;
